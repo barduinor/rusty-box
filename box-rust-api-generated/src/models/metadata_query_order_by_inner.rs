@@ -10,8 +10,6 @@
 
 /// MetadataQueryOrderByInner : An object representing one of the metadata template fields to sort the metadata query results by.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct MetadataQueryOrderByInner {
     /// The metadata template field to order by.  The `field_key` represents the `key` value of a field from the metadata template being searched for.
@@ -39,10 +37,14 @@ pub enum Direction {
     Asc,
     #[serde(rename = "DESC")]
     Desc,
-    #[serde(rename = "asc")]
-    Asc,
-    #[serde(rename = "desc")]
-    Desc,
+    //
+    // TODO: could we use a serde alias with multiple names?
+    // #[serde(alias = "ASC", alias = "Asc")]
+    //
+    // #[serde(rename = "asc")]
+    // Asc,
+    // #[serde(rename = "desc")]
+    // Desc,
 }
 
 impl Default for Direction {
@@ -50,4 +52,3 @@ impl Default for Direction {
         Self::Asc
     }
 }
-

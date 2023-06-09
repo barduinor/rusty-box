@@ -10,15 +10,18 @@
 
 /// FileFull : A full representation of a file, as can be returned from any file API endpoints by default
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct FileFull {
     /// The unique identifier that represent a file.  The ID for any file can be determined by visiting a file in the web application and copying the ID from the URL. For example, for the URL `https://_*.app.box.com/files/123` the `file_id` is `123`.
     #[serde(rename = "id")]
     pub id: String,
     /// The HTTP `etag` of this file. This can be used within some API endpoints in the `If-Match` and `If-None-Match` headers to only perform changes on the file if (no) changes have happened.
-    #[serde(rename = "etag", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "etag",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub etag: Option<Option<String>>,
     /// `file`
     #[serde(rename = "type")]
@@ -48,16 +51,36 @@ pub struct FileFull {
     #[serde(rename = "modified_at", skip_serializing_if = "Option::is_none")]
     pub modified_at: Option<String>,
     /// The time at which this file was put in the trash.
-    #[serde(rename = "trashed_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "trashed_at",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub trashed_at: Option<Option<String>>,
     /// The time at which this file is expected to be purged from the trash.
-    #[serde(rename = "purged_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "purged_at",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub purged_at: Option<Option<String>>,
     /// The date and time at which this file was originally created, which might be before it was uploaded to Box.
-    #[serde(rename = "content_created_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "content_created_at",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub content_created_at: Option<Option<String>>,
     /// The date and time at which this file was last updated, which might be before it was uploaded to Box.
-    #[serde(rename = "content_modified_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "content_modified_at",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub content_modified_at: Option<Option<String>>,
     #[serde(rename = "created_by", skip_serializing_if = "Option::is_none")]
     pub created_by: Option<Box<crate::models::FileAllOfCreatedBy>>,
@@ -67,7 +90,12 @@ pub struct FileFull {
     pub owned_by: Option<Box<crate::models::FileAllOfOwnedBy>>,
     #[serde(rename = "shared_link", skip_serializing_if = "Option::is_none")]
     pub shared_link: Option<Box<crate::models::FileAllOfSharedLink>>,
-    #[serde(rename = "parent", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "parent",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub parent: Option<Option<Box<crate::models::FileAllOfParent>>>,
     /// Defines if this item has been deleted or not.  * `active` when the item has is not in the trash * `trashed` when the item has been moved to the trash but not deleted * `deleted` when the item has been permanently deleted.
     #[serde(rename = "item_status", skip_serializing_if = "Option::is_none")]
@@ -80,9 +108,17 @@ pub struct FileFull {
     pub comment_count: Option<i32>,
     #[serde(rename = "permissions", skip_serializing_if = "Option::is_none")]
     pub permissions: Option<Box<crate::models::FileFullAllOfPermissions>>,
+    //
     #[serde(rename = "tags", skip_serializing_if = "Option::is_none")]
-    pub tags: Option<Box<crate::models::Array>>,
-    #[serde(rename = "lock", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    // pub tags: Option<Box<crate::models::Array>>,
+    pub tags: Option<Box<serde_json::Value>>,
+    //
+    #[serde(
+        rename = "lock",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub lock: Option<Option<Box<crate::models::FileFullAllOfLock>>>,
     /// Indicates the (optional) file extension for this file. By default, this is set to an empty string.
     #[serde(rename = "extension", skip_serializing_if = "Option::is_none")]
@@ -90,39 +126,72 @@ pub struct FileFull {
     /// Indicates if the file is a package. Packages are commonly used by Mac Applications and can include iWork files.
     #[serde(rename = "is_package", skip_serializing_if = "Option::is_none")]
     pub is_package: Option<bool>,
-    #[serde(rename = "expiring_embed_link", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "expiring_embed_link",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub expiring_embed_link: Option<Box<crate::models::FileFullAllOfExpiringEmbedLink>>,
     #[serde(rename = "watermark_info", skip_serializing_if = "Option::is_none")]
     pub watermark_info: Option<Box<crate::models::FileFullAllOfWatermarkInfo>>,
     /// Specifies if the file can be accessed via the direct shared link or a shared link to a parent folder.
-    #[serde(rename = "is_accessible_via_shared_link", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "is_accessible_via_shared_link",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub is_accessible_via_shared_link: Option<IsAccessibleViaSharedLink>,
     /// A list of the types of roles that user can be invited at when sharing this file.
-    #[serde(rename = "allowed_invitee_roles", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "allowed_invitee_roles",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub allowed_invitee_roles: Option<Vec<AllowedInviteeRoles>>,
     /// Specifies if this file is owned by a user outside of the authenticated enterprise.
-    #[serde(rename = "is_externally_owned", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "is_externally_owned",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub is_externally_owned: Option<bool>,
     /// Specifies if this file has any other collaborators.
     #[serde(rename = "has_collaborations", skip_serializing_if = "Option::is_none")]
     pub has_collaborations: Option<bool>,
-    #[serde(rename = "metadata", skip_serializing_if = "Option::is_none")]
-    pub metadata: Option<Box<crate::models::Map>>,
+    //
+    // TODO: Fix metadata serde
+    // #[serde(rename = "metadata", skip_serializing_if = "Option::is_none")]
+    // pub metadata: Option<Box<crate::models::Map>>,
+    //
     /// When the file will automatically be deleted
-    #[serde(rename = "expires_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "expires_at",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub expires_at: Option<Option<String>>,
     #[serde(rename = "representations", skip_serializing_if = "Option::is_none")]
     pub representations: Option<Box<crate::models::FileFullAllOfRepresentations>>,
     #[serde(rename = "classification", skip_serializing_if = "Option::is_none")]
     pub classification: Option<Box<crate::models::FileFullAllOfClassification>>,
     /// The display name of the user that uploaded the file. In most cases this is the name of the user logged in at the time of the upload.  If the file was uploaded using a File Request form that requires the user to provide an email address, this field is populated with that email address. If an email address was not required in the File Request form, this field is set to return a value of `File Request`.  In all other anonymous cases where no email was provided this field will default to a value of `Someone`.
-    #[serde(rename = "uploader_display_name", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "uploader_display_name",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub uploader_display_name: Option<String>,
     /// The retention expiration timestamp for the given file
-    #[serde(rename = "disposition_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "disposition_at",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub disposition_at: Option<Option<String>>,
     /// A list of the types of roles that user can be invited at when sharing this file.
-    #[serde(rename = "shared_link_permission_options", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "shared_link_permission_options",
+        default,
+        with = "::serde_with::rust::double_option",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub shared_link_permission_options: Option<Option<Vec<SharedLinkPermissionOptions>>>,
 }
 
@@ -165,7 +234,10 @@ impl FileFull {
             allowed_invitee_roles: None,
             is_externally_owned: None,
             has_collaborations: None,
-            metadata: None,
+            //
+            // TODO: Fix metadata serde
+            // metadata: None,
+            //
             expires_at: None,
             representations: None,
             classification: None,
@@ -258,4 +330,3 @@ impl Default for SharedLinkPermissionOptions {
         Self::Preview
     }
 }
-

@@ -10,8 +10,6 @@
 
 /// WorkflowAllOfFlows : A step in a Box Relay Workflow. Each flow contains a `Trigger` and a collection of Outcomes to perform once the conditions of a `Trigger` are met
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct WorkflowAllOfFlows {
     /// The identifier of the flow
@@ -22,8 +20,11 @@ pub struct WorkflowAllOfFlows {
     pub r#type: Option<RHashType>,
     #[serde(rename = "trigger", skip_serializing_if = "Option::is_none")]
     pub trigger: Option<Box<serde_json::Value>>,
+    //
     #[serde(rename = "outcomes", skip_serializing_if = "Option::is_none")]
-    pub outcomes: Option<Box<crate::models::Array>>,
+    // pub outcomes: Option<Box<crate::models::Array>>,
+    pub outcomes: Option<Box<serde_json::Value>>,
+    //
     /// When this flow was created
     #[serde(rename = "created_at", skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,
@@ -57,4 +58,3 @@ impl Default for RHashType {
         Self::Flow
     }
 }
-
