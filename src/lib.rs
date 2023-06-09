@@ -1,3 +1,13 @@
+#[macro_use]
+extern crate serde_derive;
+
+extern crate reqwest;
+extern crate serde;
+extern crate serde_json;
+extern crate url;
+
+mod rest_api;
+
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
