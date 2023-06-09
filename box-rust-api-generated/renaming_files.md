@@ -1,0 +1,1 @@
+ find . -name "*__*" -type f -exec sh -c 'echo mv  "$1" "$(echo "$1" | sed s/__/_/)"' _ {} \;
