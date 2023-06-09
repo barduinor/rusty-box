@@ -1,0 +1,19 @@
+# CommentFull
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**id** | Option<**String**> | The unique identifier for this comment. | [optional]
+**r#type** | Option<**String**> | `comment` | [optional]
+**is_reply_comment** | Option<**bool**> | Whether or not this comment is a reply to another comment | [optional]
+**message** | Option<**String**> | The text of the comment, as provided by the user | [optional]
+**created_by** | Option<[**crate::models::CommentAllOfCreatedBy**](Comment_allOf_created_by.md)> |  | [optional]
+**created_at** | Option<**String**> | The time this comment was created | [optional]
+**modified_at** | Option<**String**> | The time this comment was last modified | [optional]
+**item** | Option<[**crate::models::CommentAllOfItem**](Comment_allOf_item.md)> |  | [optional]
+**tagged_message** | Option<**String**> | The string representing the comment text with @mentions included. @mention format is @[id:username] where `id` is user's Box ID and `username` is their display name. | [optional]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
