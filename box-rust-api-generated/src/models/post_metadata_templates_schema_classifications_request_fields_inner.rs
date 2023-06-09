@@ -10,14 +10,12 @@
 
 /// PostMetadataTemplatesSchemaClassificationsRequestFieldsInner : The `enum` field which holds all the valid classification values.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct PostMetadataTemplatesSchemaClassificationsRequestFieldsInner {
     /// `enum`
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub r#type: Option<RHashType>,
-    /// `Box__Security__Classification__Key`
+    /// `Box_Security_Classification_Key`
     #[serde(rename = "key", skip_serializing_if = "Option::is_none")]
     pub key: Option<Key>,
     /// `Classification`
@@ -28,7 +26,11 @@ pub struct PostMetadataTemplatesSchemaClassificationsRequestFieldsInner {
     pub hidden: Option<bool>,
     /// The actual list of classifications that are present on this template.
     #[serde(rename = "options", skip_serializing_if = "Option::is_none")]
-    pub options: Option<Vec<crate::models::PostMetadataTemplatesSchemaClassificationsRequestFieldsInnerOptionsInner>>,
+    pub options: Option<
+        Vec<
+            crate::models::PostMetadataTemplatesSchemaClassificationsRequestFieldsInnerOptionsInner,
+        >,
+    >,
 }
 
 impl PostMetadataTemplatesSchemaClassificationsRequestFieldsInner {
@@ -56,10 +58,10 @@ impl Default for RHashType {
         Self::Enum
     }
 }
-/// `Box__Security__Classification__Key`
+/// `Box_Security_Classification_Key`
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum Key {
-    #[serde(rename = "Box__Security__Classification__Key")]
+    #[serde(rename = "Box_Security_Classification_Key")]
     BoxSecurityClassificationKey,
 }
 
@@ -80,4 +82,3 @@ impl Default for DisplayName {
         Self::Classification
     }
 }
-

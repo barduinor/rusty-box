@@ -10,14 +10,12 @@
 
 /// PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDeleteRequestInner : A single classification to remove.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDeleteRequestInner {
     /// `removeEnumOption`
     #[serde(rename = "op")]
     pub op: String,
-    /// `Box__Security__Classification__Key`
+    /// `Box_Security_Classification_Key`
     #[serde(rename = "fieldKey")]
     pub field_key: String,
     /// The label of the classification to remove.
@@ -27,7 +25,12 @@ pub struct PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchema
 
 impl PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDeleteRequestInner {
     /// A single classification to remove.
-    pub fn new(op: String, field_key: String, enum_option_key: String) -> PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDeleteRequestInner {
+    pub fn new(
+        op: String,
+        field_key: String,
+        enum_option_key: String,
+    ) -> PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDeleteRequestInner
+    {
         PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDeleteRequestInner {
             op,
             field_key,
@@ -35,5 +38,3 @@ impl PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaDelete
         }
     }
 }
-
-

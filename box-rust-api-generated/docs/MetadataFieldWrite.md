@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **display_name** | **String** | The display name of the field as it is shown to the user in the web and mobile apps. | 
 **description** | Option<**String**> | A description of the field. This is not shown to the user. | [optional]
 **hidden** | Option<**bool**> | Whether this field is hidden in the UI for the user and can only be set through the API instead. | [optional]
-**options** | Option<[**Vec<crate::models::MetadataOptionWrite>**](Metadata_Option__Write_.md)> | A list of options for this field. This is used in combination with the `enum` and `multiSelect` field types. | [optional]
+**options** | Option<[**Vec<crate::models::MetadataOptionWrite>**](Metadata_Option_Write_.md)> | A list of options for this field. This is used in combination with the `enum` and `multiSelect` field types. | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

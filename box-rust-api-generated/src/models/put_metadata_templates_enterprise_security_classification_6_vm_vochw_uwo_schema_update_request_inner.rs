@@ -10,14 +10,12 @@
 
 /// PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInner : A single classification to update.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInner {
     /// `editEnumOption`
     #[serde(rename = "op")]
     pub op: String,
-    /// `Box__Security__Classification__Key`
+    /// `Box_Security_Classification_Key`
     #[serde(rename = "fieldKey")]
     pub field_key: String,
     /// The original label of the classification to change.
@@ -29,7 +27,13 @@ pub struct PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchema
 
 impl PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInner {
     /// A single classification to update.
-    pub fn new(op: String, field_key: String, enum_option_key: String, data: crate::models::PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInnerData) -> PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInner {
+    pub fn new(
+        op: String,
+        field_key: String,
+        enum_option_key: String,
+        data: crate::models::PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInnerData,
+    ) -> PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInner
+    {
         PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInner {
             op,
             field_key,
@@ -38,5 +42,3 @@ impl PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdate
         }
     }
 }
-
-

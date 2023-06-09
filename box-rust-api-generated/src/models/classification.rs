@@ -10,13 +10,14 @@
 
 /// Classification : An instance of the classification metadata template, containing the classification applied to the file or folder.  To get more details about the classification applied to an item, request the classification metadata template.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct Classification {
     /// The name of the classification applied to the item.
-    #[serde(rename = "Box__Security__Classification__Key", skip_serializing_if = "Option::is_none")]
-    pub box__security__classification__key: Option<String>,
+    #[serde(
+        rename = "Box_Security_Classification_Key",
+        skip_serializing_if = "Option::is_none"
+    )]
+    pub box_security_classification_key: Option<String>,
     /// The identifier of the item that this metadata instance has been attached to. This combines the `type` and the `id` of the parent in the form `{type}_{id}`.
     #[serde(rename = "$parent", skip_serializing_if = "Option::is_none")]
     pub dollar_parent: Option<String>,
@@ -44,7 +45,7 @@ impl Classification {
     /// An instance of the classification metadata template, containing the classification applied to the file or folder.  To get more details about the classification applied to an item, request the classification metadata template.
     pub fn new() -> Classification {
         Classification {
-            box__security__classification__key: None,
+            box_security_classification_key: None,
             dollar_parent: None,
             dollar_template: None,
             dollar_scope: None,
@@ -68,4 +69,3 @@ impl Default for DollarTemplate {
         Self::SecurityClassification6VmVochwUwo
     }
 }
-

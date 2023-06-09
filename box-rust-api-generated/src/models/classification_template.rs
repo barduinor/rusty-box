@@ -10,8 +10,6 @@
 
 /// ClassificationTemplate : A metadata template that holds the security classifications defined by an enterprise.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct ClassificationTemplate {
     /// The ID of the classification template.
@@ -33,9 +31,12 @@ pub struct ClassificationTemplate {
     #[serde(rename = "hidden", skip_serializing_if = "Option::is_none")]
     pub hidden: Option<bool>,
     /// Classifications are always copied along when the file or folder is copied.
-    #[serde(rename = "copyInstanceOnItemCopy", skip_serializing_if = "Option::is_none")]
+    #[serde(
+        rename = "copyInstanceOnItemCopy",
+        skip_serializing_if = "Option::is_none"
+    )]
     pub copy_instance_on_item_copy: Option<bool>,
-    /// A list of fields for this classification template. This includes only one field, the `Box__Security__Classification__Key`, which defines the different classifications available in this enterprise.
+    /// A list of fields for this classification template. This includes only one field, the `Box_Security_Classification_Key`, which defines the different classifications available in this enterprise.
     #[serde(rename = "fields", skip_serializing_if = "Option::is_none")]
     pub fields: Option<Vec<crate::models::ClassificationTemplateFieldsInner>>,
 }
@@ -92,4 +93,3 @@ impl Default for DisplayName {
         Self::Classification
     }
 }
-

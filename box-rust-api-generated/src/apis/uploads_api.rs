@@ -81,7 +81,10 @@ pub async fn post_files_content(
     //TODO: apparently params.attributes does not exist??
     // let attributes = params.attributes;
     //
-    let file = params.file;
+    //
+    // TODO: parmas.file is not used??
+    // let file = params.file;
+    //
     let fields = params.fields;
     let content_md5 = params.content_md5;
 
@@ -161,7 +164,10 @@ pub async fn post_files_id_content(
     //TODO: apparently params.attributes does not exist??
     // let attributes = params.attributes;
     //
-    let file = params.file;
+    //
+    // TODO: parmas.file is not used??
+    // let file = params.file;
+    //
     let if_match = params.if_match;
     let fields = params.fields;
     let content_md5 = params.content_md5;

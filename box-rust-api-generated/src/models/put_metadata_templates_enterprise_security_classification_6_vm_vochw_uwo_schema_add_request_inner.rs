@@ -10,14 +10,12 @@
 
 /// PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInner : A single classification to add to the enterprise.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInner {
     /// `addEnumOption`
     #[serde(rename = "op")]
     pub op: String,
-    /// `Box__Security__Classification__Key`
+    /// `Box_Security_Classification_Key`
     #[serde(rename = "fieldKey")]
     pub field_key: String,
     #[serde(rename = "data")]
@@ -26,7 +24,11 @@ pub struct PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchema
 
 impl PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInner {
     /// A single classification to add to the enterprise.
-    pub fn new(op: String, field_key: String, data: crate::models::PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInnerData) -> PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInner {
+    pub fn new(
+        op: String,
+        field_key: String,
+        data: crate::models::PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInnerData,
+    ) -> PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInner {
         PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddRequestInner {
             op,
             field_key,
@@ -34,5 +36,3 @@ impl PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaAddReq
         }
     }
 }
-
-

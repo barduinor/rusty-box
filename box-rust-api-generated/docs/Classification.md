@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**box__security__classification__key** | Option<**String**> | The name of the classification applied to the item. | [optional]
+**box_security_classification_key** | Option<**String**> | The name of the classification applied to the item. | [optional]
 **dollar_parent** | Option<**String**> | The identifier of the item that this metadata instance has been attached to. This combines the `type` and the `id` of the parent in the form `{type}_{id}`. | [optional]
 **dollar_template** | Option<**String**> | `securityClassification-6VMVochwUWo` | [optional]
 **dollar_scope** | Option<**String**> | The scope of the enterprise that this classification has been applied for.  This will be in the format `enterprise_{enterprise_id}`. | [optional]

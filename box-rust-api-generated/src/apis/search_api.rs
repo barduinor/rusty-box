@@ -177,7 +177,10 @@ pub async fn get_search(
     let content_types = params.content_types;
     let r#type = params.r#type;
     let trash_content = params.trash_content;
-    let mdfilters = params.mdfilters;
+    //
+    // TODO: Fix metadata serialization
+    // let mdfilters = params.mdfilters;
+    //
     let sort = params.sort;
     let direction = params.direction;
     let limit = params.limit;

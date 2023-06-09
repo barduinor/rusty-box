@@ -170,7 +170,10 @@ pub async fn post_users_id_avatar(
 
     // unbox the parameters
     let user_id = params.user_id;
-    let pic = params.pic;
+    //
+    // TODO: Params.pic is not used????
+    // let pic = params.pic;
+    //
 
     let local_var_client = &local_var_configuration.client;
 

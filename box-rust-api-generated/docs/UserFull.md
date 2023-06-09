@@ -28,7 +28,7 @@ Name | Type | Description | Notes
 **is_external_collab_restricted** | Option<**bool**> | Whether the user is allowed to collaborate with users outside their enterprise | [optional]
 **is_exempt_from_device_limits** | Option<**bool**> | Whether to exempt the user from Enterprise device limits | [optional]
 **is_exempt_from_login_verification** | Option<**bool**> | Whether the user must use two-factor authentication | [optional]
-**enterprise** | Option<[**crate::models::UserFullAllOfEnterprise**](User__Full_allOf_enterprise.md)> |  | [optional]
+**enterprise** | Option<[**crate::models::UserFullAllOfEnterprise**](User_Full_allOf_enterprise.md)> |  | [optional]
 **my_tags** | Option<**Vec<String>**> | Tags for all files and folders owned by the user. Values returned will only contain tags that were set by the requester. | [optional]
 **hostname** | Option<**String**> | The root (protocol, subdomain, domain) of any links that need to be generated for the user | [optional]
 **is_platform_access_only** | Option<**bool**> | Whether the user is an App User | [optional]

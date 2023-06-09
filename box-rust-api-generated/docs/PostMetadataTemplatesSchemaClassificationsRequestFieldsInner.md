@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **r#type** | Option<**String**> | `enum` | [optional]
-**key** | Option<**String**> | `Box__Security__Classification__Key` | [optional]
+**key** | Option<**String**> | `Box_Security_Classification_Key` | [optional]
 **display_name** | Option<**String**> | `Classification` | [optional]
 **hidden** | Option<**bool**> | `false` | [optional]
 **options** | Option<[**Vec<crate::models::PostMetadataTemplatesSchemaClassificationsRequestFieldsInnerOptionsInner>**](post_metadata_templates_schema_classifications_request_fields_inner_options_inner.md)> | The actual list of classifications that are present on this template. | [optional]

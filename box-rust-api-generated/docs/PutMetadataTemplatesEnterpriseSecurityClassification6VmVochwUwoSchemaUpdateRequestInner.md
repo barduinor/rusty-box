@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **op** | **String** | `editEnumOption` | 
-**field_key** | **String** | `Box__Security__Classification__Key` | 
+**field_key** | **String** | `Box_Security_Classification_Key` | 
 **enum_option_key** | **String** | The original label of the classification to change. | 
 **data** | [**crate::models::PutMetadataTemplatesEnterpriseSecurityClassification6VmVochwUwoSchemaUpdateRequestInnerData**](put_metadata_templates_enterprise_securityClassification_6VMVochwUWo_schema_update_request_inner_data.md) |  | 
 

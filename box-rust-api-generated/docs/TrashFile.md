@@ -10,7 +10,7 @@ Name | Type | Description | Notes
 **sequence_id** | **String** |  | 
 **name** | Option<**String**> | The name of the file | [optional]
 **sha1** | **String** | The SHA1 hash of the file. This can be used to compare the contents of a file on Box with a local file. | 
-**file_version** | Option<[**crate::models::FileMiniAllOfFileVersion**](File__Mini_allOf_file_version.md)> |  | [optional]
+**file_version** | Option<[**crate::models::FileMiniAllOfFileVersion**](File_Mini_allOf_file_version.md)> |  | [optional]
 **description** | **String** | The optional description of this file | 
 **size** | **i32** | The file size in bytes. Be careful parsing this integer as it can get very large and cause an integer overflow. | 
 **path_collection** | [**crate::models::TrashFilePathCollection**](TrashFile_path_collection.md) |  | 
