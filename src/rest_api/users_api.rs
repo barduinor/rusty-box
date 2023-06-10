@@ -9,9 +9,18 @@
  */
 
 //
+use super::api_base::urlencode;
 use super::api_base::Error;
 use super::api_base::ResponseContent;
 use super::api_base_models::client_error::ClientError;
+use super::api_base_models::session_termination_message::SessionTerminationMessage;
+use super::api_configuration;
+use super::users_models::post_users_request::PostUsersRequest;
+use super::users_models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
+use super::users_models::put_users_id_request::PutUsersIdRequest;
+use super::users_models::user::User;
+use super::users_models::user_full::UserFull;
+use super::users_models::users::Users;
 
 use reqwest;
 
@@ -68,14 +77,13 @@ pub struct GetUsersMeParams {
 pub struct PostUsersParams {
     /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
     pub fields: Option<Vec<String>>,
-    pub post_users_request: Option<crate::models::PostUsersRequest>,
+    pub post_users_request: Option<PostUsersRequest>,
 }
 
 /// struct for passing parameters to the method [`post_users_terminate_sessions`]
 #[derive(Clone, Debug, Default)]
 pub struct PostUsersTerminateSessionsParams {
-    pub post_users_terminate_sessions_request:
-        Option<crate::models::PostUsersTerminateSessionsRequest>,
+    pub post_users_terminate_sessions_request: Option<PostUsersTerminateSessionsRequest>,
 }
 
 /// struct for passing parameters to the method [`put_users_id`]
@@ -85,7 +93,7 @@ pub struct PutUsersIdParams {
     pub user_id: String,
     /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
     pub fields: Option<Vec<String>>,
-    pub put_users_id_request: Option<crate::models::PutUsersIdRequest>,
+    pub put_users_id_request: Option<PutUsersIdRequest>,
 }
 
 /// struct for typed errors of method [`delete_users_id`]
@@ -154,7 +162,7 @@ pub enum PutUsersIdError {
 
 /// Deletes a user. By default this will fail if the user still owns any content. Move their owned content first before proceeding, or use the `force` field to delete the user and their files.
 pub async fn delete_users_id(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: DeleteUsersIdParams,
 ) -> Result<(), Error<DeleteUsersIdError>> {
     let local_var_configuration = configuration;
@@ -169,7 +177,7 @@ pub async fn delete_users_id(
     let local_var_uri_str = format!(
         "{}/users/{user_id}",
         local_var_configuration.base_path,
-        user_id = crate::apis::urlencode(user_id)
+        user_id = urlencode(user_id)
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
@@ -212,9 +220,9 @@ pub async fn delete_users_id(
 
 /// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.
 pub async fn get_users(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: GetUsersParams,
-) -> Result<crate::models::Users, Error<GetUsersError>> {
+) -> Result<Users, Error<GetUsersError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters
@@ -309,9 +317,9 @@ pub async fn get_users(
 
 /// Retrieves information about a user in the enterprise.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.  This endpoint also returns a limited set of information for external users who are collaborated on content owned by the enterprise for authenticated users with the right scopes. In this case, disallowed fields will return null instead.
 pub async fn get_users_id(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: GetUsersIdParams,
-) -> Result<crate::models::UserFull, Error<GetUsersIdError>> {
+) -> Result<UserFull, Error<GetUsersIdError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters
@@ -323,7 +331,7 @@ pub async fn get_users_id(
     let local_var_uri_str = format!(
         "{}/users/{user_id}",
         local_var_configuration.base_path,
-        user_id = crate::apis::urlencode(user_id)
+        user_id = urlencode(user_id)
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
@@ -377,9 +385,9 @@ pub async fn get_users_id(
 
 /// Retrieves information about the user who is currently authenticated.  In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  Use the `As-User` header to change who this API call is made on behalf of.
 pub async fn get_users_me(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: GetUsersMeParams,
-) -> Result<crate::models::UserFull, Error<GetUsersMeError>> {
+) -> Result<UserFull, Error<GetUsersMeError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters
@@ -440,9 +448,9 @@ pub async fn get_users_me(
 
 /// Creates a new managed user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
 pub async fn post_users(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: PostUsersParams,
-) -> Result<crate::models::User, Error<PostUsersError>> {
+) -> Result<User, Error<PostUsersError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters
@@ -505,9 +513,9 @@ pub async fn post_users(
 
 /// Validates the roles and permissions of the user, and creates asynchronous jobs to terminate the user's sessions. Returns the status for the POST request.
 pub async fn post_users_terminate_sessions(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: PostUsersTerminateSessionsParams,
-) -> Result<crate::models::SessionTerminationMessage, Error<PostUsersTerminateSessionsError>> {
+) -> Result<SessionTerminationMessage, Error<PostUsersTerminateSessionsError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters
@@ -553,9 +561,9 @@ pub async fn post_users_terminate_sessions(
 
 /// Updates a managed or app user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
 pub async fn put_users_id(
-    configuration: &configuration::Configuration,
+    configuration: &api_configuration::Configuration,
     params: PutUsersIdParams,
-) -> Result<crate::models::UserFull, Error<PutUsersIdError>> {
+) -> Result<UserFull, Error<PutUsersIdError>> {
     let local_var_configuration = configuration;
 
     // unbox the parameters
@@ -568,7 +576,7 @@ pub async fn put_users_id(
     let local_var_uri_str = format!(
         "{}/users/{user_id}",
         local_var_configuration.base_path,
-        user_id = crate::apis::urlencode(user_id)
+        user_id = urlencode(user_id)
     );
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::PUT, local_var_uri_str.as_str());

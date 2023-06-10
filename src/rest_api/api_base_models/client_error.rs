@@ -9,8 +9,7 @@
  */
 
 /// ClientError : A generic error
-
-
+use crate::rest_api::api_base_models::client_error_context_info::ClientErrorContextInfo;
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct ClientError {
@@ -27,7 +26,7 @@ pub struct ClientError {
     #[serde(rename = "message", skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
     #[serde(rename = "context_info", skip_serializing_if = "Option::is_none")]
-    pub context_info: Option<Box<crate::models::ClientErrorContextInfo>>,
+    pub context_info: Option<Box<ClientErrorContextInfo>>,
     /// A URL that links to more information about why this error occurred.
     #[serde(rename = "help_url", skip_serializing_if = "Option::is_none")]
     pub help_url: Option<String>,
@@ -107,4 +106,3 @@ impl Default for Code {
         Self::Created
     }
 }
-
