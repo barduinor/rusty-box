@@ -11,14 +11,14 @@
 use reqwest;
 
 use crate::rest_api::api::api_base::{Error, ResponseContent};
-use crate::rest_api::api::models::api_config::ApiConfig as Configuration;
+use crate::rest_api::api::models::api_config::ApiConfig;
 
 use super::models::access_token::AccessToken;
 use super::models::authorization::*;
 
 /// Authorize a user by sending them through the [Box](https://box.com) website and request their permission to act on their behalf.  This is the first step when authenticating a user using OAuth 2.0. To request a user's authorization to use the Box APIs on their behalf you will need to send a user to the URL with this format.
 pub async fn get_authorize(
-    configuration: &Configuration,
+    configuration: &ApiConfig,
     params: GetAuthorizeParams,
 ) -> Result<String, Error<GetAuthorizeError>> {
     let local_var_configuration = configuration;
@@ -78,7 +78,7 @@ pub async fn get_authorize(
 
 /// Revoke an active Access Token, effectively logging a user out that has been previously authenticated.
 pub async fn post_oauth2_revoke(
-    configuration: &Configuration,
+    configuration: &ApiConfig,
     params: PostOauth2RevokeParams,
 ) -> Result<(), Error<PostOauth2RevokeError>> {
     let local_var_configuration = configuration;
@@ -132,7 +132,7 @@ pub async fn post_oauth2_revoke(
 
 /// Request an Access Token using either a client-side obtained OAuth 2.0 authorization code or a server-side JWT assertion.  An Access Token is a string that enables Box to verify that a request belongs to an authorized session. In the normal order of operations you will begin by requesting authentication from the [authorize](#get-authorize) endpoint and Box will send you an authorization code.  You will then send this code to this endpoint to exchange it for an Access Token. The returned Access Token can then be used to to make Box API calls.
 pub async fn post_oauth2_token(
-    configuration: &Configuration,
+    configuration: &ApiConfig,
     params: PostOauth2TokenParams,
 ) -> Result<AccessToken, Error<PostOauth2TokenError>> {
     let local_var_configuration = configuration;
@@ -232,7 +232,7 @@ pub async fn post_oauth2_token(
 
 /// Refresh an Access Token using its client ID, secret, and refresh token.
 pub async fn post_oauth2_token_refresh(
-    configuration: &Configuration,
+    configuration: &ApiConfig,
     params: PostOauth2TokenRefreshParams,
 ) -> Result<AccessToken, Error<PostOauth2TokenRefreshError>> {
     let local_var_configuration = configuration;
