@@ -9,18 +9,19 @@
  */
 
 //
-use super::api_base::urlencode;
-use super::api_base::Error;
-use super::api_base::ResponseContent;
-use super::api_base_models::client_error::ClientError;
-use super::api_base_models::session_termination_message::SessionTerminationMessage;
-use super::api_configuration;
-use super::users_models::post_users_request::PostUsersRequest;
-use super::users_models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
-use super::users_models::put_users_id_request::PutUsersIdRequest;
-use super::users_models::user::User;
-use super::users_models::user_full::UserFull;
-use super::users_models::users::Users;
+use super::models::post_users_request::PostUsersRequest;
+use super::models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
+use super::models::put_users_id_request::PutUsersIdRequest;
+use super::models::user::User;
+use super::models::user_full::UserFull;
+use super::models::users::Users;
+
+use crate::rest_api::api::api_base::urlencode;
+use crate::rest_api::api::api_base::Error;
+use crate::rest_api::api::api_base::ResponseContent;
+use crate::rest_api::api::models::api_configuration::Configuration;
+use crate::rest_api::api::models::client_error::ClientError;
+use crate::rest_api::api::models::session_termination_message::SessionTerminationMessage;
 
 use reqwest;
 
@@ -162,7 +163,7 @@ pub enum PutUsersIdError {
 
 /// Deletes a user. By default this will fail if the user still owns any content. Move their owned content first before proceeding, or use the `force` field to delete the user and their files.
 pub async fn delete_users_id(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: DeleteUsersIdParams,
 ) -> Result<(), Error<DeleteUsersIdError>> {
     let local_var_configuration = configuration;
@@ -220,7 +221,7 @@ pub async fn delete_users_id(
 
 /// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.
 pub async fn get_users(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: GetUsersParams,
 ) -> Result<Users, Error<GetUsersError>> {
     let local_var_configuration = configuration;
@@ -317,7 +318,7 @@ pub async fn get_users(
 
 /// Retrieves information about a user in the enterprise.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.  This endpoint also returns a limited set of information for external users who are collaborated on content owned by the enterprise for authenticated users with the right scopes. In this case, disallowed fields will return null instead.
 pub async fn get_users_id(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: GetUsersIdParams,
 ) -> Result<UserFull, Error<GetUsersIdError>> {
     let local_var_configuration = configuration;
@@ -385,7 +386,7 @@ pub async fn get_users_id(
 
 /// Retrieves information about the user who is currently authenticated.  In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  Use the `As-User` header to change who this API call is made on behalf of.
 pub async fn get_users_me(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: GetUsersMeParams,
 ) -> Result<UserFull, Error<GetUsersMeError>> {
     let local_var_configuration = configuration;
@@ -448,7 +449,7 @@ pub async fn get_users_me(
 
 /// Creates a new managed user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
 pub async fn post_users(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: PostUsersParams,
 ) -> Result<User, Error<PostUsersError>> {
     let local_var_configuration = configuration;
@@ -513,7 +514,7 @@ pub async fn post_users(
 
 /// Validates the roles and permissions of the user, and creates asynchronous jobs to terminate the user's sessions. Returns the status for the POST request.
 pub async fn post_users_terminate_sessions(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: PostUsersTerminateSessionsParams,
 ) -> Result<SessionTerminationMessage, Error<PostUsersTerminateSessionsError>> {
     let local_var_configuration = configuration;
@@ -561,7 +562,7 @@ pub async fn post_users_terminate_sessions(
 
 /// Updates a managed or app user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
 pub async fn put_users_id(
-    configuration: &api_configuration::Configuration,
+    configuration: &Configuration,
     params: PutUsersIdParams,
 ) -> Result<UserFull, Error<PutUsersIdError>> {
     let local_var_configuration = configuration;
