@@ -3,11 +3,11 @@
 pub struct ApiConfig {
     base_api_url: String,
     upload_url: String,
-    oauth2_api_url: String,
-    oauth2_authorize_url: String,
-    api_version: String,
-    max_retry_attempts: u8,
-    chunk_upload_threads: u8,
+    pub oauth2_api_url: String,
+    pub oauth2_authorize_url: String,
+    pub api_version: String,
+    pub max_retry_attempts: u8,
+    pub chunk_upload_threads: u8,
     pub client: reqwest::Client,
     pub user_agent: Option<String>,
 }
@@ -31,6 +31,7 @@ impl Default for ApiConfig {
             chunk_upload_threads: 5,
             client: reqwest::Client::new(),
             user_agent: Some("OpenAPI-Generator/2.0.0/rust".to_owned()),
+            // TODO: Use official box user agent (see pyhton sdk)
         }
     }
 }
@@ -51,30 +52,30 @@ impl ApiConfig {
     pub fn set_upload_url(&mut self, upload_url: String) {
         self.upload_url = upload_url;
     }
-    pub fn oauth2_api_url(&self) -> String {
-        self.oauth2_api_url.clone()
-    }
-    pub fn oauth2_authorize_url(&self) -> String {
-        self.oauth2_authorize_url.clone()
-    }
-    pub fn max_retry_attempts(&self) -> u8 {
-        self.max_retry_attempts
-    }
-    pub fn set_max_retry_attempts(&mut self, max_retry_attempts: u8) {
-        self.max_retry_attempts = max_retry_attempts;
-    }
-    pub fn chunk_upload_threads(&self) -> u8 {
-        self.chunk_upload_threads
-    }
-    pub fn set_chunk_upload_threads(&mut self, chunk_upload_threads: u8) {
-        self.chunk_upload_threads = chunk_upload_threads;
-    }
-    pub fn api_version(&self) -> String {
-        self.api_version.clone()
-    }
-    pub fn set_api_version(&mut self, api_version: String) {
-        self.api_version = api_version;
-    }
+    // pub fn oauth2_api_url(&self) -> String {
+    //     self.oauth2_api_url.clone()
+    // }
+    // pub fn oauth2_authorize_url(&self) -> String {
+    //     self.oauth2_authorize_url.clone()
+    // }
+    // pub fn max_retry_attempts(&self) -> u8 {
+    //     self.max_retry_attempts
+    // }
+    // pub fn set_max_retry_attempts(&mut self, max_retry_attempts: u8) {
+    //     self.max_retry_attempts = max_retry_attempts;
+    // }
+    // pub fn chunk_upload_threads(&self) -> u8 {
+    //     self.chunk_upload_threads
+    // }
+    // pub fn set_chunk_upload_threads(&mut self, chunk_upload_threads: u8) {
+    //     self.chunk_upload_threads = chunk_upload_threads;
+    // }
+    // pub fn api_version(&self) -> String {
+    //     self.api_version.clone()
+    // }
+    // pub fn set_api_version(&mut self, api_version: String) {
+    //     self.api_version = api_version;
+    // }
 }
 
 #[cfg(test)]
@@ -92,13 +93,19 @@ mod tests {
         assert_eq!(config.upload_url, "https://upload.box.com/api");
         assert_eq!(config.upload_url(), "https://upload.box.com/api/2.0");
 
-        assert_eq!(config.oauth2_api_url(), "https://api.box.com/oauth2");
+        assert_eq!(config.oauth2_api_url, "https://api.box.com/oauth2");
         assert_eq!(
-            config.oauth2_authorize_url(),
+            config.oauth2_authorize_url,
             "https://account.box.com/api/oauth2/authorize"
         );
-        assert_eq!(config.max_retry_attempts(), 5);
-        assert_eq!(config.chunk_upload_threads(), 5);
+        assert_eq!(config.max_retry_attempts, 5);
+        assert_eq!(config.chunk_upload_threads, 5);
+        assert_eq!(config.api_version, "2.0");
+        // assert_eq!(config.client, reqwest::Client::new());
+        assert_eq!(
+            config.user_agent,
+            Some("OpenAPI-Generator/2.0.0/rust".to_owned())
+        );
     }
 
     #[test]

@@ -32,10 +32,7 @@ pub async fn get_authorize(
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!(
-        "{}/authorize",
-        local_var_configuration.oauth2_authorize_url()
-    );
+    let local_var_uri_str = format!("{}/authorize", local_var_configuration.oauth2_authorize_url);
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
@@ -93,7 +90,7 @@ pub async fn post_oauth2_revoke(
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/revoke", local_var_configuration.oauth2_api_url());
+    let local_var_uri_str = format!("{}/revoke", local_var_configuration.oauth2_api_url);
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
@@ -159,7 +156,7 @@ pub async fn post_oauth2_token(
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/token", local_var_configuration.oauth2_api_url());
+    let local_var_uri_str = format!("{}/token", local_var_configuration.oauth2_api_url);
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
@@ -248,7 +245,7 @@ pub async fn post_oauth2_token_refresh(
 
     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/token", local_var_configuration.oauth2_api_url());
+    let local_var_uri_str = format!("{}/token", local_var_configuration.oauth2_api_url);
     let mut local_var_req_builder =
         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
 
