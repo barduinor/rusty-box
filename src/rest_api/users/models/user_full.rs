@@ -10,10 +10,7 @@
 
 use crate::rest_api::api::models::tracking_code::TrackingCode;
 
-use super::{
-    user_all_of_notification_email::UserAllOfNotificationEmail,
-    user_full_all_of_enterprise::UserFullAllOfEnterprise,
-};
+use super::user_full_all_of_enterprise::UserFullAllOfEnterprise;
 
 /// UserFull : A full representation of a user, as can be returned from any user API endpoint.
 
@@ -67,13 +64,17 @@ pub struct UserFull {
     /// URL of the user’s avatar image
     #[serde(rename = "avatar_url", skip_serializing_if = "Option::is_none")]
     pub avatar_url: Option<String>,
-    #[serde(
-        rename = "notification_email",
-        default,
-        with = "::serde_with::rust::double_option",
-        skip_serializing_if = "Option::is_none"
-    )]
-    pub notification_email: Option<Option<Box<UserAllOfNotificationEmail>>>,
+    //
+    //TODO: Empty notification email is not working
+    // #[serde(
+    //     rename = "notification_email",
+    //     default,
+    //     with = "::serde_with::rust::double_option",
+    //     skip_serializing_if = "Option::is_none"
+    // )]
+    // pub notification_email: Option<Option<Box<UserAllOfNotificationEmail>>>,
+    //
+    //
     /// The user’s enterprise role
     #[serde(rename = "role", skip_serializing_if = "Option::is_none")]
     pub role: Option<Role>,
@@ -149,7 +150,10 @@ impl UserFull {
             phone: None,
             address: None,
             avatar_url: None,
-            notification_email: None,
+            //
+            //TODO: Empty notification email is not working
+            // notification_email: None,
+            //
             role: None,
             tracking_codes: None,
             can_see_managed_users: None,
