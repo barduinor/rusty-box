@@ -18,8 +18,8 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
 
     let api_config = ApiConfig::new();
 
-    // let api_config = ApiConfig::new();
-    // api_config.set_base_api_url("https://invalid_url.local".to_owned());
+    // let mut api_config = ApiConfig::new();
+    // api_config.set_base_api_url("https://127.0.0.1".to_owned());
 
     let mut client_config = api_configuration_old::Configuration::new();
     client_config.base_path = api_config.base_api_url();
