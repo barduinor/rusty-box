@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Config {
     base_api_url: String,
     upload_url: String,
