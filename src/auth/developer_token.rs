@@ -20,6 +20,8 @@ pub struct DeveloperToken {
     // store_auth_callable: Option<&'a dyn Fn()>,
 }
 
+// TODO: Can these tokens be refreshed before they expire?
+
 // impl<'a> DeveloperToken<'a> {
 impl DeveloperToken {
     fn new(
