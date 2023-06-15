@@ -31,7 +31,7 @@ impl Default for SubjectType {
 // TODO: CCG support both enterprise and user auth. Should there be a specific implementation for each one?
 #[derive(Debug, Clone, Serialize)]
 pub struct CCGAuth {
-    config: Config,
+    pub config: Config,
     client_id: String,
     client_secret: String,
     box_subject_type: SubjectType,
@@ -66,7 +66,7 @@ impl CCGAuth {
         Utc::now() > self.expires_by
     }
 
-    async fn fetch_access_token(&mut self) -> Result<AccessToken, CCGAuthError> {
+    pub async fn fetch_access_token(&mut self) -> Result<AccessToken, CCGAuthError> {
         let url = &(self.config.oauth2_api_url.clone() + "/token");
 
         let headers = None; // TODO: Add headers to rquest
