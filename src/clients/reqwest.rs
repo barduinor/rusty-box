@@ -10,6 +10,8 @@ use maybe_async::async_impl;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
 
+// use crate::error::ApiError;
+
 /// Custom enum that contains all the possible errors that may occur when using
 /// [`reqwest`].
 ///
@@ -18,7 +20,7 @@ use serde_json::Value;
 /// ```
 /// # #[tokio::main]
 /// # async fn main() {
-/// use rusty_box::{HttpError, HttpClient, BaseHttpClient};
+/// use rusty_box::clients::{HttpError, HttpClient, BaseHttpClient};
 ///
 /// let client = HttpClient::default();
 /// let response = client.get("wrongurl", None, &Default::default()).await;
@@ -27,7 +29,7 @@ use serde_json::Value;
 ///     Err(HttpError::Client(e)) => eprintln!("request failed: {}", e),
 ///     Err(HttpError::StatusCode(response)) => {
 ///         let code = response.status().as_u16();
-///         match response.json::<rspotify_model::ApiError>().await {
+///         match response.json::<rusty_box::error::ApiError>().await {
 ///             Ok(api_error) => eprintln!("status code {}: {:?}", code, api_error),
 ///             Err(_) => eprintln!("status code {}", code),
 ///         }

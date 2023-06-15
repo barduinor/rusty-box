@@ -10,7 +10,6 @@ pub enum DeveloperTokenError {
 }
 
 #[derive(Debug, Clone, Serialize)]
-
 // pub struct DeveloperToken<'a> {
 pub struct DeveloperToken {
     config: Config,
@@ -19,8 +18,6 @@ pub struct DeveloperToken {
     expires_by: DateTime<Utc>,
     // store_auth_callable: Option<&'a dyn Fn()>,
 }
-
-// TODO: Can these tokens be refreshed before they expire?
 
 // impl<'a> DeveloperToken<'a> {
 impl DeveloperToken {

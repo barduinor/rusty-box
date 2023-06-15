@@ -16,6 +16,7 @@ Cargo.lock
 .DS_Store
 .access_token.json
 .env
+*.env
 # Added by cargo
 
 /target

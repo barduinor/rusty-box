@@ -9,6 +9,7 @@ pub type Query<'a> = HashMap<&'a str, &'a str>;
 pub type Form<'a> = HashMap<&'a str, &'a str>;
 
 pub mod reqwest;
+pub use self::reqwest::{ReqwestClient as HttpClient, ReqwestError as HttpError};
 
 /// This trait represents the interface to be implemented for an HTTP client,
 /// which is kept separate from the Spotify client for cleaner code. Thus, it

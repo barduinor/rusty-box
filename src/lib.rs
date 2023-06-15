@@ -8,4 +8,5 @@ extern crate url;
 pub mod auth;
 pub mod clients;
 pub mod config;
+pub mod error;
 pub mod rest_api;
