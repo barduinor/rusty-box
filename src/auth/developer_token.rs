@@ -24,7 +24,7 @@ pub struct DeveloperToken {
 
 // impl<'a> DeveloperToken<'a> {
 impl DeveloperToken {
-    fn new(
+    pub fn new(
         config: Config,
         access_token: String,
         // store_auth_callable: Option<&'a dyn Fn()>,
