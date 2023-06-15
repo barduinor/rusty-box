@@ -3,10 +3,10 @@ use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
 use super::Auth;
+
 #[derive(Debug)]
 pub enum DeveloperTokenError {
-    Expired,
-    SerdeError,
+    Generic { message: String },
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -52,7 +52,9 @@ impl Auth for DeveloperToken {
 
     fn access_token(&self) -> Result<String, Self::Error> {
         if self.is_expired() {
-            Err(DeveloperTokenError::Expired)
+            Err(DeveloperTokenError::Generic {
+                message: "Developer token has expired".to_owned(),
+            })
         } else {
             Ok(self.access_token.clone())
         }
@@ -60,8 +62,9 @@ impl Auth for DeveloperToken {
     fn to_json(&self) -> Result<String, Self::Error> {
         match serde_json::to_string(&self) {
             Ok(json) => Ok(json),
-            // Err(e) => Err(DeveloperTokenError::Error),
-            Err(_) => Err(DeveloperTokenError::SerdeError),
+            Err(e) => Err(DeveloperTokenError::Generic {
+                message: e.to_string(),
+            }),
         }
     }
     // fn store_auth(&self) {

@@ -1,13 +1,15 @@
 [package]
-name = "box-rust-sdk"
+name = "rusty-box"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+log = "0.4.19"
+thiserror = "1.0.40"
 dotenv = "^0.15"
-tokio = { version = "^1.0", features = ["full"] }
+tokio = { version = "1.28.2", features = ["full"] }
 serde = "^1.0"
 serde_derive = "^1.0"
 serde_with = "3.0.0"
@@ -15,7 +17,12 @@ serde_json = "^1.0"
 url = "^2.2"
 uuid = { version = "^1.0", features = ["serde"] }
 chrono = { version = "0.4.26", features = ["serde"] }
+async-trait = "0.1.68"
+maybe-async = "0.2.7"
 # derivative = "2.2.0"
 [dependencies.reqwest]
 version = "^0.11"
 features = ["json", "multipart"]
+
+
+
