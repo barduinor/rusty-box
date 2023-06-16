@@ -18,10 +18,12 @@ use std::env;
 async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
     dotenv::from_filename(".ccg.env").ok();
     let config = Config::new();
+
     let client_id = env::var("CLIENT_ID").expect("CLIENT_ID must be set");
     let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set");
     let box_subject_type = SubjectType::Enterprise;
     let box_subject_id = env::var("BOX_ENTERPRISE_ID").expect("BOX_ENTERPRISE_ID must be set");
+
     let mut ccg_auth = CCGAuth::new(
         config,
         client_id,
@@ -29,7 +31,7 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         box_subject_type,
         box_subject_id,
     );
-    // let access_token = ccg_auth.fetch_access_token().await.unwrap_or_default();
+
     let access_token = ccg_auth.access_token().await.unwrap_or_default();
 
     let mut client_config = api_configuration_old::Configuration::new();
