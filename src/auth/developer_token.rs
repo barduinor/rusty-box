@@ -1,4 +1,5 @@
 use crate::config::Config;
+use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
@@ -43,11 +44,12 @@ impl DeveloperToken {
     }
 }
 
+#[async_trait]
 // impl<'a> Auth for DeveloperToken<'a> {
 impl Auth for DeveloperToken {
     type Error = DeveloperTokenError;
 
-    fn access_token(&self) -> Result<String, Self::Error> {
+    async fn access_token(&mut self) -> Result<String, Self::Error> {
         if self.is_expired() {
             Err(DeveloperTokenError::Generic {
                 message: "Developer token has expired".to_owned(),

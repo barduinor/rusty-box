@@ -1,4 +1,5 @@
 use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
+use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
@@ -66,7 +67,7 @@ impl CCGAuth {
         Utc::now() > self.expires_by
     }
 
-    pub async fn fetch_access_token(&mut self) -> Result<AccessToken, CCGAuthError> {
+    async fn fetch_access_token(&mut self) -> Result<AccessToken, CCGAuthError> {
         let url = &(self.config.oauth2_api_url.clone() + "/token");
 
         let headers = None; // TODO: Add headers to rquest
@@ -106,15 +107,19 @@ impl CCGAuth {
     }
 }
 
+#[async_trait]
 impl Auth for CCGAuth {
     type Error = CCGAuthError;
 
-    fn access_token(&self) -> Result<String, Self::Error> {
+    async fn access_token(&mut self) -> Result<String, Self::Error> {
         if self.is_expired() {
-            todo!("CCG token has expired or is new, try to get a new token first");
-            // Err(CCGError::Generic {
-            //     message: "CCG token has expired".to_owned(),
-            // })
+            match self.fetch_access_token().await {
+                Ok(access_token) => Ok(access_token.access_token.unwrap_or_default()),
+                Err(e) => {
+                    let error = format!("Error fetching access token: {:?}", e);
+                    Err(CCGAuthError::Generic { message: error })
+                }
+            }
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
@@ -176,7 +181,7 @@ async fn test_ccg_request() {
         box_subject_id,
     );
     ccg_auth.fetch_access_token().await.unwrap();
-    let access_token = ccg_auth.access_token();
+    let access_token = ccg_auth.access_token().await;
 
     assert_eq!(access_token.is_ok(), true);
     assert_eq!(ccg_auth.is_expired(), false);

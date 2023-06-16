@@ -2,7 +2,10 @@
 // use dotenv;
 
 use rusty_box::{
-    auth::ccg::{CCGAuth, SubjectType},
+    auth::{
+        ccg::{CCGAuth, SubjectType},
+        Auth,
+    },
     config::Config,
     rest_api::{
         api::{api_base::Error, models::api_configuration_old},
@@ -26,11 +29,12 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         box_subject_type,
         box_subject_id,
     );
-    let access_token = ccg_auth.fetch_access_token().await.unwrap_or_default();
+    // let access_token = ccg_auth.fetch_access_token().await.unwrap_or_default();
+    let access_token = ccg_auth.access_token().await.unwrap_or_default();
 
     let mut client_config = api_configuration_old::Configuration::new();
     client_config.base_path = ccg_auth.config.base_api_url();
-    client_config.oauth_access_token = access_token.access_token;
+    client_config.oauth_access_token = Some(access_token);
 
     // let paramsx = users_api::GetUsersMeParams::default();
     let params = users_api::GetUsersMeParams::default();
