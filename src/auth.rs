@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 
-pub mod ccg;
-pub mod developer_token;
+pub mod auth_ccg;
+pub mod auth_developer;
 
 #[async_trait]
 pub trait Auth {

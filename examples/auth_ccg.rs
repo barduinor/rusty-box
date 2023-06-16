@@ -3,7 +3,7 @@
 
 use rusty_box::{
     auth::{
-        ccg::{CCGAuth, SubjectType},
+        auth_ccg::{CCGAuth, SubjectType},
         Auth,
     },
     config::Config,
