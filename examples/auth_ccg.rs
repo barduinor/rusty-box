@@ -24,7 +24,7 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
     let box_subject_type = SubjectType::Enterprise;
     let box_subject_id = env::var("BOX_ENTERPRISE_ID").expect("BOX_ENTERPRISE_ID must be set");
 
-    let mut ccg_auth = CCGAuth::new(
+    let mut auth = CCGAuth::new(
         config,
         client_id,
         client_secret,
@@ -32,10 +32,13 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         box_subject_id,
     );
 
-    let access_token = ccg_auth.access_token().await.unwrap_or_default();
+    // TODO: implement a client
+    // let client = Client(auth);
+
+    let access_token = auth.access_token().await.unwrap_or_default();
 
     let mut client_config = api_configuration_old::Configuration::new();
-    client_config.base_path = ccg_auth.config.base_api_url();
+    client_config.base_path = auth.config.base_api_url();
     client_config.oauth_access_token = Some(access_token);
 
     // let paramsx = users_api::GetUsersMeParams::default();
