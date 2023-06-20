@@ -138,6 +138,9 @@ impl Auth for CCGAuth {
             }),
         }
     }
+    fn base_api_url(&self) -> String {
+        self.config.base_api_url().clone()
+    }
 }
 
 #[cfg(test)]

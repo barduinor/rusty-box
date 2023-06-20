@@ -35,16 +35,20 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
     // TODO: implement a client
 
     let access_token = client.auth.access_token().await.unwrap_or_default();
+    println!("Access token:\n{:#?}\n", access_token);
 
-    let mut client_config = api_configuration_old::Configuration::new();
-    client_config.base_path = auth.config.base_api_url();
-    client_config.oauth_access_token = Some(access_token);
+    let me = users_api::me(client).await;
+    println!("Me:\n{me:#?}\n");
 
-    // let paramsx = users_api::GetUsersMeParams::default();
-    let params = users_api::GetUsersMeParams::default();
+    // let mut client_config = api_configuration_old::Configuration::new();
+    // client_config.base_path = auth.config.base_api_url();
+    // client_config.oauth_access_token = Some(access_token);
 
-    let user = users_api::get_users_me(&client_config, params).await?;
+    // // let paramsx = users_api::GetUsersMeParams::default();
+    // let params = users_api::GetUsersMeParams::default();
 
-    println!("Current user:\n{user:#?}\n");
+    // let user = users_api::get_users_me(&client_config, params).await?;
+
+    // println!("Current user:\n{user:#?}\n");
     Ok(())
 }

@@ -9,6 +9,8 @@
  */
 //
 
+use std::collections::HashMap;
+
 use super::models::post_users_request::PostUsersRequest;
 use super::models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
 use super::models::put_users_id_request::PutUsersIdRequest;
@@ -16,6 +18,9 @@ use super::models::user::User;
 use super::models::user_full::UserFull;
 use super::models::users::Users;
 
+use crate::auth::AuthError;
+use crate::box_client::BoxClient;
+use crate::clients::BaseHttpClient;
 use crate::rest_api::api::api_base::*;
 use crate::rest_api::api::models::api_configuration_old::Configuration;
 use crate::rest_api::api::models::client_error::ClientError;
@@ -383,6 +388,23 @@ pub async fn get_users_id(
 }
 
 /// Retrieves information about the user who is currently authenticated.  In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  Use the `As-User` header to change who this API call is made on behalf of.
+pub async fn me(client: BoxClient) -> Result<UserFull, AuthError> {
+    let uri = client.auth.base_api_url() + "/users/me";
+    let headers = HashMap::new();
+    let payload = HashMap::new();
+    let resp = client.http.get(&uri, Some(&headers), &payload).await;
+    match resp {
+        Ok(res) => {
+            let user: UserFull = serde_json::from_str(&res).unwrap();
+            Ok(user)
+        }
+        Err(e) => Err(AuthError::Generic {
+            message: e.to_string(),
+            //TODO: fix error type
+        }),
+    }
+}
+
 pub async fn get_users_me(
     configuration: &Configuration,
     params: GetUsersMeParams,

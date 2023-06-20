@@ -1,4 +1,7 @@
-use crate::auth::{Auth, AuthError};
+use crate::{
+    auth::{Auth, AuthError},
+    clients::HttpClient,
+};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -32,11 +35,15 @@ impl From<AuthError> for ClientError {
 #[derive(Debug)]
 pub struct BoxClient {
     pub auth: Box<dyn Auth + 'static>,
+    pub http: HttpClient,
 }
 
 impl BoxClient {
     pub fn new(auth: Box<dyn Auth + 'static>) -> Self {
-        Self { auth }
+        Self {
+            auth,
+            http: HttpClient::default(),
+        }
     }
 }
 

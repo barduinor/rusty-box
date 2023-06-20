@@ -12,17 +12,23 @@ dotenv = "^0.15"
 tokio = { version = "1.28.0", features = ["full"] }
 serde = "^1.0"
 serde_derive = "^1.0"
-serde_with = "2.3.3"
+serde_with = "3.0.0"
 serde_json = "^1.0"
 url = "^2.2"
 uuid = { version = "^1.0", features = ["serde"] }
 chrono = { version = "0.4.24", features = ["serde"] }
 async-trait = "0.1.68"
 maybe-async = "0.2.7"
+
 # derivative = "2.2.0"
 [dependencies.reqwest]
 version = "^0.11"
 features = ["json", "multipart"]
+
+[dev-dependencies]
+env_logger = { version = "0.10.0", default-features = false }
+tokio = { version = "1.11.0", features = ["rt-multi-thread", "macros"] }
+
 
 [[example]]
 name = "auth_developer"

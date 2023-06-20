@@ -73,11 +73,9 @@ impl Auth for DeveloperToken {
             }),
         }
     }
-    // fn store_auth(&self) {
-    //     if let Some(store_auth_callable) = self.store_auth_callable {
-    //         store_auth_callable();
-    //     }
-    // }
+    fn base_api_url(&self) -> String {
+        self.config.base_api_url().clone()
+    }
 }
 
 #[cfg(test)]
