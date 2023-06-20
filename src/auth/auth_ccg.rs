@@ -3,13 +3,13 @@ use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
-use super::Auth;
+use super::{Auth, AuthError};
 use crate::clients::{BaseHttpClient, Form, HttpClient};
 
-#[derive(Debug, Clone, Serialize, PartialEq)]
-pub enum CCGError {
-    Generic { message: String },
-}
+// #[derive(Debug, Clone, Serialize, PartialEq)]
+// pub enum CCGError {
+//     Generic { message: String },
+// }
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum SubjectType {
     Enterprise,
@@ -67,7 +67,7 @@ impl CCGAuth {
         Utc::now() > self.expires_by
     }
 
-    async fn fetch_access_token(&mut self) -> Result<AccessToken, CCGError> {
+    async fn fetch_access_token(&mut self) -> Result<AccessToken, AuthError> {
         let url = &(self.config.oauth2_api_url.clone() + "/token");
 
         let headers = None; // TODO: Add headers to rquest
@@ -89,7 +89,7 @@ impl CCGAuth {
                 let access_token = match serde_json::from_str(&response) {
                     Ok(access_token) => access_token,
                     Err(e) => {
-                        return Err(CCGError::Generic {
+                        return Err(AuthError::Generic {
                             message: e.to_string(),
                         })
                     }
@@ -99,7 +99,7 @@ impl CCGAuth {
                     now + Duration::seconds(self.access_token.expires_in.unwrap_or_default());
                 Ok(self.access_token.clone())
             }
-            Err(e) => Err(CCGError::Generic {
+            Err(e) => Err(AuthError::Generic {
                 message: e.to_string(),
             }),
         };
@@ -109,22 +109,20 @@ impl CCGAuth {
 
 #[async_trait]
 impl Auth for CCGAuth {
-    type Error = CCGError;
-
-    async fn access_token(&mut self) -> Result<String, Self::Error> {
+    async fn access_token(&mut self) -> Result<String, AuthError> {
         if self.is_expired() {
             match self.fetch_access_token().await {
                 Ok(access_token) => Ok(access_token.access_token.unwrap_or_default()),
                 Err(e) => {
                     let error = format!("Error fetching access token: {:?}", e);
-                    Err(CCGError::Generic { message: error })
+                    Err(AuthError::Generic { message: error })
                 }
             }
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
                 None => {
-                    return Err(CCGError::Generic {
+                    return Err(AuthError::Generic {
                         message: "CCG token is not set".to_owned(),
                     })
                 }
@@ -132,10 +130,10 @@ impl Auth for CCGAuth {
             Ok(access_token)
         }
     }
-    fn to_json(&self) -> Result<String, Self::Error> {
+    fn to_json(&self) -> Result<String, AuthError> {
         match serde_json::to_string(&self) {
             Ok(json) => Ok(json),
-            Err(e) => Err(CCGError::Generic {
+            Err(e) => Err(AuthError::Generic {
                 message: e.to_string(),
             }),
         }

@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
-use super::Auth;
+use super::{Auth, AuthError};
 
 #[derive(Debug)]
 pub enum DeveloperTokenError {
@@ -48,18 +48,16 @@ impl DeveloperToken {
 #[async_trait]
 // impl<'a> Auth for DeveloperToken<'a> {
 impl Auth for DeveloperToken {
-    type Error = DeveloperTokenError;
-
-    async fn access_token(&mut self) -> Result<String, Self::Error> {
+    async fn access_token(&mut self) -> Result<String, AuthError> {
         if self.is_expired() {
-            Err(DeveloperTokenError::Generic {
+            Err(AuthError::Generic {
                 message: "Developer token has expired".to_owned(),
             })
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
                 None => {
-                    return Err(DeveloperTokenError::Generic {
+                    return Err(AuthError::Generic {
                         message: "CCG token is not set".to_owned(),
                     })
                 }
@@ -67,10 +65,10 @@ impl Auth for DeveloperToken {
             Ok(access_token)
         }
     }
-    fn to_json(&self) -> Result<String, Self::Error> {
+    fn to_json(&self) -> Result<String, AuthError> {
         match serde_json::to_string(&self) {
             Ok(json) => Ok(json),
-            Err(e) => Err(DeveloperTokenError::Generic {
+            Err(e) => Err(AuthError::Generic {
                 message: e.to_string(),
             }),
         }
