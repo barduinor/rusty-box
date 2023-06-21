@@ -5,10 +5,7 @@ use rusty_box::{
     auth::auth_ccg::{CCGAuth, SubjectType},
     box_client::BoxClient,
     config::Config,
-    rest_api::{
-        api::{api_base::Error, models::api_configuration_old},
-        users::users_api,
-    },
+    rest_api::{api::api_base::Error, users::users_api},
 };
 use std::env;
 
