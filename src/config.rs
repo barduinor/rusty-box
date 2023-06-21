@@ -40,9 +40,9 @@ impl Config {
     pub fn base_api_url(&self) -> String {
         format!("{}/{}", self.base_api_url, self.api_version)
     }
-    pub fn set_base_api_url(&mut self, base_api_url: String) {
-        self.base_api_url = base_api_url;
-    }
+    // pub fn set_base_api_url(&mut self, base_api_url: String) {
+    //     self.base_api_url = base_api_url;
+    // }
     pub fn upload_url(&self) -> String {
         format!("{}/{}", self.upload_url, self.api_version)
     }

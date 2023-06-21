@@ -1,10 +1,12 @@
-use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
 use super::{Auth, AuthError};
+use crate::http_client::HttpError;
 use crate::http_client::{BaseHttpClient, Form, HttpClient};
+use crate::rest_api::authorization::models::access_token;
+use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
 
 // #[derive(Debug, Clone, Serialize, PartialEq)]
 // pub enum CCGError {
@@ -84,26 +86,26 @@ impl CCGAuth {
         let now = Utc::now();
 
         let response = self.client.post_form(url, headers, &payload).await;
-        let access_token = match response {
-            Ok(response) => {
-                let access_token = match serde_json::from_str(&response) {
-                    Ok(access_token) => access_token,
-                    Err(e) => {
-                        return Err(AuthError::Generic {
-                            message: e.to_string(),
-                        })
-                    }
-                };
-                self.access_token = access_token;
-                self.expires_by =
-                    now + Duration::seconds(self.access_token.expires_in.unwrap_or_default());
-                Ok(self.access_token.clone())
-            }
-            Err(e) => Err(AuthError::Generic {
-                message: e.to_string(),
-            }),
+
+        let data = match response {
+            Ok(data) => data,
+            Err(HttpError::Client(e)) => return Err(AuthError::Client(e)),
+            Err(HttpError::StatusCode(e)) => return Err(AuthError::StatusCode(e)),
         };
-        access_token
+
+        // let xx = serde_json::from_str::<AccessToken>(&data)?;
+
+        let access_token = match serde_json::from_str::<AccessToken>(&data) {
+            Ok(access_token) => access_token,
+            Err(e) => {
+                let error = format!("Error parsing access token: {:?}", e);
+                return Err(AuthError::Generic { message: error });
+            }
+        };
+        let expires_in = access_token.expires_in.unwrap_or_default();
+        self.expires_by = now + Duration::seconds(expires_in);
+        self.access_token = access_token.clone();
+        Ok(access_token)
     }
 }
 
@@ -174,21 +176,23 @@ async fn test_ccg_request() {
     let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set");
     let box_subject_type = SubjectType::Enterprise;
     let box_subject_id = env::var("BOX_ENTERPRISE_ID").expect("BOX_ENTERPRISE_ID must be set");
-    let mut ccg_auth = CCGAuth::new(
+
+    let mut auth = CCGAuth::new(
         config,
         client_id,
         client_secret,
         box_subject_type,
         box_subject_id,
     );
-    ccg_auth.fetch_access_token().await.unwrap();
-    let access_token = ccg_auth.access_token().await;
+
+    let access_token = auth.access_token().await;
+    // println!("access_token: {:#?}", access_token);
 
     assert_eq!(access_token.is_ok(), true);
-    assert_eq!(ccg_auth.is_expired(), false);
-    assert_eq!(ccg_auth.access_token.access_token.is_some(), true);
+    assert_eq!(auth.is_expired(), false);
+    assert_eq!(auth.access_token.access_token.is_some(), true);
     assert_eq!(
         access_token.unwrap(),
-        ccg_auth.access_token.access_token.unwrap()
+        auth.access_token.access_token.unwrap()
     );
 }
