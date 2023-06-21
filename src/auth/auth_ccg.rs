@@ -4,7 +4,7 @@ use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
 use super::{Auth, AuthError};
-use crate::clients::{BaseHttpClient, Form, HttpClient};
+use crate::http_client::{BaseHttpClient, Form, HttpClient};
 
 // #[derive(Debug, Clone, Serialize, PartialEq)]
 // pub enum CCGError {

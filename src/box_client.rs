@@ -1,7 +1,5 @@
-use crate::{
-    auth::{Auth, AuthError},
-    clients::HttpClient,
-};
+use crate::auth::{Auth, AuthError};
+use crate::http_client::HttpClient;
 use thiserror::Error;
 
 #[derive(Debug, Error)]

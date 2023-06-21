@@ -1,63 +1,28 @@
-use std::collections::HashMap;
-use std::fmt;
+mod base;
 
-use maybe_async::maybe_async;
-use serde_json::Value;
+use crate::http_client::HttpError;
+use thiserror::Error;
+/// Possible errors returned from the http client.
+#[derive(Debug, Error)]
+pub enum ClientError {
+    #[error("json parse error: {0}")]
+    ParseJson(#[from] serde_json::Error),
 
-pub type Headers = HashMap<String, String>;
-pub type Query<'a> = HashMap<&'a str, &'a str>;
-pub type Form<'a> = HashMap<&'a str, &'a str>;
+    #[error("url parse error: {0}")]
+    ParseUrl(#[from] url::ParseError),
 
-pub mod reqwest;
-pub use self::reqwest::{ReqwestClient as HttpClient, ReqwestError as HttpError};
+    // Note that this type is boxed because its size might be very large in
+    // comparison to the rest. For more information visit:
+    // https://rust-lang.github.io/rust-clippy/master/index.html#large_enum_variant
+    #[error("http error: {0}")]
+    Http(Box<HttpError>),
 
-/// This trait represents the interface to be implemented for an HTTP client,
-/// which is kept separate from the Spotify client for cleaner code. Thus, it
-/// also requires other basic traits that are needed for the Spotify client.
-///
-/// When a request doesn't need to pass parameters, the empty or default value
-/// of the payload type should be passed, like `json!({})` or `Query::new()`.
-/// This avoids using `Option<T>` because `Value` itself may be null in other
-/// different ways (`Value::Null`, an empty `Value::Object`...), so this removes
-/// redundancy and edge cases (a `Some(Value::Null), for example, doesn't make
-/// much sense).
-#[maybe_async]
-pub trait BaseHttpClient: Send + Default + Clone + fmt::Debug {
-    type Error;
+    #[error("input/output error: {0}")]
+    Io(#[from] std::io::Error),
 
-    // This internal function should always be given an object value in JSON.
-    async fn get(
-        &self,
-        url: &str,
-        headers: Option<&Headers>,
-        payload: &Query,
-    ) -> Result<String, Self::Error>;
-
-    async fn post(
-        &self,
-        url: &str,
-        headers: Option<&Headers>,
-        payload: &Value,
-    ) -> Result<String, Self::Error>;
-
-    async fn post_form(
-        &self,
-        url: &str,
-        headers: Option<&Headers>,
-        payload: &Form<'_>,
-    ) -> Result<String, Self::Error>;
-
-    async fn put(
-        &self,
-        url: &str,
-        headers: Option<&Headers>,
-        payload: &Value,
-    ) -> Result<String, Self::Error>;
-
-    async fn delete(
-        &self,
-        url: &str,
-        headers: Option<&Headers>,
-        payload: &Value,
-    ) -> Result<String, Self::Error>;
+    #[error("cache file error: {0}")]
+    CacheFile(String),
+    // #[error("model error: {0}")]
+    // Model(#[from] model::ModelError),
 }
+pub type ClientResult<T> = Result<T, ClientError>;

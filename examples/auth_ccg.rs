@@ -34,8 +34,8 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
     let access_token = client.auth.access_token().await.unwrap_or_default();
     println!("Access token:\n{:#?}\n", access_token);
 
-    let me = users_api::me(client).await;
-    println!("Me:\n{me:#?}\n");
+    // let me = users_api::me(client).await;
+    // println!("Me:\n{me:#?}\n");
 
     // let mut client_config = api_configuration_old::Configuration::new();
     // client_config.base_path = auth.config.base_api_url();
