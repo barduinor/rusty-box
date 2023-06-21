@@ -10,7 +10,7 @@ pub enum DeveloperTokenError {
     Generic { message: String },
 }
 
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 // pub struct DeveloperToken<'a> {
 pub struct DeveloperToken {
     config: Config,
@@ -58,7 +58,7 @@ impl Auth for DeveloperToken {
                 Some(token) => token,
                 None => {
                     return Err(AuthError::Generic {
-                        message: "CCG token is not set".to_owned(),
+                        message: "Developer token is not set".to_owned(),
                     })
                 }
             };

@@ -27,12 +27,14 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         box_subject_id,
     );
 
-    let mut client = BoxClient::new(Box::new(auth.clone()));
+    // todo!("re implement");
 
-    // TODO: implement a client
+    // let mut client = BoxClient::new(Box::new(auth.clone()));
 
-    let access_token = client.auth.access_token().await.unwrap_or_default();
-    println!("Access token:\n{:#?}\n", access_token);
+    // // TODO: implement a client
+
+    // let access_token = client.auth.access_token().await.unwrap_or_default();
+    // println!("Access token:\n{:#?}\n", access_token);
 
     // let me = users_api::me(client).await;
     // println!("Me:\n{me:#?}\n");

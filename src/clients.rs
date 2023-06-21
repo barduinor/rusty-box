@@ -1,4 +1,4 @@
-mod base;
+pub mod base;
 
 use crate::http_client::HttpError;
 use thiserror::Error;
@@ -22,6 +22,7 @@ pub enum ClientError {
 
     #[error("cache file error: {0}")]
     CacheFile(String),
+    //
     // #[error("model error: {0}")]
     // Model(#[from] model::ModelError),
 }

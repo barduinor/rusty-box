@@ -1,3 +1,5 @@
+use std::fmt;
+
 use async_trait::async_trait;
 
 pub mod auth_ccg;
@@ -22,15 +24,18 @@ pub enum AuthError {
 }
 
 #[async_trait]
-pub trait Auth {
+pub trait Auth
+where
+    Self: Default + Clone + fmt::Debug,
+{
     async fn access_token(&mut self) -> Result<String, AuthError>;
     fn to_json(&self) -> Result<String, AuthError>;
     fn base_api_url(&self) -> String;
 }
 
 // implement debug
-impl std::fmt::Debug for dyn Auth {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("Auth").finish()
-    }
-}
+// impl std::fmt::Debug for dyn Auth {
+//     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+//         f.debug_struct("Auth").finish()
+//     }
+// }

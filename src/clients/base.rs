@@ -2,9 +2,13 @@ use std::fmt;
 
 // use chrono::Utc;
 use maybe_async::maybe_async;
+use serde_json::Value;
 // use serde_json::Value;
 
-// use crate::http_client::{Form, Headers, Query};
+use crate::http_client::Query;
+
+use super::ClientResult;
+// use crate::htt
 
 // use super::ClientResult;
 
@@ -27,6 +31,7 @@ where
 
     // Returns the absolute URL for an endpoint in the API.
     // fn api_url(&self, url: &str) -> String {
+    //     let base_api_url = self.auth.base_api_url();
     //     let mut base = self.get_config().api_base_url.clone();
     //     if !base.ends_with('/') {
     //         base.push('/');
@@ -97,11 +102,11 @@ where
     //         .auth_headers()
     // }
 
-    // // HTTP-related methods for the Spotify client. They wrap up the basic HTTP
-    // // client with its specific usage for endpoints or authentication.
+    // HTTP-related methods for the Spotify client. They wrap up the basic HTTP
+    // client with its specific usage for endpoints or authentication.
 
-    // /// Convenience method to send GET requests related to an endpoint in the
-    // /// API.
+    // Convenience method to send GET requests related to an endpoint in the
+    // API.
     // #[doc(hidden)]
     // #[inline]
     // async fn api_get(&self, url: &str, payload: &Query<'_>) -> ClientResult<String> {

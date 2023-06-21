@@ -25,19 +25,21 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set"),
     );
 
-    let mut client = BoxClient::new(Box::new(auth.clone()));
-    let access_token = client.auth.access_token().await.unwrap_or_default();
+    // todo!("re implement");
 
-    let api_config = ApiConfig::new();
+    // let mut client = BoxClient::new(Box::new(auth.clone()));
+    // let access_token = client.auth.access_token().await.unwrap_or_default();
 
-    let mut client_config = api_configuration_old::Configuration::new();
-    client_config.base_path = api_config.base_api_url();
-    client_config.oauth_access_token = Some(access_token);
+    // let api_config = ApiConfig::new();
 
-    let params = users_api::GetUsersMeParams::default();
+    // let mut client_config = api_configuration_old::Configuration::new();
+    // client_config.base_path = api_config.base_api_url();
+    // client_config.oauth_access_token = Some(access_token);
 
-    let user = users_api::get_users_me(&client_config, params).await?;
+    // let params = users_api::GetUsersMeParams::default();
 
-    println!("Current user:\n{user:#?}\n");
+    // let user = users_api::get_users_me(&client_config, params).await?;
+
+    // println!("Current user:\n{user:#?}\n");
     Ok(())
 }

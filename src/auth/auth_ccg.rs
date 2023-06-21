@@ -31,7 +31,7 @@ impl Default for SubjectType {
 }
 
 // TODO: CCG support both enterprise and user auth. Should there be a specific implementation for each one?
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Default)]
 pub struct CCGAuth {
     pub config: Config,
     client_id: String,
