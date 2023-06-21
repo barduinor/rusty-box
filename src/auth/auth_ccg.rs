@@ -5,7 +5,6 @@ use serde::Serialize;
 use super::{Auth, AuthError};
 use crate::http_client::HttpError;
 use crate::http_client::{BaseHttpClient, Form, HttpClient};
-use crate::rest_api::authorization::models::access_token;
 use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
 
 // #[derive(Debug, Clone, Serialize, PartialEq)]
