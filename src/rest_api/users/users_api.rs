@@ -220,6 +220,37 @@ pub async fn delete_users_id(
     }
 }
 
+/// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  
+/// The application and the authenticated user need to have the permission to look up users in the entire enterprise.
+pub async fn users(mut client: BoxClient<'_>, params: GetUsersParams) -> Result<Users, AuthError> {
+    let uri = client.auth.base_api_url() + "/users";
+    let headers = client.auth.headers().await?;
+
+    let fields = params
+        .fields
+        .unwrap_or(vec![])
+        .into_iter()
+        .map(|p| p.to_string())
+        .collect::<Vec<String>>()
+        .join(",")
+        .to_string();
+
+    let mut payload = HashMap::new();
+    payload.insert("fields", fields.as_str());
+
+    let resp = client.http.get(&uri, Some(&headers), &payload).await;
+    match resp {
+        Ok(res) => {
+            let users = serde_json::from_str(&res).unwrap(); //TODO: remove unwrap
+            Ok(users)
+        }
+        Err(e) => Err(AuthError::Generic {
+            message: e.to_string(),
+            //TODO: fix error type
+        }),
+    }
+}
+
 /// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.
 pub async fn get_users(
     configuration: &Configuration,
@@ -408,12 +439,10 @@ pub async fn me(
     let mut payload = HashMap::new();
     payload.insert("fields", fields.as_str());
 
-    // let x = client.http.get(url, headers, payload);
-
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
     match resp {
         Ok(res) => {
-            let user: UserFull = serde_json::from_str(&res).unwrap();
+            let user = serde_json::from_str(&res).unwrap(); // TODO: remove unwrap
             Ok(user)
         }
         Err(e) => Err(AuthError::Generic {
