@@ -222,7 +222,7 @@ pub async fn delete_users_id(
 
 /// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  
 /// The application and the authenticated user need to have the permission to look up users in the entire enterprise.
-pub async fn users(mut client: BoxClient<'_>, params: GetUsersParams) -> Result<Users, AuthError> {
+pub async fn users(client: &mut BoxClient<'_>, params: GetUsersParams) -> Result<Users, AuthError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.auth.headers().await?;
 
@@ -422,7 +422,7 @@ pub async fn get_users_id(
 /// Use the `As-User` header to change who this API call is made on behalf of.
 
 pub async fn me(
-    mut client: BoxClient<'_>,
+    client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
 ) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users/me";

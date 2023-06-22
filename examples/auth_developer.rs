@@ -19,7 +19,7 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set"),
     );
 
-    let client = BoxClient::new(Box::new(auth.clone()));
+    let mut client = BoxClient::new(Box::new(auth.clone()));
 
     let fields = vec![
         // "id".to_string(),
@@ -28,16 +28,16 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         // "login".to_string(),
     ];
 
-    let me = users_api::me(client, Some(fields.clone())).await;
+    let me = users_api::me(&mut client, Some(fields.clone())).await;
     println!("Me:\n{me:#?}\n");
 
-    let client = BoxClient::new(Box::new(auth.clone()));
+    // let client = BoxClient::new(Box::new(auth.clone()));
 
     let params = users_api::GetUsersParams {
         fields: Some(fields),
         ..Default::default()
     };
-    let result = users_api::users(client, params).await;
+    let result = users_api::users(&mut client, params).await;
     // println!("Users: {result:#?}\n");
     print!("Users:\n");
 
