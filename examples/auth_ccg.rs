@@ -27,25 +27,17 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         box_subject_id,
     );
 
-    let mut client = BoxClient::new(Box::new(auth.clone()));
+    let client = BoxClient::new(Box::new(auth.clone()));
 
-    // TODO: implement a client
+    let fields = vec![
+        // "id".to_string(),
+        // "type".to_string(),
+        // "name".to_string(),
+        // "login".to_string(),
+    ];
 
-    let access_token = client.auth.access_token().await;
-    println!("Access token:\n{:#?}\n", access_token);
-
-    let me = users_api::me(client).await;
+    let me = users_api::me(client, Some(fields)).await;
     println!("Me:\n{me:#?}\n");
 
-    // let mut client_config = api_configuration_old::Configuration::new();
-    // client_config.base_path = auth.config.base_api_url();
-    // client_config.oauth_access_token = Some(access_token);
-
-    // // let paramsx = users_api::GetUsersMeParams::default();
-    // let params = users_api::GetUsersMeParams::default();
-
-    // let user = users_api::get_users_me(&client_config, params).await?;
-
-    // println!("Current user:\n{user:#?}\n");
     Ok(())
 }

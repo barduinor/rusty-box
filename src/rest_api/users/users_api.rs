@@ -387,11 +387,31 @@ pub async fn get_users_id(
     }
 }
 
-/// Retrieves information about the user who is currently authenticated.  In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  Use the `As-User` header to change who this API call is made on behalf of.
-pub async fn me(mut client: BoxClient<'_>) -> Result<UserFull, AuthError> {
+/// Retrieves information about the user who is currently authenticated.  
+/// In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  
+/// In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  
+/// Use the `As-User` header to change who this API call is made on behalf of.
+
+pub async fn me(
+    mut client: BoxClient<'_>,
+    fields: Option<Vec<String>>,
+) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users/me";
     let headers = client.auth.headers().await?;
-    let payload = HashMap::new();
+
+    let fields = fields
+        .unwrap_or(vec![])
+        .into_iter()
+        .map(|p| p.to_string())
+        .collect::<Vec<String>>()
+        .join(",")
+        .to_string();
+
+    let mut payload = HashMap::new();
+    payload.insert("fields", fields.as_str());
+
+    // let x = &payload;
+
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
     match resp {
         Ok(res) => {
@@ -405,69 +425,69 @@ pub async fn me(mut client: BoxClient<'_>) -> Result<UserFull, AuthError> {
     }
 }
 
-pub async fn get_users_me(
-    configuration: &Configuration,
-    params: GetUsersMeParams,
-) -> Result<UserFull, Error<GetUsersMeError>> {
-    let local_var_configuration = configuration;
+// pub async fn get_users_me(
+//     configuration: &Configuration,
+//     params: GetUsersMeParams,
+// ) -> Result<UserFull, Error<GetUsersMeError>> {
+//     let local_var_configuration = configuration;
 
-    // unbox the parameters
-    let fields = params.fields;
+//     // unbox the parameters
+//     let fields = params.fields;
 
-    let local_var_client = &local_var_configuration.client;
+//     let local_var_client = &local_var_configuration.client;
 
-    let local_var_uri_str = format!("{}/users/me", local_var_configuration.base_path);
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
+//     let local_var_uri_str = format!("{}/users/me", local_var_configuration.base_path);
+//     let mut local_var_req_builder =
+//         local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
 
-    if let Some(ref local_var_str) = fields {
-        local_var_req_builder = match "csv" {
-            "multi" => local_var_req_builder.query(
-                &local_var_str
-                    .into_iter()
-                    .map(|p| ("fields".to_owned(), p.to_string()))
-                    .collect::<Vec<(std::string::String, std::string::String)>>(),
-            ),
-            _ => local_var_req_builder.query(&[(
-                "fields",
-                &local_var_str
-                    .into_iter()
-                    .map(|p| p.to_string())
-                    .collect::<Vec<String>>()
-                    .join(",")
-                    .to_string(),
-            )]),
-        };
-    }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
-    if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-        local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-    };
+//     if let Some(ref local_var_str) = fields {
+//         local_var_req_builder = match "csv" {
+//             "multi" => local_var_req_builder.query(
+//                 &local_var_str
+//                     .into_iter()
+//                     .map(|p| ("fields".to_owned(), p.to_string()))
+//                     .collect::<Vec<(std::string::String, std::string::String)>>(),
+//             ),
+//             _ => local_var_req_builder.query(&[(
+//                 "fields",
+//                 &local_var_str
+//                     .into_iter()
+//                     .map(|p| p.to_string())
+//                     .collect::<Vec<String>>()
+//                     .join(",")
+//                     .to_string(),
+//             )]),
+//         };
+//     }
+//     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
+//         local_var_req_builder =
+//             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+//     }
+//     if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
+//         local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
+//     };
 
-    let local_var_req = local_var_req_builder.build()?;
+//     let local_var_req = local_var_req_builder.build()?;
 
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
+//     let local_var_resp = local_var_client.execute(local_var_req).await?;
 
-    let local_var_status = local_var_resp.status();
+//     let local_var_status = local_var_resp.status();
 
-    let local_var_content = local_var_resp.text().await?;
+//     let local_var_content = local_var_resp.text().await?;
 
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<GetUsersMeError> =
-            serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
-}
+//     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+//         serde_json::from_str(&local_var_content).map_err(Error::from)
+//     } else {
+//         let local_var_entity: Option<GetUsersMeError> =
+//             serde_json::from_str(&local_var_content).ok();
+//         let local_var_error = ResponseContent {
+//             status: local_var_status,
+//             content: local_var_content,
+//             entity: local_var_entity,
+//         };
+//         Err(Error::ResponseError(local_var_error))
+//     }
+// }
 
 /// Creates a new managed user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
 pub async fn post_users(

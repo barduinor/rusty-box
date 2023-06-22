@@ -5,13 +5,7 @@ use rusty_box::{
     auth::auth_developer::DeveloperToken,
     box_client::BoxClient,
     config::Config,
-    rest_api::{
-        api::{
-            api_base::Error,
-            models::{api_config::ApiConfig, api_configuration_old},
-        },
-        users::users_api,
-    },
+    rest_api::{api::api_base::Error, users::users_api},
 };
 use std::env;
 
@@ -25,19 +19,16 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set"),
     );
 
-    let mut client = BoxClient::new(Box::new(auth.clone()));
-    let access_token = client.auth.access_token().await.unwrap_or_default();
+    let client = BoxClient::new(Box::new(auth.clone()));
 
-    let api_config = ApiConfig::new();
+    let fields = vec![
+        // "id".to_string(),
+        // "type".to_string(),
+        // "name".to_string(),
+        // "login".to_string(),
+    ];
 
-    let mut client_config = api_configuration_old::Configuration::new();
-    client_config.base_path = api_config.base_api_url();
-    client_config.oauth_access_token = Some(access_token);
-
-    let params = users_api::GetUsersMeParams::default();
-
-    let user = users_api::get_users_me(&client_config, params).await?;
-
-    println!("Current user:\n{user:#?}\n");
+    let me = users_api::me(client, Some(fields)).await;
+    println!("Me:\n{me:#?}\n");
     Ok(())
 }
