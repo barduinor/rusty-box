@@ -1,7 +1,5 @@
 use std::collections::HashMap;
 
-use std::fmt;
-
 use async_trait::async_trait;
 
 pub mod auth_ccg;
@@ -26,10 +24,7 @@ pub enum AuthError {
 }
 
 #[async_trait]
-pub trait Auth<'a>
-where
-    Self: Default + Clone + fmt::Debug,
-{
+pub trait Auth<'a> {
     async fn access_token(&mut self) -> Result<String, AuthError>;
     fn to_json(&self) -> Result<String, AuthError>;
     fn base_api_url(&self) -> String;
