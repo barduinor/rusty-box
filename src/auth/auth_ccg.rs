@@ -1,11 +1,11 @@
-use async_trait::async_trait;
-use chrono::{DateTime, Duration, Utc};
-use serde::Serialize;
-
 use super::{Auth, AuthError};
 use crate::http_client::HttpError;
 use crate::http_client::{BaseHttpClient, Form, HttpClient};
 use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
+use async_trait::async_trait;
+use chrono::{DateTime, Duration, Utc};
+use serde::Serialize;
+use std::collections::HashMap;
 
 // #[derive(Debug, Clone, Serialize, PartialEq)]
 // pub enum CCGError {
@@ -109,7 +109,7 @@ impl CCGAuth {
 }
 
 #[async_trait]
-impl Auth for CCGAuth {
+impl<'a> Auth<'a> for CCGAuth {
     async fn access_token(&mut self) -> Result<String, AuthError> {
         if self.is_expired() {
             match self.fetch_access_token().await {
@@ -141,6 +141,15 @@ impl Auth for CCGAuth {
     }
     fn base_api_url(&self) -> String {
         self.config.base_api_url().clone()
+    }
+
+    async fn headers(&mut self) -> Result<HashMap<String, String>, AuthError> {
+        let mut headers = HashMap::new();
+        headers.insert(
+            "Authorization".to_owned(),
+            format!("Bearer {}", self.access_token().await?),
+        );
+        Ok(headers)
     }
 }
 

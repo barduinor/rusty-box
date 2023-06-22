@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
@@ -46,8 +48,7 @@ impl DeveloperToken {
 }
 
 #[async_trait]
-// impl<'a> Auth for DeveloperToken<'a> {
-impl Auth for DeveloperToken {
+impl<'a> Auth<'a> for DeveloperToken {
     async fn access_token(&mut self) -> Result<String, AuthError> {
         if self.is_expired() {
             Err(AuthError::Generic {
@@ -75,6 +76,15 @@ impl Auth for DeveloperToken {
     }
     fn base_api_url(&self) -> String {
         self.config.base_api_url().clone()
+    }
+
+    async fn headers(&mut self) -> Result<HashMap<String, String>, AuthError> {
+        let mut headers = HashMap::new();
+        headers.insert(
+            "Authorization".to_owned(),
+            format!("Bearer {}", self.access_token().await?),
+        );
+        Ok(headers)
     }
 }
 

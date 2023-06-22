@@ -33,13 +33,13 @@ impl From<AuthError> for ClientError {
 }
 
 #[derive(Debug, Clone, Default)]
-pub struct BoxClient {
-    // pub auth: Box<dyn Auth>,
+pub struct BoxClient<'a> {
+    // pub auth: Box<dyn Auth<'a>>,
     pub http: HttpClient,
 }
 
-impl BoxClient {
-    pub fn new() -> Self {
+impl<'a> BoxClient<'a> {
+    pub fn new(auth: Box<dyn Auth<'a> + 'static>) -> Self {
         Self {
             // auth,
             http: HttpClient::default(),
