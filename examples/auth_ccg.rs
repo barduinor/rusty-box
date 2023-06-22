@@ -31,7 +31,7 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
 
     // TODO: implement a client
 
-    let access_token = client.auth.access_token().await.unwrap_or_default();
+    let access_token = client.auth.access_token().await;
     println!("Access token:\n{:#?}\n", access_token);
 
     let me = users_api::me(client).await;
