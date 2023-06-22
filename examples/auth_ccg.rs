@@ -36,8 +36,37 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         // "login".to_string(),
     ];
 
-    let me = users_api::me(client, Some(fields)).await;
+    let me = users_api::me(client, Some(fields.clone())).await;
     println!("Me:\n{me:#?}\n");
+
+    let client = BoxClient::new(Box::new(auth.clone()));
+
+    let params = users_api::GetUsersParams {
+        fields: Some(fields),
+        ..Default::default()
+    };
+    let result = users_api::users(client, params).await;
+    // println!("Users: {result:#?}\n");
+    print!("Users:\n");
+
+    let user_list = match result {
+        Ok(users) => users,
+        Err(e) => {
+            println!("Error: {:#?}", e);
+            return Ok(());
+        }
+    };
+
+    if let Some(users) = user_list.entries {
+        for user in users {
+            println!(
+                "{}\t{}\t{}",
+                user.id.unwrap(),
+                user.name.unwrap(),
+                user.login.unwrap()
+            );
+        }
+    }
 
     Ok(())
 }
