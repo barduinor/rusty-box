@@ -2,6 +2,8 @@ use std::collections::HashMap;
 
 use async_trait::async_trait;
 
+use crate::http_client;
+
 pub mod auth_ccg;
 pub mod auth_developer;
 
@@ -19,8 +21,14 @@ pub enum AuthError {
     #[error("status code {}", reqwest::Response::status(.0))]
     StatusCode(reqwest::Response),
 
+    #[error("json parse error: {0}")]
+    ParseJson(#[from] serde_json::Error),
+
     #[error("Generic: {message}")]
     Generic { message: String },
+
+    #[error("request: {0}")]
+    RequestError(#[from] http_client::reqwest::ReqwestError),
 }
 
 #[async_trait]

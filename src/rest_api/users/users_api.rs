@@ -239,15 +239,13 @@ pub async fn users(client: &mut BoxClient<'_>, params: GetUsersParams) -> Result
     payload.insert("fields", fields.as_str());
 
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
+
     match resp {
         Ok(res) => {
-            let users = serde_json::from_str(&res).unwrap(); //TODO: remove unwrap
+            let users = serde_json::from_str::<Users>(&res)?;
             Ok(users)
         }
-        Err(e) => Err(AuthError::Generic {
-            message: e.to_string(),
-            //TODO: fix error type
-        }),
+        Err(e) => Err(AuthError::RequestError(e)),
     }
 }
 
@@ -442,13 +440,10 @@ pub async fn me(
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
     match resp {
         Ok(res) => {
-            let user = serde_json::from_str(&res).unwrap(); // TODO: remove unwrap
+            let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(AuthError::Generic {
-            message: e.to_string(),
-            //TODO: fix error type
-        }),
+        Err(e) => Err(AuthError::RequestError(e)),
     }
 }
 
