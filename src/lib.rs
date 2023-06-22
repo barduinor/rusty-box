@@ -12,3 +12,4 @@ pub mod config;
 pub mod error;
 pub mod http_client;
 pub mod rest_api;
+pub mod sync;

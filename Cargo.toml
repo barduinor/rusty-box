@@ -19,6 +19,8 @@ uuid = { version = "^1.0", features = ["serde"] }
 chrono = { version = "0.4.24", features = ["serde"] }
 async-trait = "0.1.68"
 maybe-async = "0.2.7"
+futures = "0.3.17"
+# futures = { version = "0.3.17", optional = true }
 
 # derivative = "2.2.0"
 [dependencies.reqwest]
@@ -28,7 +30,7 @@ features = ["json", "multipart"]
 [dev-dependencies]
 env_logger = { version = "0.10.0", default-features = false }
 tokio = { version = "1.11.0", features = ["rt-multi-thread", "macros"] }
-
+futures-util = "0.3.17"
 
 [[example]]
 name = "auth_developer"

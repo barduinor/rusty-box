@@ -1,7 +1,5 @@
-use crate::{
-    auth::{Auth, AuthError},
-    clients::HttpClient,
-};
+use crate::auth::{Auth, AuthError};
+use crate::http_client::HttpClient;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -47,6 +45,12 @@ impl<'a> BoxClient<'a> {
     }
 }
 
+// impl BaseClient for BoxClient<'a> {
+//     fn base_api_url(&self) -> String {
+//         self.auth.base_api_url()
+//     }
+// }
+
 #[cfg(test)]
 use crate::auth::auth_ccg::{CCGAuth, SubjectType};
 
@@ -60,12 +64,12 @@ async fn test_create_client_dev() {
     );
     let mut client = BoxClient::new(Box::new(auth));
     let access_token = client.auth.access_token().await;
+    println!("{:#?}", client);
     assert_eq!(access_token.is_ok(), true);
 }
 
 #[tokio::test]
 async fn test_create_client_ccg() {
-    // let auth = Box::new(super::auth::auth_ccg::CCGAuth::new());
     dotenv::from_filename(".ccg.env").ok();
     let config = crate::config::Config::new();
     let client_id = std::env::var("CLIENT_ID").expect("CLIENT_ID must be set");
@@ -83,5 +87,6 @@ async fn test_create_client_ccg() {
 
     let mut client = BoxClient::new(Box::new(auth));
     let access_token = client.auth.access_token().await;
+    // println!("{:#?}", client.auth);
     assert_eq!(access_token.is_ok(), true);
 }

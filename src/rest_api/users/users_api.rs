@@ -20,13 +20,11 @@ use super::models::users::Users;
 
 use crate::auth::AuthError;
 use crate::box_client::BoxClient;
-use crate::clients::BaseHttpClient;
+use crate::http_client::BaseHttpClient;
 use crate::rest_api::api::api_base::*;
 use crate::rest_api::api::models::api_configuration_old::Configuration;
 use crate::rest_api::api::models::client_error::ClientError;
 use crate::rest_api::api::models::session_termination_message::SessionTerminationMessage;
-
-use reqwest;
 
 /// struct for passing parameters to the method [`delete_users_id`]
 #[derive(Clone, Debug, Default)]
@@ -410,7 +408,7 @@ pub async fn me(
     let mut payload = HashMap::new();
     payload.insert("fields", fields.as_str());
 
-    // let x = &payload;
+    // let x = client.http.get(url, headers, payload);
 
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
     match resp {
