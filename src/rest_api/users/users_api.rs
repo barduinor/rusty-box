@@ -388,9 +388,9 @@ pub async fn get_users_id(
 }
 
 /// Retrieves information about the user who is currently authenticated.  In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  Use the `As-User` header to change who this API call is made on behalf of.
-pub async fn me(client: BoxClient) -> Result<UserFull, AuthError> {
+pub async fn me(mut client: BoxClient<'_>) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users/me";
-    let headers = HashMap::new();
+    let headers = client.auth.headers().await?;
     let payload = HashMap::new();
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
     match resp {
