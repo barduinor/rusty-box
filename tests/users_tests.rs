@@ -32,6 +32,17 @@ async fn users_list() -> Result<(), AuthError> {
 
     assert!(users_list.total_count.is_some());
     assert!(users_list.entries.is_some());
+    assert!(users_list.limit.is_some());
+
+    // there must be at least one user
+    let user_0 = &users_list.entries.unwrap()[0];
+    assert!(user_0.id.is_some());
+    assert!(user_0.name.is_some());
+    assert!(user_0.login.is_some());
+    assert_eq!(
+        user_0.r#type,
+        rusty_box::rest_api::users::models::user::RHashType::User
+    );
 
     Ok(())
 }
