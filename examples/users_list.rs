@@ -1,5 +1,4 @@
-// use cargo run --example users_main to run this file
-// use dotenv;
+use std::env;
 
 use rusty_box::{
     auth::{
@@ -10,7 +9,6 @@ use rusty_box::{
     config::Config,
     rest_api::users::users_api,
 };
-use std::env;
 
 #[tokio::main]
 async fn main() -> Result<(), AuthError> {
@@ -32,10 +30,37 @@ async fn main() -> Result<(), AuthError> {
 
     let mut client = BoxClient::new(Box::new(auth));
 
-    let fields = vec![];
+    let fields = vec![
+        "id".to_string(),
+        "type".to_string(),
+        "name".to_string(),
+        "login".to_string(),
+    ];
+    let params = users_api::GetUsersParams {
+        fields: Some(fields),
+        ..Default::default()
+    };
+    let result = users_api::list(&mut client, Some(params)).await;
+    print!("Users:\n");
 
-    let me = users_api::me(&mut client, Some(fields)).await?;
-    println!("Me:\n{me:#?}\n");
+    let user_list = match result {
+        Ok(users) => users,
+        Err(e) => {
+            println!("Error: {:#?}", e);
+            return Ok(());
+        }
+    };
+
+    if let Some(users) = user_list.entries {
+        for user in users {
+            println!(
+                "{}\t{}\t{}",
+                user.id.unwrap(),
+                user.name.unwrap(),
+                user.login.unwrap()
+            );
+        }
+    }
 
     Ok(())
 }

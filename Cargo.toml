@@ -40,6 +40,10 @@ path = "examples/auth_developer.rs"
 name = "auth_ccg"
 path = "examples/auth_ccg.rs"
 
+[[example]]
+name = "users_list"
+path = "examples/users_list.rs"
+
 
 
 
