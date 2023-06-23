@@ -49,6 +49,7 @@ impl<'a> BoxClient<'a> {
 
         headers.insert("Accept".to_string(), "application/json".to_string());
         headers.insert("Content-Type".to_string(), "application/json".to_string());
+        headers.insert("User-Agent".to_string(), self.auth.user_agent());
 
         let auth_headers = self.auth.auth_header().await?;
 

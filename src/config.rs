@@ -8,7 +8,7 @@ pub struct Config {
     pub api_version: String,
     pub max_retry_attempts: u8,
     pub chunk_upload_threads: u8,
-    pub user_agent: Option<String>,
+    pub user_agent: String,
 }
 
 //     BASE_API_URL = 'https://api.box.com/2.0'
@@ -28,7 +28,7 @@ impl Default for Config {
             api_version: String::from("2.0"),
             max_retry_attempts: 5,
             chunk_upload_threads: 5,
-            user_agent: Some("box-rust-sdk/rusty_box".to_owned()),
+            user_agent: "box-rust-sdk/rusty_box".to_owned(),
         }
     }
 }
@@ -48,6 +48,10 @@ impl Config {
     }
     pub fn set_upload_url(&mut self, upload_url: String) {
         self.upload_url = upload_url;
+    }
+
+    pub fn user_agent(&self) -> String {
+        self.user_agent.clone()
     }
     // pub fn oauth2_api_url(&self) -> String {
     //     self.oauth2_api_url.clone()
@@ -97,7 +101,7 @@ mod tests {
         assert_eq!(config.max_retry_attempts, 5);
         assert_eq!(config.chunk_upload_threads, 5);
         assert_eq!(config.api_version, "2.0");
-        assert_eq!(config.user_agent, Some("box-rust-sdk/rusty_box".to_owned()));
+        assert_eq!(config.user_agent, "box-rust-sdk/rusty_box".to_owned());
     }
 
     #[test]

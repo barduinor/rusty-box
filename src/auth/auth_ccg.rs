@@ -152,6 +152,10 @@ impl<'a> Auth<'a> for CCGAuth {
 
         Ok(header)
     }
+
+    fn user_agent(&self) -> String {
+        self.config.user_agent()
+    }
 }
 
 #[cfg(test)]
