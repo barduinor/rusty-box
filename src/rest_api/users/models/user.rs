@@ -110,6 +110,14 @@ pub enum RHashType {
     User,
 }
 
+impl ToString for RHashType {
+    fn to_string(&self) -> String {
+        match self {
+            Self::User => String::from("user"),
+        }
+    }
+}
+
 impl Default for RHashType {
     fn default() -> RHashType {
         Self::User

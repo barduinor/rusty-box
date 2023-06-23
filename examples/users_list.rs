@@ -54,10 +54,11 @@ async fn main() -> Result<(), AuthError> {
     if let Some(users) = user_list.entries {
         for user in users {
             println!(
-                "{}\t{}\t{}",
+                "{}\t{}\t{}\t{}",
                 user.id.unwrap(),
+                user.r#type.to_string(),
                 user.name.unwrap(),
-                user.login.unwrap()
+                user.login.unwrap(),
             );
         }
     }
