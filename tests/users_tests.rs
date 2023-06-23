@@ -1,3 +1,5 @@
+/// Users API tests
+use pretty_assertions::assert_eq;
 use rusty_box::{self, auth::AuthError, rest_api::users::users_api};
 mod common;
 
@@ -43,6 +45,7 @@ async fn users_list() -> Result<(), AuthError> {
         user_0.r#type,
         rusty_box::rest_api::users::models::user::RHashType::User
     );
+    // assert_eq!(user_0.name.as_ref().unwrap(), "Box Admin"); // this will fail
 
     Ok(())
 }
