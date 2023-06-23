@@ -32,7 +32,7 @@ pub enum AuthError {
 #[async_trait]
 pub trait Auth<'a> {
     async fn access_token(&mut self) -> Result<String, AuthError>;
-    fn to_json(&self) -> Result<String, AuthError>;
+    async fn to_json(&mut self) -> Result<String, AuthError>;
     fn base_api_url(&self) -> String;
     fn user_agent(&self) -> String;
     // async fn auth_header(&mut self) -> Result<Headers, AuthError>;

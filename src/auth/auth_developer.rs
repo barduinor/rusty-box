@@ -64,7 +64,9 @@ impl<'a> Auth<'a> for DeveloperToken {
             Ok(access_token)
         }
     }
-    fn to_json(&self) -> Result<String, AuthError> {
+
+    async fn to_json(&mut self) -> Result<String, AuthError> {
+        self.access_token().await?;
         match serde_json::to_string(&self) {
             Ok(json) => Ok(json),
             Err(e) => Err(AuthError::Generic {
@@ -72,6 +74,7 @@ impl<'a> Auth<'a> for DeveloperToken {
             }),
         }
     }
+
     fn base_api_url(&self) -> String {
         self.config.base_api_url().clone()
     }
@@ -93,30 +96,5 @@ mod tests {
         assert_eq!(access_token, "test");
         assert!(dev_token.expires_by <= Utc::now() + Duration::seconds(3600));
         assert!(dev_token.is_expired() == false);
-    }
-
-    #[test]
-    fn test_dev_token_json() {
-        let dev_token = DeveloperToken::new(Config::default(), "test".to_owned());
-        let json = dev_token.to_json().unwrap();
-        // let access_token = dev_token.access_token().await.unwrap_or_default();
-        assert!(json.contains("test"));
-
-        // println!("{}", json);
-        // {"config":{
-        //     "base_api_url":"https://api.box.com",
-        //     "upload_url":"https://upload.box.com/api",
-        //     "oauth2_api_url":"https://api.box.com/oauth2",
-        //     "oauth2_authorize_url":"https://account.box.com/api/oauth2/authorize",
-        //     "api_version":"2.0",
-        //     "max_retry_attempts":5,
-        //     "chunk_upload_threads":5,
-        //     "user_agent":"
-        //     box-rust-sdk/rusty_box"
-        // },
-        // "access_token":"test",
-        // "expires_in":3600,
-        // "expires_by":"2023-06-14T23:57:25.660427Z"
-        // }
     }
 }

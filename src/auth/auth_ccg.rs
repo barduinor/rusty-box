@@ -130,7 +130,9 @@ impl<'a> Auth<'a> for CCGAuth {
             Ok(access_token)
         }
     }
-    fn to_json(&self) -> Result<String, AuthError> {
+
+    async fn to_json(&mut self) -> Result<String, AuthError> {
+        self.access_token().await?;
         match serde_json::to_string(&self) {
             Ok(json) => Ok(json),
             Err(e) => Err(AuthError::Generic {
@@ -138,6 +140,7 @@ impl<'a> Auth<'a> for CCGAuth {
             }),
         }
     }
+
     fn base_api_url(&self) -> String {
         self.config.base_api_url().clone()
     }
@@ -164,6 +167,7 @@ async fn test_ccg_new() {
         box_subject_type,
         box_subject_id,
     );
+
     assert_eq!(ccg_auth.client_id, "client_id".to_owned());
     assert_eq!(ccg_auth.client_secret, "client_secret".to_owned());
     assert_eq!(ccg_auth.box_subject_type, SubjectType::Enterprise);
