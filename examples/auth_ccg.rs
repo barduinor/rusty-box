@@ -12,13 +12,13 @@ use std::env;
 #[tokio::main]
 async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
     dotenv::from_filename(".ccg.env").ok();
-    let config = Config::new();
 
     let client_id = env::var("CLIENT_ID").expect("CLIENT_ID must be set");
     let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set");
     let box_subject_type = SubjectType::Enterprise;
     let box_subject_id = env::var("BOX_ENTERPRISE_ID").expect("BOX_ENTERPRISE_ID must be set");
 
+    let config = Config::new();
     let auth = CCGAuth::new(
         config,
         client_id,
@@ -27,13 +27,13 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         box_subject_id,
     );
 
-    let mut client = BoxClient::new(Box::new(auth.clone()));
+    let mut client = BoxClient::new(Box::new(auth));
 
     let fields = vec![
-        // "id".to_string(),
-        // "type".to_string(),
-        // "name".to_string(),
-        // "login".to_string(),
+        "id".to_string(),
+        "type".to_string(),
+        "name".to_string(),
+        "login".to_string(),
     ];
 
     let me = users_api::me(&mut client, Some(fields.clone())).await;
