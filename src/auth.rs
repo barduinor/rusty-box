@@ -35,7 +35,20 @@ pub trait Auth<'a> {
     fn to_json(&self) -> Result<String, AuthError>;
     fn base_api_url(&self) -> String;
     fn user_agent(&self) -> String;
-    async fn auth_header(&mut self) -> Result<Headers, AuthError>;
+    // async fn auth_header(&mut self) -> Result<Headers, AuthError>;
+}
+
+impl dyn Auth<'_> {
+    pub async fn auth_header(&mut self) -> Result<Headers, AuthError> {
+        let mut header = Headers::new();
+
+        let header_name = "Authorization".to_string();
+        let header_value = format!("Bearer {}", self.access_token().await?);
+
+        header.insert(header_name, header_value);
+
+        Ok(header)
+    }
 }
 
 // implement debug

@@ -1,6 +1,6 @@
 use super::{Auth, AuthError};
+use crate::http_client::HttpError;
 use crate::http_client::{BaseHttpClient, Form, HttpClient};
-use crate::http_client::{Headers, HttpError};
 use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
@@ -140,17 +140,6 @@ impl<'a> Auth<'a> for CCGAuth {
     }
     fn base_api_url(&self) -> String {
         self.config.base_api_url().clone()
-    }
-
-    async fn auth_header(&mut self) -> Result<Headers, AuthError> {
-        let mut header = Headers::new();
-
-        let header_name = "Authorization".to_string();
-        let header_value = format!("Bearer {}", self.access_token().await?);
-
-        header.insert(header_name, header_value);
-
-        Ok(header)
     }
 
     fn user_agent(&self) -> String {
