@@ -1,5 +1,5 @@
 use crate::auth::{Auth, AuthError};
-use crate::http_client::HttpClient;
+use crate::http_client::{Headers, HttpClient};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -42,6 +42,18 @@ impl<'a> BoxClient<'a> {
             auth,
             http: HttpClient::default(),
         }
+    }
+
+    pub async fn headers(&mut self) -> Result<Headers, AuthError> {
+        let mut headers = Headers::new();
+
+        headers.insert("Accept".to_string(), "application/json".to_string());
+        headers.insert("Content-Type".to_string(), "application/json".to_string());
+
+        let auth_headers = self.auth.auth_header().await?;
+
+        headers.extend(auth_headers);
+        Ok(headers)
     }
 }
 

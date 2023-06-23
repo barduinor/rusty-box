@@ -1,6 +1,7 @@
-use std::collections::HashMap;
-
-use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
+use crate::{
+    config::Config, http_client::Headers,
+    rest_api::authorization::models::access_token::AccessToken,
+};
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
@@ -78,13 +79,15 @@ impl<'a> Auth<'a> for DeveloperToken {
         self.config.base_api_url().clone()
     }
 
-    async fn headers(&mut self) -> Result<HashMap<String, String>, AuthError> {
-        let mut headers = HashMap::new();
-        headers.insert(
-            "Authorization".to_owned(),
-            format!("Bearer {}", self.access_token().await?),
-        );
-        Ok(headers)
+    async fn auth_header(&mut self) -> Result<Headers, AuthError> {
+        let mut header = Headers::new();
+
+        let header_name = "Authorization".to_string();
+        let header_value = format!("Bearer {}", self.access_token().await?);
+
+        header.insert(header_name, header_value);
+
+        Ok(header)
     }
 }
 

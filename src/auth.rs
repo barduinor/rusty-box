@@ -1,8 +1,6 @@
-use std::collections::HashMap;
-
 use async_trait::async_trait;
 
-use crate::http_client;
+use crate::http_client::{self, Headers};
 
 pub mod auth_ccg;
 pub mod auth_developer;
@@ -36,7 +34,7 @@ pub trait Auth<'a> {
     async fn access_token(&mut self) -> Result<String, AuthError>;
     fn to_json(&self) -> Result<String, AuthError>;
     fn base_api_url(&self) -> String;
-    async fn headers(&mut self) -> Result<HashMap<String, String>, AuthError>;
+    async fn auth_header(&mut self) -> Result<Headers, AuthError>;
 }
 
 // implement debug

@@ -37,7 +37,7 @@ async fn main() -> Result<(), Error<users_api::GetUsersMeError>> {
         fields: Some(fields),
         ..Default::default()
     };
-    let result = users_api::users(&mut client, params).await;
+    let result = users_api::list(&mut client, params).await;
     // println!("Users: {result:#?}\n");
     print!("Users:\n");
 
