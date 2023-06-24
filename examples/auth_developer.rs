@@ -1,7 +1,7 @@
 // use cargo run --example users_main to run this file
 // use dotenv;
 
-use rusty_box::{
+use rustybox::{
     auth::{auth_developer::DeveloperToken, AuthError},
     box_client::BoxClient,
     config::Config,

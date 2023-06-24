@@ -2,7 +2,7 @@
 authors = [
     "Barduino <barduinor@gmail.com>",
 ]
-name = "rusty-box"
+name = "rustybox"
 version = "0.1.0"
 edition = "2021"
 
