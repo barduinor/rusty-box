@@ -98,7 +98,7 @@ where
     //         .await
     //         .expect("Failed to acquire lock")
     //         .as_ref()
-    //         .expect("RSpotify not authenticated")
+    //         .expect("rusty-box not authenticated")
     //         .auth_headers()
     // }
 

@@ -14,8 +14,8 @@ pub enum AuthError {
 
     /// The request was made, but the server returned an unsuccessful status
     /// code, such as 404 or 503. In some cases, the response may contain a
-    /// custom message from Spotify with more information, which can be
-    /// serialized into `rspotify_model::ApiError`.
+    /// custom message from Box.com with more information, which can be
+    /// serialized into `Box_model::ApiError`.
     #[error("status code {}", reqwest::Response::status(.0))]
     StatusCode(reqwest::Response),
 
