@@ -1,7 +1,18 @@
 [package]
+authors = [
+    "Barduino <barduinor@gmail.com>",
+]
 name = "rusty-box"
 version = "0.1.0"
 edition = "2021"
+
+license = "MIT"
+readme = "README.md"
+description = "Box.com API wrapper"
+homepage = "https://github.com/barduinor/box-rust-sdk"
+repository = "https://github.com/barduinor/box-rust-sdk"
+keywords = ["box.com", "api"]
+categories = ["api-bindings", "multimedia::audio"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -13,7 +24,7 @@ tokio = { version = "1.28.0", features = ["full"] }
 reqwest = { version = "0.11.6", features = ["multipart", "json"] }
 serde = "^1.0"
 serde_derive = "^1.0"
-serde_with = "3.0.0"
+serde_with = "2.3.3"
 serde_json = "^1.0"
 url = "^2.2"
 uuid = { version = "^1.0", features = ["serde"] }
