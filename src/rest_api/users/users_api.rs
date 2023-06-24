@@ -301,8 +301,7 @@ pub async fn get_users(
                     .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    ,
+                    .join(","),
             )]),
         };
     }
@@ -384,8 +383,7 @@ pub async fn get_users_id(
                     .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    ,
+                    .join(","),
             )]),
         };
     }
@@ -480,8 +478,7 @@ pub async fn post_users(
                     .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    ,
+                    .join(","),
             )]),
         };
     }
@@ -598,8 +595,7 @@ pub async fn put_users_id(
                     .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
-                    .join(",")
-                    ,
+                    .join(","),
             )]),
         };
     }

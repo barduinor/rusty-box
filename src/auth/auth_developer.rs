@@ -30,7 +30,7 @@ impl DeveloperToken {
     ) -> Self {
         let mut access_token = AccessToken::new();
         access_token.access_token = Some(developer_token);
-        
+
         DeveloperToken {
             config,
             access_token,
