@@ -1,6 +1,6 @@
 use super::o_auth2_error::OAuth2Error;
 
-/// struct for passing parameters to the method [`get_authorize`]
+// struct for passing parameters to the method [`get_authorize`]
 #[derive(Clone, Debug, Default)]
 pub struct GetAuthorizeParams {
     /// The type of response we'd like to receive.
@@ -15,7 +15,7 @@ pub struct GetAuthorizeParams {
     pub scope: Option<String>,
 }
 
-/// struct for passing parameters to the method [`post_oauth2_revoke`]
+// struct for passing parameters to the method [`post_oauth2_revoke`]
 #[derive(Clone, Debug, Default)]
 pub struct PostOauth2RevokeParams {
     /// The Client ID of the application requesting to revoke the access token.
@@ -26,7 +26,7 @@ pub struct PostOauth2RevokeParams {
     pub token: Option<String>,
 }
 
-/// struct for passing parameters to the method [`post_oauth2_token`]
+// struct for passing parameters to the method [`post_oauth2_token`]
 #[derive(Clone, Debug, Default)]
 pub struct PostOauth2TokenParams {
     /// The type of request being made, either using a client-side obtained authorization code, a refresh token, a JWT assertion, client credentials grant or another access token for the purpose of downscoping a token.
@@ -61,7 +61,7 @@ pub struct PostOauth2TokenParams {
     pub box_shared_link: Option<String>,
 }
 
-/// struct for passing parameters to the method [`post_oauth2_token_refresh`]
+// struct for passing parameters to the method [`post_oauth2_token_refresh`]
 #[derive(Clone, Debug, Default)]
 pub struct PostOauth2TokenRefreshParams {
     /// The type of request being made, in this case a refresh request.
@@ -74,7 +74,7 @@ pub struct PostOauth2TokenRefreshParams {
     pub refresh_token: String,
 }
 
-/// struct for typed errors of method [`get_authorize`]
+// struct for typed errors of method [`get_authorize`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAuthorizeError {
@@ -82,7 +82,7 @@ pub enum GetAuthorizeError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`post_oauth2_revoke`]
+// struct for typed errors of method [`post_oauth2_revoke`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PostOauth2RevokeError {
@@ -91,7 +91,7 @@ pub enum PostOauth2RevokeError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`post_oauth2_token`]
+// struct for typed errors of method [`post_oauth2_token`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PostOauth2TokenError {
@@ -100,7 +100,7 @@ pub enum PostOauth2TokenError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`post_oauth2_token_refresh`]
+// struct for typed errors of method [`post_oauth2_token_refresh`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PostOauth2TokenRefreshError {

@@ -67,7 +67,7 @@ pub struct GetUsersIdParams {
     pub fields: Option<Vec<String>>,
 }
 
-/// struct for passing parameters to the method [`get_users_me`]
+// struct for passing parameters to the method [`get_users_me`]
 #[derive(Clone, Debug, Default)]
 pub struct GetUsersMeParams {
     /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
@@ -122,7 +122,7 @@ pub enum GetUsersIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_users_me`]
+// struct for typed errors of method [`get_users_me`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUsersMeError {
