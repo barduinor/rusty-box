@@ -53,7 +53,7 @@ jobs:
         continue-on-error: true
         run: |
           cd target
-          for crate in doc/rustybox*; do
+          for crate in doc/rusty-box*; do
             echo ">> Checking in $crate"
             cargo deadlinks --check-http --dir "$crate"
           done
@@ -79,10 +79,10 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -p rustybox --all-targets -- -D warnings
+          args: -p rusty-box --all-targets -- -D warnings
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
           command: test
-          args: -p rustybox
+          args: -p rusty-box

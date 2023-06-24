@@ -18,7 +18,7 @@ use serde_json::Value;
 /// ```
 /// # #[tokio::main]
 /// # async fn main() {
-/// use rustybox::http_client::{HttpError, HttpClient, BaseHttpClient};
+/// use rusty_box::http_client::{HttpError, HttpClient, BaseHttpClient};
 ///
 /// let client = HttpClient::default();
 /// let response = client.get("wrongurl", None, &Default::default()).await;
@@ -27,7 +27,7 @@ use serde_json::Value;
 ///     Err(HttpError::Client(e)) => eprintln!("request failed: {}", e),
 ///     Err(HttpError::StatusCode(response)) => {
 ///         let code = response.status().as_u16();
-///         match response.json::<rustybox::rest_api::api::models::client_error::ClientError>().await {
+///         match response.json::<rusty_box::rest_api::api::models::client_error::ClientError>().await {
 ///             Ok(api_error) => eprintln!("status code {}: {:?}", code, api_error),
 ///             Err(_) => eprintln!("status code {}", code),
 ///         }

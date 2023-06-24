@@ -28,7 +28,7 @@ impl Default for Config {
             api_version: String::from("2.0"),
             max_retry_attempts: 5,
             chunk_upload_threads: 5,
-            user_agent: "box-rust-sdk/rustybox".to_owned(),
+            user_agent: "box-rust-sdk/rusty-box".to_owned(),
         }
     }
 }
@@ -101,7 +101,7 @@ mod tests {
         assert_eq!(config.max_retry_attempts, 5);
         assert_eq!(config.chunk_upload_threads, 5);
         assert_eq!(config.api_version, "2.0");
-        assert_eq!(config.user_agent, "box-rust-sdk/rustybox".to_owned());
+        assert_eq!(config.user_agent, "box-rust-sdk/rusty-box".to_owned());
     }
 
     #[test]

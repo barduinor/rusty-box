@@ -1,6 +1,6 @@
 /// Users API tests
 use pretty_assertions::assert_eq;
-use rustybox::{self, auth::AuthError, rest_api::users::users_api};
+use rusty_box::{self, auth::AuthError, rest_api::users::users_api};
 mod common;
 
 #[tokio::test]
@@ -43,7 +43,7 @@ async fn users_list() -> Result<(), AuthError> {
     assert!(user_0.login.is_some());
     assert_eq!(
         user_0.r#type,
-        rustybox::rest_api::users::models::user::RHashType::User
+        rusty_box::rest_api::users::models::user::RHashType::User
     );
     // assert_eq!(user_0.name.as_ref().unwrap(), "Box Admin"); // this will fail
 

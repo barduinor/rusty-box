@@ -1,3 +1,3 @@
 ## 0.1.0
 
-- rustybox first release
+- rusty-box first release

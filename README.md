@@ -3,4 +3,4 @@
 [![Crates.io](https://img.shields.io/crates/v/rspotify.svg)](https://crates.io/crates/rspotify)
 [![Docs](https://docs.rs/rspotify/badge.svg)](https://docs.rs/crate/rspotify/)
 
-# RustyBox
+# Rusty-Box

@@ -1,6 +1,6 @@
 use std::env;
 
-use rustybox::{
+use rusty_box::{
     auth::{
         auth_ccg::{CCGAuth, SubjectType},
         AuthError,

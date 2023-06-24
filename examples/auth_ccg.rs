@@ -1,7 +1,7 @@
 // use cargo run --example users_main to run this file
 // use dotenv;
 
-use rustybox::{
+use rusty_box::{
     auth::{
         auth_ccg::{CCGAuth, SubjectType},
         AuthError,
