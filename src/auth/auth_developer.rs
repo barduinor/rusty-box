@@ -30,14 +30,14 @@ impl DeveloperToken {
     ) -> Self {
         let mut access_token = AccessToken::new();
         access_token.access_token = Some(developer_token);
-        let dev_token = DeveloperToken {
-            config: config,
-            access_token: access_token,
+        
+        DeveloperToken {
+            config,
+            access_token,
             // expires_in: 3600,
             expires_by: Utc::now() + Duration::seconds(3600),
             // store_auth_callable: store_auth_callable,
-        };
-        dev_token
+        }
     }
 
     pub fn is_expired(&self) -> bool {
@@ -76,7 +76,7 @@ impl<'a> Auth<'a> for DeveloperToken {
     }
 
     fn base_api_url(&self) -> String {
-        self.config.base_api_url().clone()
+        self.config.base_api_url()
     }
 
     fn user_agent(&self) -> String {
@@ -95,6 +95,6 @@ mod tests {
         let access_token = dev_token.access_token().await.unwrap_or_default();
         assert_eq!(access_token, "test");
         assert!(dev_token.expires_by <= Utc::now() + Duration::seconds(3600));
-        assert!(dev_token.is_expired() == false);
+        assert!(!dev_token.is_expired());
     }
 }

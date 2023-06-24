@@ -234,7 +234,6 @@ pub async fn list(
         .fields
         .unwrap_or(vec![])
         .into_iter()
-        .map(|p| p.to_string())
         .collect::<Vec<String>>()
         .join(",")
         .to_string();
@@ -292,18 +291,18 @@ pub async fn get_users(
         local_var_req_builder = match "csv" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("fields".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "fields",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
                     .join(",")
-                    .to_string(),
+                    ,
             )]),
         };
     }
@@ -375,18 +374,18 @@ pub async fn get_users_id(
         local_var_req_builder = match "csv" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("fields".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "fields",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
                     .join(",")
-                    .to_string(),
+                    ,
             )]),
         };
     }
@@ -433,7 +432,6 @@ pub async fn me(
     let fields = fields
         .unwrap_or(vec![])
         .into_iter()
-        .map(|p| p.to_string())
         .collect::<Vec<String>>()
         .join(",")
         .to_string();
@@ -472,18 +470,18 @@ pub async fn post_users(
         local_var_req_builder = match "csv" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("fields".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "fields",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
                     .join(",")
-                    .to_string(),
+                    ,
             )]),
         };
     }
@@ -590,18 +588,18 @@ pub async fn put_users_id(
         local_var_req_builder = match "csv" {
             "multi" => local_var_req_builder.query(
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| ("fields".to_owned(), p.to_string()))
                     .collect::<Vec<(std::string::String, std::string::String)>>(),
             ),
             _ => local_var_req_builder.query(&[(
                 "fields",
                 &local_var_str
-                    .into_iter()
+                    .iter()
                     .map(|p| p.to_string())
                     .collect::<Vec<String>>()
                     .join(",")
-                    .to_string(),
+                    ,
             )]),
         };
     }

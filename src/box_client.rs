@@ -78,7 +78,7 @@ async fn test_create_client_dev() {
     let mut client = BoxClient::new(Box::new(auth));
     let access_token = client.auth.access_token().await;
     println!("{:#?}", client);
-    assert_eq!(access_token.is_ok(), true);
+    assert!(access_token.is_ok());
 }
 
 #[tokio::test]
@@ -101,5 +101,5 @@ async fn test_create_client_ccg() {
     let mut client = BoxClient::new(Box::new(auth));
     let access_token = client.auth.access_token().await;
     // println!("{:#?}", client.auth);
-    assert_eq!(access_token.is_ok(), true);
+    assert!(access_token.is_ok());
 }

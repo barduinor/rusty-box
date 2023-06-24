@@ -41,7 +41,7 @@ async fn main() -> Result<(), AuthError> {
         ..Default::default()
     };
     let result = users_api::list(&mut client, Some(params)).await;
-    print!("Users:\n");
+    println!("Users:");
 
     let user_list = match result {
         Ok(users) => users,

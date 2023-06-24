@@ -52,11 +52,11 @@ impl CCGAuth {
         box_subject_id: String,
     ) -> Self {
         CCGAuth {
-            config: config,
-            client_id: client_id,
-            client_secret: client_secret,
-            box_subject_type: box_subject_type,
-            box_subject_id: box_subject_id,
+            config,
+            client_id,
+            client_secret,
+            box_subject_type,
+            box_subject_id,
             access_token: AccessToken::new(),
             expires_by: Utc::now(),
             client: HttpClient::default(),
@@ -142,7 +142,7 @@ impl<'a> Auth<'a> for CCGAuth {
     }
 
     fn base_api_url(&self) -> String {
-        self.config.base_api_url().clone()
+        self.config.base_api_url()
     }
 
     fn user_agent(&self) -> String {
@@ -194,9 +194,9 @@ async fn test_ccg_request() {
     let access_token = auth.access_token().await;
     // println!("access_token: {:#?}", access_token);
 
-    assert_eq!(access_token.is_ok(), true);
-    assert_eq!(auth.is_expired(), false);
-    assert_eq!(auth.access_token.access_token.is_some(), true);
+    assert!(access_token.is_ok());
+    assert!(!auth.is_expired());
+    assert!(auth.access_token.access_token.is_some());
     assert_eq!(
         access_token.unwrap(),
         auth.access_token.access_token.unwrap()
