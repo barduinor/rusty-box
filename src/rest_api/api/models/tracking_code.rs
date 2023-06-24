@@ -10,8 +10,6 @@
 
 /// TrackingCode : Tracking codes allow an admin to generate reports from the admin console and assign an attribute to a specific group of users. This setting must be enabled for an enterprise before it can be used.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct TrackingCode {
     /// `tracking_code`
@@ -48,4 +46,3 @@ impl Default for RHashType {
         Self::TrackingCode
     }
 }
-

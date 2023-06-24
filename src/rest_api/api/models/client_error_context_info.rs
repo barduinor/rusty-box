@@ -10,8 +10,6 @@
 
 /// ClientErrorContextInfo : A free-form object that contains additional context about the error. The possible fields are defined on a per-endpoint basis. `message` is only one example.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct ClientErrorContextInfo {
     /// More details on the error.
@@ -22,10 +20,6 @@ pub struct ClientErrorContextInfo {
 impl ClientErrorContextInfo {
     /// A free-form object that contains additional context about the error. The possible fields are defined on a per-endpoint basis. `message` is only one example.
     pub fn new() -> ClientErrorContextInfo {
-        ClientErrorContextInfo {
-            message: None,
-        }
+        ClientErrorContextInfo { message: None }
     }
 }
-
-

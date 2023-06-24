@@ -10,8 +10,6 @@
 
 /// OAuth2Error : An OAuth 2.0 error
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct OAuth2Error {
     /// The type of the error returned.
@@ -31,5 +29,3 @@ impl OAuth2Error {
         }
     }
 }
-
-

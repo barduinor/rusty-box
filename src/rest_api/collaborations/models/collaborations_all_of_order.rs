@@ -10,8 +10,6 @@
 
 /// CollaborationsAllOfOrder : The order in which a pagination is ordered
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct CollaborationsAllOfOrder {
     /// The field to order by
@@ -46,4 +44,3 @@ impl Default for Direction {
         Self::Asc
     }
 }
-

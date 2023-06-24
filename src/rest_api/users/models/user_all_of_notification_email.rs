@@ -10,8 +10,6 @@
 
 /// UserAllOfNotificationEmail : An alternate notification email address to which email notifications are sent. When it's confirmed, this will be the email address to which notifications are sent instead of to the primary email address.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct UserAllOfNotificationEmail {
     /// The email address to send the notifications to.
@@ -31,5 +29,3 @@ impl UserAllOfNotificationEmail {
         }
     }
 }
-
-

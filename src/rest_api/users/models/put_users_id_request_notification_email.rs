@@ -10,8 +10,6 @@
 
 /// PutUsersIdRequestNotificationEmail : An alternate notification email address to which email notifications are sent. When it's confirmed, this will be the email address to which notifications are sent instead of to the primary email address.  Set this value to `null` to remove the notification email.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct PutUsersIdRequestNotificationEmail {
     /// The email address to send the notifications to.
@@ -22,10 +20,6 @@ pub struct PutUsersIdRequestNotificationEmail {
 impl PutUsersIdRequestNotificationEmail {
     /// An alternate notification email address to which email notifications are sent. When it's confirmed, this will be the email address to which notifications are sent instead of to the primary email address.  Set this value to `null` to remove the notification email.
     pub fn new() -> PutUsersIdRequestNotificationEmail {
-        PutUsersIdRequestNotificationEmail {
-            email: None,
-        }
+        PutUsersIdRequestNotificationEmail { email: None }
     }
 }
-
-
