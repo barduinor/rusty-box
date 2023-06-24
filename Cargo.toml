@@ -12,7 +12,7 @@ description = "Box.com API wrapper"
 homepage = "https://github.com/barduinor/box-rust-sdk"
 repository = "https://github.com/barduinor/box-rust-sdk"
 categories = ["api-bindings"]
-keywords=["box.com", "box-platform","box-api"]
+keywords=["box", "box-platform","box-api"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
