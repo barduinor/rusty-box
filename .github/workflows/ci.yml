@@ -80,6 +80,11 @@ jobs:
           echo "${{secrets.CCG_ENV}}"
           echo "${{secrets.CCG_ENV}}" | base64 -d > .ccg.env
           
+      - name: Build sources
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: -p rusty-box --all-targets
 
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
