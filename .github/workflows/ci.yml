@@ -75,15 +75,16 @@ jobs:
           override: true
           components: clippy
 
+      - name: Create .ccg.env from secrets
+        run: |
+          echo "{secrets.$CCG_ENV}"
+          echo "{secrets.$CCG_ENV}" | base64 -d -o .ccg.env
+
       - name: Run cargo clippy
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -p rusty-box --all-targets -- -D warnings
-
-      - name: Create .ccg.env from secrets
-        run: |
-          echo "{$CCG_ENV}" | base64 -d -o .ccg.env
+          args: -p rusty-box --all-targets -- -D warnings --no-deps
 
       - name: Run cargo test
         uses: actions-rs/cargo@v1
