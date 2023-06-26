@@ -25,7 +25,8 @@ use crate::rest_api::api::models::api_configuration_old::Configuration;
 use crate::rest_api::api::models::client_error::ClientError;
 use crate::rest_api::api::models::session_termination_message::SessionTerminationMessage;
 
-/// struct for passing parameters to the method [`delete_users_id`]
+/// struct for passing parameters to the method
+/// DEPRECATED
 #[derive(Clone, Debug, Default)]
 pub struct DeleteUsersIdParams {
     /// The ID of the user.
@@ -58,7 +59,8 @@ pub struct GetUsersParams {
     pub marker: Option<String>,
 }
 
-/// struct for passing parameters to the method [`get_users_id`]
+/// struct for passing parameters to the method
+/// DEPRECATED
 #[derive(Clone, Debug, Default)]
 pub struct GetUsersIdParams {
     /// The ID of the user.
@@ -67,14 +69,16 @@ pub struct GetUsersIdParams {
     pub fields: Option<Vec<String>>,
 }
 
-// struct for passing parameters to the method [`get_users_me`]
+/// struct for passing parameters to the method
+/// DEPRECATED
 #[derive(Clone, Debug, Default)]
 pub struct GetUsersMeParams {
     /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
     pub fields: Option<Vec<String>>,
 }
 
-/// struct for passing parameters to the method [`post_users`]
+/// struct for passing parameters to the method
+/// DEPRECATED
 #[derive(Clone, Debug, Default)]
 pub struct PostUsersParams {
     /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
@@ -88,7 +92,8 @@ pub struct PostUsersTerminateSessionsParams {
     pub post_users_terminate_sessions_request: Option<PostUsersTerminateSessionsRequest>,
 }
 
-/// struct for passing parameters to the method [`put_users_id`]
+/// struct for passing parameters to the method
+/// DEPRECATED
 #[derive(Clone, Debug, Default)]
 pub struct PutUsersIdParams {
     /// The ID of the user.
@@ -98,7 +103,8 @@ pub struct PutUsersIdParams {
     pub put_users_id_request: Option<PutUsersIdRequest>,
 }
 
-/// struct for typed errors of method [`delete_users_id`]
+/// struct for typed errors of method
+/// DEPRECATED
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteUsersIdError {
@@ -114,7 +120,8 @@ pub enum GetUsersError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_users_id`]
+/// struct for typed errors of method
+/// DEPRECATED
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUsersIdError {
@@ -130,7 +137,8 @@ pub enum GetUsersMeError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`post_users`]
+/// struct for typed errors of method
+/// DEPRECATED
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PostUsersError {
@@ -152,7 +160,8 @@ pub enum PostUsersTerminateSessionsError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`put_users_id`]
+/// struct for typed errors of method
+/// DEPRECATED
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PutUsersIdError {
