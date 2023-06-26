@@ -135,5 +135,8 @@ async fn users_create() -> Result<(), AuthError> {
     //     "test-external-app-user-id"
     // );
 
+    //Delete User
+    users_api::delete(&mut client, &new_user.id.unwrap(), None, None).await?;
+
     Ok(())
 }

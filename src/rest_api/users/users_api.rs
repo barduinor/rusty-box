@@ -14,7 +14,6 @@ use std::collections::HashMap;
 use super::models::post_users_request::PostUsersRequest;
 use super::models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
 use super::models::put_users_id_request::PutUsersIdRequest;
-use super::models::user::User;
 use super::models::user_full::UserFull;
 use super::models::users::Users;
 
@@ -163,63 +162,34 @@ pub enum PutUsersIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// Deletes a user. By default this will fail if the user still owns any content. Move their owned content first before proceeding, or use the `force` field to delete the user and their files.
-pub async fn delete_users_id(
-    configuration: &Configuration,
-    params: DeleteUsersIdParams,
-) -> Result<(), Error<DeleteUsersIdError>> {
-    let local_var_configuration = configuration;
+/// Deletes a user.
+/// By default this will fail if the user still owns any content.
+/// Move their owned content first before proceeding, or use the `force` field to delete the user and their files.
+pub async fn delete(
+    client: &mut BoxClient<'_>,
+    user_id: &str,
+    notify: Option<bool>,
+    force: Option<bool>,
+) -> Result<(), AuthError> {
+    let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
+    let headers = client.headers().await?;
 
-    // unbox the parameters
-    let user_id = params.user_id;
-    let notify = params.notify;
-    let force = params.force;
+    //TODO: these need to go in the query string
+    let value = serde_json::json!({
+        "notify": notify,
+        "force": force,
+    });
 
-    let local_var_client = &local_var_configuration.client;
-
-    let local_var_uri_str = format!(
-        "{}/users/{user_id}",
-        local_var_configuration.base_path,
-        user_id = urlencode(user_id)
-    );
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::DELETE, local_var_uri_str.as_str());
-
-    if let Some(ref local_var_str) = notify {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("notify", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = force {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("force", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
-    if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-        local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-    };
-
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
-
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
-
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        Ok(())
-    } else {
-        let local_var_entity: Option<DeleteUsersIdError> =
-            serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
+    let resp = client.http.delete(&uri, Some(&headers), &value).await;
+    match resp {
+        Ok(_) => Ok(()),
+        Err(e) => Err(AuthError::RequestError(e)),
     }
 }
+// pub async fn delete_users_id(
+//     configuration: &Configuration,
+//     params: DeleteUsersIdParams,
+// ) -> Result<(), Error<DeleteUsersIdError>> {}
 
 /// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  
 /// The application and the authenticated user need to have the permission to look up users in the entire enterprise.
@@ -371,6 +341,7 @@ pub async fn create(
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
+    // TODO: Implement query fields on the post request
     // let fields = fields
     //     .unwrap_or(vec![])
     //     .into_iter()
@@ -394,68 +365,10 @@ pub async fn create(
         Err(e) => Err(AuthError::RequestError(e)),
     }
 }
-pub async fn post_users(
-    configuration: &Configuration,
-    params: PostUsersParams,
-) -> Result<User, Error<PostUsersError>> {
-    let local_var_configuration = configuration;
-
-    // unbox the parameters
-    let fields = params.fields;
-    let post_users_request = params.post_users_request;
-
-    let local_var_client = &local_var_configuration.client;
-
-    let local_var_uri_str = format!("{}/users", local_var_configuration.base_path);
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
-
-    if let Some(ref local_var_str) = fields {
-        local_var_req_builder = match "csv" {
-            "multi" => local_var_req_builder.query(
-                &local_var_str
-                    .iter()
-                    .map(|p| ("fields".to_owned(), p.to_string()))
-                    .collect::<Vec<(std::string::String, std::string::String)>>(),
-            ),
-            _ => local_var_req_builder.query(&[(
-                "fields",
-                &local_var_str
-                    .iter()
-                    .map(|p| p.to_string())
-                    .collect::<Vec<String>>()
-                    .join(","),
-            )]),
-        };
-    }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
-    if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-        local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-    };
-    local_var_req_builder = local_var_req_builder.json(&post_users_request);
-
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
-
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
-
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<PostUsersError> =
-            serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
-}
+// pub async fn post_users(
+//     configuration: &Configuration,
+//     params: PostUsersParams,
+// ) -> Result<User, Error<PostUsersError>> {}
 
 /// Validates the roles and permissions of the user, and creates asynchronous jobs to terminate the user's sessions. Returns the status for the POST request.
 pub async fn post_users_terminate_sessions(
