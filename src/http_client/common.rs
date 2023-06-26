@@ -34,6 +34,7 @@ pub trait BaseHttpClient: Send + Default + Clone + fmt::Debug {
         &self,
         url: &str,
         headers: Option<&Headers>,
+        // query: &Query,
         payload: &Value,
     ) -> Result<String, Self::Error>;
 

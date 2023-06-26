@@ -328,11 +328,11 @@ pub async fn id(
 //     configuration: &Configuration,
 //     params: GetUsersIdParams,
 // ) -> Result<UserFull, Error<GetUsersIdError>> {}
+
 /// Retrieves information about the user who is currently authenticated.  
 /// In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  
 /// In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  
 /// Use the `As-User` header to change who this API call is made on behalf of.
-
 pub async fn me(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
@@ -360,7 +360,40 @@ pub async fn me(
     }
 }
 
-/// Creates a new managed user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
+/// Creates a new managed user in an enterprise.
+/// This endpoint is only available to users and applications with the right admin permissions.
+
+pub async fn create(
+    client: &mut BoxClient<'_>,
+    user: PostUsersRequest,
+    // fields: Option<Vec<String>>,
+) -> Result<UserFull, AuthError> {
+    let uri = client.auth.base_api_url() + "/users";
+    let headers = client.headers().await?;
+
+    // let fields = fields
+    //     .unwrap_or(vec![])
+    //     .into_iter()
+    //     .collect::<Vec<String>>()
+    //     .join(",")
+    //     .to_string();
+
+    // let mut payload = HashMap::new();
+    // payload.insert("fields", fields.as_str());
+
+    // convert the postusersrequest to json
+    let value_json = serde_json::to_string(&user)?;
+    let value = serde_json::from_str(&value_json)?;
+
+    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    match resp {
+        Ok(res) => {
+            let user = serde_json::from_str::<UserFull>(&res)?;
+            Ok(user)
+        }
+        Err(e) => Err(AuthError::RequestError(e)),
+    }
+}
 pub async fn post_users(
     configuration: &Configuration,
     params: PostUsersParams,

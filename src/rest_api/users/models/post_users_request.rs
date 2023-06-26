@@ -111,7 +111,7 @@ impl PostUsersRequest {
     }
 }
 
-/// The user’s enterprise role
+/// The user's enterprise role
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
 pub enum Role {
     #[serde(rename = "coadmin")]
