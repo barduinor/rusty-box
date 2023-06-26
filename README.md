@@ -12,3 +12,6 @@ width=40%;>
 [![Docs](https://docs.rs/rusty-box/badge.svg)](https://docs.rs/crate/rusty-box/)
 
 ---
+
+
+[CI](https://github.com/barduinor/rusty-box/actions/workflows/ci.yml/badge.svg)
