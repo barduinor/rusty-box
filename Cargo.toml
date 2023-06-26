@@ -9,8 +9,8 @@ edition = "2021"
 license = "MIT"
 readme = "README.md"
 description = "Box.com API wrapper"
-homepage = "https://github.com/barduinor/box-rust-sdk"
-repository = "https://github.com/barduinor/box-rust-sdk"
+homepage = "https://github.com/barduinor/rusty-box"
+repository = "https://github.com/barduinor/rusty-box"
 categories = ["api-bindings"]
 keywords=["box", "box-platform","box-api"]
 
