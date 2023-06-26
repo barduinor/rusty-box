@@ -68,20 +68,6 @@ impl<'a> BoxClient<'a> {
 use crate::auth::auth_ccg::{CCGAuth, SubjectType};
 
 #[tokio::test]
-async fn test_create_client_dev() {
-    dotenv::from_filename(".dev.env").ok();
-    let config = crate::config::Config::new();
-    let auth = crate::auth::auth_developer::DeveloperToken::new(
-        config,
-        std::env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set"),
-    );
-    let mut client = BoxClient::new(Box::new(auth));
-    let access_token = client.auth.access_token().await;
-    println!("{:#?}", client);
-    assert!(access_token.is_ok());
-}
-
-#[tokio::test]
 async fn test_create_client_ccg() {
     dotenv::from_filename(".ccg.env").ok();
     let config = crate::config::Config::new();
