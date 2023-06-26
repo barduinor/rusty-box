@@ -45,7 +45,7 @@ jobs:
         run: cargo install cargo-deadlinks
 
       - name: Build and Check
-        run: RUSTDOCFLAGS='-D warnings' cargo doc
+        run: RUSTDOCFLAGS='-D warnings' cargo doc -p rusty-box --no-deps 
 
       - name: Look for Dead Links
         # We don't enforce deadlinks in the CI because it may print various
@@ -59,7 +59,7 @@ jobs:
           done
 
   test:
-    name: Test and Lint for each Client
+    name: Test and Lint
     runs-on: ubuntu-latest
     env:
       RUST_BACKTRACE: 1
