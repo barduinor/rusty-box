@@ -1,6 +1,7 @@
 /// Users API tests
 use pretty_assertions::assert_eq;
 use rusty_box::rest_api::users::models::post_users_request;
+use rusty_box::rest_api::users::models::put_users_id_request::PutUsersIdRequest;
 use rusty_box::rest_api::users::models::user_full;
 use rusty_box::{self, auth::AuthError, rest_api::users::users_api};
 mod common;
@@ -137,6 +138,57 @@ async fn users_create() -> Result<(), AuthError> {
 
     //Delete User
     users_api::delete(&mut client, &new_user.id.unwrap(), None, None).await?;
+
+    Ok(())
+}
+
+#[tokio::test]
+async fn users_update() -> Result<(), AuthError> {
+    let mut client = common::box_client::get_box_client()?;
+
+    let new_user_request = post_users_request::PostUsersRequest {
+        name: "Test User To Update".to_string(),
+        login: Some("test.user.to.update@gmail.local".to_string()),
+        is_platform_access_only: Some(false),
+        role: Some(post_users_request::Role::Coadmin),
+        language: Some("en".to_string()),
+        is_sync_enabled: Some(true),
+        job_title: Some("Test Job Title".to_string()),
+        phone: Some("555-555-5555".to_string()),
+        address: Some("123 Test St".to_string()),
+        space_amount: Some(1073741824),
+        // tracking_codes: Some(vec!["test-tracking-code".to_string()]),
+        can_see_managed_users: Some(true),
+        timezone: Some("America/Los_Angeles".to_string()),
+        is_external_collab_restricted: Some(false),
+        is_exempt_from_device_limits: Some(false),
+        is_exempt_from_login_verification: Some(false),
+        status: Some(post_users_request::Status::Active),
+        external_app_user_id: Some("test-external-app-user-id".to_string()),
+
+        ..Default::default()
+    };
+
+    let new_user = users_api::create(&mut client, new_user_request).await?;
+
+    let new_user_updates = PutUsersIdRequest {
+        name: Some("Test User Updated".to_string()),
+        address: Some("456 Test St".to_string()),
+        ..Default::default()
+    };
+
+    let updated_user =
+        users_api::update(&mut client, &new_user.id.unwrap(), new_user_updates).await?;
+
+    assert_eq!(updated_user.name.unwrap(), "Test User Updated");
+    assert_eq!(updated_user.address.unwrap(), "456 Test St");
+    assert_eq!(
+        updated_user.login.unwrap(),
+        "test.user.to.update@gmail.local".to_string()
+    );
+
+    //Delete User
+    users_api::delete(&mut client, &updated_user.id.unwrap(), None, None).await?;
 
     Ok(())
 }
