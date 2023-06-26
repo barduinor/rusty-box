@@ -81,6 +81,10 @@ jobs:
           command: clippy
           args: -p rusty-box --all-targets -- -D warnings
 
+      - name: Create .ccg.env from secrets
+        run: |
+          echo "{$GITHUB_TOKEN}" | base64 -d -o .ccg.env
+
       - name: Run cargo test
         uses: actions-rs/cargo@v1
         with:
