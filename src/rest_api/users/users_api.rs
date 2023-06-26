@@ -292,73 +292,42 @@ pub async fn list(
 //     params: GetUsersParams,
 // ) -> Result<Users, Error<GetUsersError>> {}
 
-/// Retrieves information about a user in the enterprise.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.  This endpoint also returns a limited set of information for external users who are collaborated on content owned by the enterprise for authenticated users with the right scopes. In this case, disallowed fields will return null instead.
-pub async fn get_users_id(
-    configuration: &Configuration,
-    params: GetUsersIdParams,
-) -> Result<UserFull, Error<GetUsersIdError>> {
-    let local_var_configuration = configuration;
+/// Retrieves information about a user in the enterprise.  
+/// The application and the authenticated user need to have the permission to look up users in the entire enterprise.  
+/// This endpoint also returns a limited set of information for external users who are collaborated on content owned by the enterprise for authenticated users with the right scopes.
+/// In this case, disallowed fields will return null instead.
+pub async fn id(
+    client: &mut BoxClient<'_>,
+    user_id: &str,
+    fields: Option<Vec<String>>,
+) -> Result<UserFull, AuthError> {
+    let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
+    let headers = client.headers().await?;
 
-    // unbox the parameters
-    let user_id = params.user_id;
-    let fields = params.fields;
+    let fields = fields
+        .unwrap_or(vec![])
+        .into_iter()
+        .collect::<Vec<String>>()
+        .join(",")
+        .to_string();
 
-    let local_var_client = &local_var_configuration.client;
+    let mut payload = HashMap::new();
+    payload.insert("fields", fields.as_str());
 
-    let local_var_uri_str = format!(
-        "{}/users/{user_id}",
-        local_var_configuration.base_path,
-        user_id = urlencode(user_id)
-    );
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
-
-    if let Some(ref local_var_str) = fields {
-        local_var_req_builder = match "csv" {
-            "multi" => local_var_req_builder.query(
-                &local_var_str
-                    .iter()
-                    .map(|p| ("fields".to_owned(), p.to_string()))
-                    .collect::<Vec<(std::string::String, std::string::String)>>(),
-            ),
-            _ => local_var_req_builder.query(&[(
-                "fields",
-                &local_var_str
-                    .iter()
-                    .map(|p| p.to_string())
-                    .collect::<Vec<String>>()
-                    .join(","),
-            )]),
-        };
-    }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
-    if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-        local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-    };
-
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
-
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
-
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<GetUsersIdError> =
-            serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
+    let resp = client.http.get(&uri, Some(&headers), &payload).await;
+    match resp {
+        Ok(res) => {
+            let user = serde_json::from_str::<UserFull>(&res)?;
+            Ok(user)
+        }
+        Err(e) => Err(AuthError::RequestError(e)),
     }
 }
 
+// pub async fn get_users_id(
+//     configuration: &Configuration,
+//     params: GetUsersIdParams,
+// ) -> Result<UserFull, Error<GetUsersIdError>> {}
 /// Retrieves information about the user who is currently authenticated.  
 /// In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  
 /// In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  
@@ -503,7 +472,8 @@ pub async fn post_users_terminate_sessions(
     }
 }
 
-/// Updates a managed or app user in an enterprise. This endpoint is only available to users and applications with the right admin permissions.
+/// Updates a managed or app user in an enterprise.
+/// This endpoint is only available to users and applications with the right admin permissions.
 pub async fn put_users_id(
     configuration: &Configuration,
     params: PutUsersIdParams,

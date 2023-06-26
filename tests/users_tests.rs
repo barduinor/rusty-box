@@ -49,3 +49,31 @@ async fn users_list() -> Result<(), AuthError> {
 
     Ok(())
 }
+
+#[tokio::test]
+async fn users_get_by_id() -> Result<(), AuthError> {
+    let mut client = common::box_client::get_box_client()?;
+
+    let me = users_api::me(&mut client, None).await?;
+
+    let user_id = me.id.unwrap();
+
+    let fields = vec![
+        "id".to_string(),
+        "type".to_string(),
+        "name".to_string(),
+        "login".to_string(),
+    ];
+
+    let user = users_api::id(&mut client, &user_id, Some(fields)).await?;
+
+    assert!(user.id.is_some());
+    assert!(user.name.is_some());
+    assert!(user.login.is_some());
+    assert_eq!(
+        user.r#type,
+        rusty_box::rest_api::users::models::user_full::RHashType::User
+    );
+
+    Ok(())
+}
