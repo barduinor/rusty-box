@@ -38,6 +38,8 @@ async fn main() -> Result<(), AuthError> {
     ];
     let params = users_api::GetUsersParams {
         fields: Some(fields),
+        limit: Some(100),
+        // filter_term: Some("admin".to_string()),
         ..Default::default()
     };
     let result = users_api::list(&mut client, Some(params)).await;

@@ -37,10 +37,11 @@ pub struct DeleteUsersIdParams {
     pub force: Option<bool>,
 }
 
-/// struct for passing parameters to the method [`get_users`]
+/// struct for passing parameters to the method [`list`]
 #[derive(Clone, Debug, Default)]
 pub struct GetUsersParams {
-    /// Limits the results to only users who's `name` or `login` start with the search term.  For externally managed users, the search term needs to completely match the in order to find the user, and it will only return one user at a time.
+    /// Limits the results to only users who's `name` or `login` start with the search term.  
+    /// For externally managed users, the search term needs to completely match the in order to find the user, and it will only return one user at a time.
     pub filter_term: Option<String>,
     /// Limits the results to the kind of user specified.  * `all` returns every kind of user for whom the   `login` or `name` partially matches the   `filter_term`. It will only return an external user   if the login matches the `filter_term` completely,   and in that case it will only return that user. * `managed` returns all managed and app users for whom   the `login` or `name` partially matches the   `filter_term`. * `external` returns all external users for whom the   `login` matches the `filter_term` exactly.
     pub user_type: Option<String>,
@@ -106,7 +107,7 @@ pub enum DeleteUsersIdError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`get_users`]
+/// struct for typed errors of method [`list`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetUsersError {
@@ -229,8 +230,13 @@ pub async fn list(
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
+    let params = params.unwrap_or_default();
+
+    let filter_term = params.filter_term.unwrap_or_default();
+    let user_type = params.user_type.unwrap_or_default();
+    let external_app_user_id = params.external_app_user_id.unwrap_or_default();
+
     let fields = params
-        .unwrap_or_default()
         .fields
         .unwrap_or(vec![])
         .into_iter()
@@ -238,8 +244,37 @@ pub async fn list(
         .join(",")
         .to_string();
 
+    let offset = params.offset.unwrap_or_default().to_string();
+    let limit = params.limit.unwrap_or_default().to_string();
+    let usemarker = params.usemarker.unwrap_or_default().to_string();
+    let marker = params.marker.unwrap_or_default().to_string();
+
     let mut payload = HashMap::new();
-    payload.insert("fields", fields.as_str());
+
+    if filter_term != String::default() {
+        payload.insert("filter_term", filter_term.as_str());
+    }
+    if user_type != String::default() {
+        payload.insert("user_type", user_type.as_str());
+    }
+    if external_app_user_id != String::default() {
+        payload.insert("external_app_user_id", external_app_user_id.as_str());
+    }
+    if fields != String::default() {
+        payload.insert("fields", fields.as_str());
+    }
+    if offset != "0" {
+        payload.insert("offset", offset.as_str());
+    }
+    if limit != "0" {
+        payload.insert("limit", limit.as_str());
+    }
+    if usemarker != String::default() {
+        payload.insert("usemarker", usemarker.as_str());
+    }
+    if marker != String::default() {
+        payload.insert("marker", marker.as_str());
+    }
 
     let resp = client.http.get(&uri, Some(&headers), &payload).await;
 
@@ -252,101 +287,10 @@ pub async fn list(
     }
 }
 
-/// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.
-pub async fn get_users(
-    configuration: &Configuration,
-    params: GetUsersParams,
-) -> Result<Users, Error<GetUsersError>> {
-    let local_var_configuration = configuration;
-
-    // unbox the parameters
-    let filter_term = params.filter_term;
-    let user_type = params.user_type;
-    let external_app_user_id = params.external_app_user_id;
-    let fields = params.fields;
-    let offset = params.offset;
-    let limit = params.limit;
-    let usemarker = params.usemarker;
-    let marker = params.marker;
-
-    let local_var_client = &local_var_configuration.client;
-
-    let local_var_uri_str = format!("{}/users", local_var_configuration.base_path);
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::GET, local_var_uri_str.as_str());
-
-    if let Some(ref local_var_str) = filter_term {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("filter_term", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = user_type {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("user_type", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = external_app_user_id {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("external_app_user_id", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = fields {
-        local_var_req_builder = match "csv" {
-            "multi" => local_var_req_builder.query(
-                &local_var_str
-                    .iter()
-                    .map(|p| ("fields".to_owned(), p.to_string()))
-                    .collect::<Vec<(std::string::String, std::string::String)>>(),
-            ),
-            _ => local_var_req_builder.query(&[(
-                "fields",
-                &local_var_str
-                    .iter()
-                    .map(|p| p.to_string())
-                    .collect::<Vec<String>>()
-                    .join(","),
-            )]),
-        };
-    }
-    if let Some(ref local_var_str) = offset {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("offset", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = limit {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("limit", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = usemarker {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("usemarker", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_str) = marker {
-        local_var_req_builder =
-            local_var_req_builder.query(&[("marker", &local_var_str.to_string())]);
-    }
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
-    if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-        local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-    };
-
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
-
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
-
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<GetUsersError> = serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
-}
+// pub async fn get_users(
+//     configuration: &Configuration,
+//     params: GetUsersParams,
+// ) -> Result<Users, Error<GetUsersError>> {}
 
 /// Retrieves information about a user in the enterprise.  The application and the authenticated user need to have the permission to look up users in the entire enterprise.  This endpoint also returns a limited set of information for external users who are collaborated on content owned by the enterprise for authenticated users with the right scopes. In this case, disallowed fields will return null instead.
 pub async fn get_users_id(
