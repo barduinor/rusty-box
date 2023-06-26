@@ -370,7 +370,9 @@ pub async fn create(
 //     params: PostUsersParams,
 // ) -> Result<User, Error<PostUsersError>> {}
 
-/// Validates the roles and permissions of the user, and creates asynchronous jobs to terminate the user's sessions. Returns the status for the POST request.
+/// Validates the roles and permissions of the user,
+/// and creates asynchronous jobs to terminate the user's sessions.
+/// Returns the status for the POST request.
 pub async fn post_users_terminate_sessions(
     configuration: &Configuration,
     params: PostUsersTerminateSessionsParams,
