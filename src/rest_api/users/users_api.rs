@@ -22,10 +22,7 @@ use super::models::users::Users;
 use crate::auth::AuthError;
 use crate::box_client::BoxClient;
 use crate::http_client::BaseHttpClient;
-use crate::rest_api::api::api_base::*;
-use crate::rest_api::api::models::api_configuration_old::Configuration;
 use crate::rest_api::api::models::client_error::ClientError;
-use crate::rest_api::api::models::session_termination_message::SessionTerminationMessage;
 
 /// struct for passing parameters to the method
 /// DEPRECATED
@@ -444,52 +441,6 @@ pub async fn terminate_sessions_by_group_ids(
         Err(e) => Err(AuthError::RequestError(e)),
     }
 }
-pub async fn post_users_terminate_sessions(
-    configuration: &Configuration,
-    params: PostUsersTerminateSessionsParams,
-) -> Result<SessionTerminationMessage, Error<PostUsersTerminateSessionsError>> {
-    let local_var_configuration = configuration;
-
-    // unbox the parameters
-    let post_users_terminate_sessions_request = params.post_users_terminate_sessions_request;
-
-    let local_var_client = &local_var_configuration.client;
-
-    let local_var_uri_str = format!(
-        "{}/users/terminate_sessions",
-        local_var_configuration.base_path
-    );
-    let mut local_var_req_builder =
-        local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
-
-    if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-        local_var_req_builder =
-            local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-    }
-    if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-        local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-    };
-    local_var_req_builder = local_var_req_builder.json(&post_users_terminate_sessions_request);
-
-    let local_var_req = local_var_req_builder.build()?;
-    let local_var_resp = local_var_client.execute(local_var_req).await?;
-
-    let local_var_status = local_var_resp.status();
-    let local_var_content = local_var_resp.text().await?;
-
-    if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-        serde_json::from_str(&local_var_content).map_err(Error::from)
-    } else {
-        let local_var_entity: Option<PostUsersTerminateSessionsError> =
-            serde_json::from_str(&local_var_content).ok();
-        let local_var_error = ResponseContent {
-            status: local_var_status,
-            content: local_var_content,
-            entity: local_var_entity,
-        };
-        Err(Error::ResponseError(local_var_error))
-    }
-}
 
 /// Updates a managed or app user in an enterprise.
 /// This endpoint is only available to users and applications with the right admin permissions.
@@ -530,3 +481,50 @@ pub async fn update(
 //     configuration: &Configuration,
 //     params: PutUsersIdParams,
 // ) -> Result<UserFull, Error<PutUsersIdError>> {}
+
+// pub async fn post_users_terminate_sessions(
+//     configuration: &Configuration,
+//     params: PostUsersTerminateSessionsParams,
+// ) -> Result<SessionTerminationMessage, Error<PostUsersTerminateSessionsError>> {
+//     let local_var_configuration = configuration;
+
+//     // unbox the parameters
+//     let post_users_terminate_sessions_request = params.post_users_terminate_sessions_request;
+
+//     let local_var_client = &local_var_configuration.client;
+
+//     let local_var_uri_str = format!(
+//         "{}/users/terminate_sessions",
+//         local_var_configuration.base_path
+//     );
+//     let mut local_var_req_builder =
+//         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
+
+//     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
+//         local_var_req_builder =
+//             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+//     }
+//     if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
+//         local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
+//     };
+//     local_var_req_builder = local_var_req_builder.json(&post_users_terminate_sessions_request);
+
+//     let local_var_req = local_var_req_builder.build()?;
+//     let local_var_resp = local_var_client.execute(local_var_req).await?;
+
+//     let local_var_status = local_var_resp.status();
+//     let local_var_content = local_var_resp.text().await?;
+
+//     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+//         serde_json::from_str(&local_var_content).map_err(Error::from)
+//     } else {
+//         let local_var_entity: Option<PostUsersTerminateSessionsError> =
+//             serde_json::from_str(&local_var_content).ok();
+//         let local_var_error = ResponseContent {
+//             status: local_var_status,
+//             content: local_var_content,
+//             entity: local_var_entity,
+//         };
+//         Err(Error::ResponseError(local_var_error))
+//     }
+// }

@@ -60,6 +60,7 @@ async fn users_get_by_id() -> Result<(), AuthError> {
     let me = users_api::me(&mut client, None).await?;
 
     let user_id = me.id.unwrap();
+    // let user_id = "123";
 
     let fields = vec![
         "id".to_string(),
