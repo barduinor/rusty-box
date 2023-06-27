@@ -343,28 +343,32 @@ pub async fn me(
 
 pub async fn create(
     client: &mut BoxClient<'_>,
+    fields: Option<Vec<String>>,
     user: PostUsersRequest,
-    // fields: Option<Vec<String>>,
 ) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
-    // TODO: Implement query fields on the post request
-    // let fields = fields
-    //     .unwrap_or(vec![])
-    //     .into_iter()
-    //     .collect::<Vec<String>>()
-    //     .join(",")
-    //     .to_string();
+    let fields = fields
+        .unwrap_or(vec![])
+        .into_iter()
+        .collect::<Vec<String>>()
+        .join(",")
+        .to_string();
 
-    // let mut payload = HashMap::new();
-    // payload.insert("fields", fields.as_str());
+    let mut query = HashMap::new();
+    if !fields.is_empty() {
+        query.insert("fields", fields.as_str());
+    }
 
     // convert the postusersrequest to json
     let value_json = serde_json::to_string(&user)?;
     let value = serde_json::from_str(&value_json)?;
 
-    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    let resp = client
+        .http
+        .post(&uri, Some(&headers), Some(&query), &value)
+        .await;
     match resp {
         Ok(res) => {
             let user = serde_json::from_str::<UserFull>(&res)?;
@@ -392,7 +396,7 @@ pub async fn terminate_sessions_by_user_ids(
     value.insert("user_ids", user_ids);
     let value = json!(value);
 
-    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
         Err(e) => Err(AuthError::RequestError(e)),
@@ -413,7 +417,7 @@ pub async fn terminate_sessions_by_user_logins(
     value.insert("user_logins", user_logins);
     let value = json!(value);
 
-    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
         Err(e) => Err(AuthError::RequestError(e)),
@@ -435,7 +439,7 @@ pub async fn terminate_sessions_by_group_ids(
     value.insert("user_ids", group_ids);
     let value = json!(value);
 
-    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
         Err(e) => Err(AuthError::RequestError(e)),
@@ -447,28 +451,32 @@ pub async fn terminate_sessions_by_group_ids(
 pub async fn update(
     client: &mut BoxClient<'_>,
     user_id: &str,
+    fields: Option<Vec<String>>,
     user: PutUsersIdRequest,
-    // fields: Option<Vec<String>>,
 ) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
-    // TODO: Implement query fields on the post request
-    // let fields = fields
-    //     .unwrap_or(vec![])
-    //     .into_iter()
-    //     .collect::<Vec<String>>()
-    //     .join(",")
-    //     .to_string();
+    let fields = fields
+        .unwrap_or(vec![])
+        .into_iter()
+        .collect::<Vec<String>>()
+        .join(",")
+        .to_string();
 
-    // let mut payload = HashMap::new();
-    // payload.insert("fields", fields.as_str());
+    let mut query = HashMap::new();
+    if !fields.is_empty() {
+        query.insert("fields", fields.as_str());
+    }
 
     // convert the postusersrequest to json
     let value_json = serde_json::to_string(&user)?;
     let value = serde_json::from_str(&value_json)?;
 
-    let resp = client.http.put(&uri, Some(&headers), &value).await;
+    let resp = client
+        .http
+        .put(&uri, Some(&headers), Some(&query), &value)
+        .await;
     match resp {
         Ok(res) => {
             let user = serde_json::from_str::<UserFull>(&res)?;

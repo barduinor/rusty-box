@@ -129,11 +129,13 @@ impl BaseHttpClient for ReqwestClient {
         &self,
         url: &str,
         headers: Option<&Headers>,
-        // query: &Query,
+        query: Option<&Query>,
         payload: &Value,
     ) -> Result<String, Self::Error> {
-        self.request(Method::POST, url, headers, |req| req.json(payload))
-            .await
+        self.request(Method::POST, url, headers, |req| {
+            req.query(&query).json(payload)
+        })
+        .await
     }
 
     #[inline]
@@ -152,10 +154,13 @@ impl BaseHttpClient for ReqwestClient {
         &self,
         url: &str,
         headers: Option<&Headers>,
+        query: Option<&Query>,
         payload: &Value,
     ) -> Result<String, Self::Error> {
-        self.request(Method::PUT, url, headers, |req| req.json(payload))
-            .await
+        self.request(Method::PUT, url, headers, |req| {
+            req.query(&query).json(payload)
+        })
+        .await
     }
 
     #[inline]

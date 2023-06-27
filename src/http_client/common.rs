@@ -34,7 +34,7 @@ pub trait BaseHttpClient: Send + Default + Clone + fmt::Debug {
         &self,
         url: &str,
         headers: Option<&Headers>,
-        // query: &Query,
+        query: Option<&Query>,
         payload: &Value,
     ) -> Result<String, Self::Error>;
 
@@ -49,6 +49,7 @@ pub trait BaseHttpClient: Send + Default + Clone + fmt::Debug {
         &self,
         url: &str,
         headers: Option<&Headers>,
+        query: Option<&Query>,
         payload: &Value,
     ) -> Result<String, Self::Error>;
 

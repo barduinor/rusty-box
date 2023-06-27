@@ -2,7 +2,6 @@
 use pretty_assertions::assert_eq;
 use rusty_box::rest_api::users::models::post_users_request;
 use rusty_box::rest_api::users::models::put_users_id_request::PutUsersIdRequest;
-use rusty_box::rest_api::users::models::user_full;
 use rusty_box::{self, auth::AuthError, rest_api::users::users_api};
 mod common;
 
@@ -109,7 +108,14 @@ async fn users_create() -> Result<(), AuthError> {
         ..Default::default()
     };
 
-    let new_user = users_api::create(&mut client, new_user_request).await?;
+    // let fields = vec![
+    //     "id".to_string(),
+    //     "type".to_string(),
+    //     "name".to_string(),
+    //     "login".to_string(),
+    // ];
+
+    let new_user = users_api::create(&mut client, None, new_user_request).await?;
 
     // log::info!("new_user: {:#?}", new_user);
 
@@ -122,7 +128,10 @@ async fn users_create() -> Result<(), AuthError> {
     assert_eq!(new_user.address.unwrap(), "123 Test St");
     assert_eq!(new_user.space_amount.unwrap(), 1073741824);
     assert_eq!(new_user.timezone.unwrap(), "America/Los_Angeles");
-    assert_eq!(new_user.status.unwrap(), user_full::Status::Active);
+    assert_eq!(
+        new_user.status.unwrap(),
+        rusty_box::rest_api::users::models::user_full::Status::Active
+    );
 
     // fields not included by default
     // assert_eq!(new_user.role.unwrap(), user_full::Role::Coadmin); // not normaly returned
@@ -170,7 +179,14 @@ async fn users_update() -> Result<(), AuthError> {
         ..Default::default()
     };
 
-    let new_user = users_api::create(&mut client, new_user_request).await?;
+    let fields = vec![
+        "id".to_string(),
+        "type".to_string(),
+        "name".to_string(),
+        "login".to_string(),
+    ];
+
+    let new_user = users_api::create(&mut client, Some(fields), new_user_request).await?;
 
     let new_user_updates = PutUsersIdRequest {
         name: Some("Test User Updated".to_string()),
@@ -179,7 +195,7 @@ async fn users_update() -> Result<(), AuthError> {
     };
 
     let updated_user =
-        users_api::update(&mut client, &new_user.id.unwrap(), new_user_updates).await?;
+        users_api::update(&mut client, &new_user.id.unwrap(), None, new_user_updates).await?;
 
     assert_eq!(updated_user.name.unwrap(), "Test User Updated");
     assert_eq!(updated_user.address.unwrap(), "456 Test St");
