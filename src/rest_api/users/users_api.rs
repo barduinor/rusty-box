@@ -11,6 +11,8 @@
 
 use std::collections::HashMap;
 
+use serde_json::json;
+
 use super::models::post_users_request::PostUsersRequest;
 use super::models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
 use super::models::put_users_id_request::PutUsersIdRequest;
@@ -382,6 +384,66 @@ pub async fn create(
 /// Validates the roles and permissions of the user,
 /// and creates asynchronous jobs to terminate the user's sessions.
 /// Returns the status for the POST request.
+pub async fn terminate_sessions_by_user_ids(
+    client: &mut BoxClient<'_>,
+    user_ids: Vec<String>,
+) -> Result<Option<String>, AuthError> {
+    let uri = client.auth.base_api_url() + "/users/terminate_sessions";
+    let headers = client.headers().await?;
+
+    let mut value = HashMap::new();
+    value.insert("user_ids", user_ids);
+    let value = json!(value);
+
+    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    match resp {
+        Ok(res) => Ok(Some(res)),
+        Err(e) => Err(AuthError::RequestError(e)),
+    }
+}
+
+/// Validates the roles and permissions of the user,
+/// and creates asynchronous jobs to terminate the user's sessions.
+/// Returns the status for the POST request.
+pub async fn terminate_sessions_by_user_logins(
+    client: &mut BoxClient<'_>,
+    user_logins: Vec<String>,
+) -> Result<Option<String>, AuthError> {
+    let uri = client.auth.base_api_url() + "/users/terminate_sessions";
+    let headers = client.headers().await?;
+
+    let mut value = HashMap::new();
+    value.insert("user_logins", user_logins);
+    let value = json!(value);
+
+    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    match resp {
+        Ok(res) => Ok(Some(res)),
+        Err(e) => Err(AuthError::RequestError(e)),
+    }
+}
+
+/// Validates the roles and permissions of the user,
+/// and creates asynchronous jobs to terminate the user's sessions.
+/// Returns the status for the POST request.
+pub async fn terminate_sessions_by_group_ids(
+    client: &mut BoxClient<'_>,
+    group_ids: Vec<String>,
+    // fields: Option<Vec<String>>,
+) -> Result<Option<String>, AuthError> {
+    let uri = client.auth.base_api_url() + "/users/terminate_sessions";
+    let headers = client.headers().await?;
+
+    let mut value = HashMap::new();
+    value.insert("user_ids", group_ids);
+    let value = json!(value);
+
+    let resp = client.http.post(&uri, Some(&headers), &value).await;
+    match resp {
+        Ok(res) => Ok(Some(res)),
+        Err(e) => Err(AuthError::RequestError(e)),
+    }
+}
 pub async fn post_users_terminate_sessions(
     configuration: &Configuration,
     params: PostUsersTerminateSessionsParams,

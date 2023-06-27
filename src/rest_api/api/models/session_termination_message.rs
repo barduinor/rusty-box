@@ -10,6 +10,7 @@
 
 /// SessionTerminationMessage : A message informing about the termination job status
 
+//TODO: DEPRECATED - This will be removed in a future version
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct SessionTerminationMessage {
     /// The unique identifier for the termination job status

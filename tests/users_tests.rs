@@ -192,3 +192,31 @@ async fn users_update() -> Result<(), AuthError> {
 
     Ok(())
 }
+
+#[tokio::test]
+async fn users_terminate_sessions() -> Result<(), AuthError> {
+    let mut client = common::box_client::get_box_client()?;
+
+    let by_user_ids = users_api::terminate_sessions_by_user_ids(
+        &mut client,
+        vec!["123".to_string(), "456".to_string()],
+    )
+    .await?;
+    assert!(by_user_ids.is_some());
+
+    let by_user_logins = users_api::terminate_sessions_by_user_logins(
+        &mut client,
+        vec!["abc@gmail.local".to_string(), "def@gmail.local".to_string()],
+    )
+    .await?;
+    assert!(by_user_logins.is_some());
+
+    let by_group_ids = users_api::terminate_sessions_by_group_ids(
+        &mut client,
+        vec!["123".to_string(), "456".to_string()],
+    )
+    .await?;
+    assert!(by_group_ids.is_some());
+
+    Ok(())
+}
