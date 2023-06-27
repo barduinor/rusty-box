@@ -42,18 +42,10 @@ async fn main() -> Result<(), AuthError> {
         // filter_term: Some("admin".to_string()),
         ..Default::default()
     };
-    let result = users_api::list(&mut client, Some(params)).await;
+    let result = users_api::list(&mut client, Some(params)).await?;
     println!("Users:");
 
-    let user_list = match result {
-        Ok(users) => users,
-        Err(e) => {
-            println!("Error: {:#?}", e);
-            return Ok(());
-        }
-    };
-
-    if let Some(users) = user_list.entries {
+    if let Some(users) = result.entries {
         for user in users {
             println!(
                 "{}\t{}\t{}\t{}",
