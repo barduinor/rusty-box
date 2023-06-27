@@ -85,7 +85,8 @@ pub struct PostUsersParams {
     pub post_users_request: Option<PostUsersRequest>,
 }
 
-/// struct for passing parameters to the method [`post_users_terminate_sessions`]
+/// struct for passing parameters to the method
+/// DEPRECATED
 #[derive(Clone, Debug, Default)]
 pub struct PostUsersTerminateSessionsParams {
     pub post_users_terminate_sessions_request: Option<PostUsersTerminateSessionsRequest>,
@@ -145,7 +146,8 @@ pub enum PostUsersError {
     UnknownValue(serde_json::Value),
 }
 
-/// struct for typed errors of method [`post_users_terminate_sessions`]
+/// struct for typed errors of method
+/// DEPRECATED
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum PostUsersTerminateSessionsError {
