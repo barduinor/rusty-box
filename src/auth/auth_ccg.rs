@@ -1,3 +1,4 @@
+//! Client Credentials Grant (CCG) authentication
 use super::access_token::AccessToken;
 use super::{Auth, AuthError};
 use crate::config::Config;
@@ -7,10 +8,7 @@ use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
-// #[derive(Debug, Clone, Serialize, PartialEq)]
-// pub enum CCGError {
-//     Generic { message: String },
-// }
+/// The type of subject that is being authenticated (user or enterprise)
 #[derive(Debug, Clone, Serialize, PartialEq)]
 pub enum SubjectType {
     Enterprise,
@@ -30,7 +28,7 @@ impl Default for SubjectType {
     }
 }
 
-// TODO: CCG support both enterprise and user auth. Should there be a specific implementation for each one?
+/// Client Credentials Grant (CCG) authentication
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct CCGAuth {
     pub config: Config,

@@ -1,3 +1,4 @@
+//! Developer token authentication
 use crate::config::Config;
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
@@ -5,11 +6,8 @@ use serde::Serialize;
 
 use super::{access_token::AccessToken, Auth, AuthError};
 
-#[derive(Debug)]
-pub enum DeveloperTokenError {
-    Generic { message: String },
-}
-
+/// Developer token authentication. This is used for testing and development.
+/// Has a life time of 1 hour, and has to be manually generated in the Box developer console.
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct DevAuth {
     config: Config,

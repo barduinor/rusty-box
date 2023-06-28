@@ -1,3 +1,4 @@
+//! Box API authentication
 use async_trait::async_trait;
 
 use crate::http_client::{self, Headers};
@@ -6,6 +7,7 @@ pub mod access_token;
 pub mod auth_ccg;
 pub mod auth_developer;
 
+/// Box API errors
 #[derive(thiserror::Error, Debug)]
 pub enum AuthError {
     /// The request couldn't be completed because there was an error when trying
@@ -30,6 +32,7 @@ pub enum AuthError {
     RequestError(#[from] http_client::reqwest::ReqwestError),
 }
 
+/// Trait for authentication methods
 #[async_trait]
 pub trait Auth<'a> {
     async fn access_token(&mut self) -> Result<String, AuthError>;

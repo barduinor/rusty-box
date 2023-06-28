@@ -1,3 +1,4 @@
+//! Structures for the access token response from the Box API.
 /*
  * Box Platform API
  *
