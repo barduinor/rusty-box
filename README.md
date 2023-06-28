@@ -74,6 +74,9 @@ async fn main() -> Result<(), AuthError> {
 ```bash
 cargo run
 ```
+## Getting Help
+Questions about Rusty Box usage and development can be asked on the [Box community forum](https://forum.box.com).
+
 
 ## Changelog
 Please see the [changelog](CHANGELOG.md) for a release history and indications on how to upgrade from one version to another.

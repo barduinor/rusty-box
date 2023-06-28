@@ -12,6 +12,7 @@
 ### Notes:
 - Removed way to many structures to handle passing parameters to the users api.
 - Added samples for each endpoint.
+- Cleaned up unused code.
 
 
 ## 0.1.0-alpha
