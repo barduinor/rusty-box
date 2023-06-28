@@ -1,3 +1,5 @@
+//! Authentication error handling and help functions.
+//! This is stale code from the original conversion, but it's still useful for reference
 use std::error;
 use std::fmt;
 

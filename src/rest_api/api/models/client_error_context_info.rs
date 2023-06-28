@@ -1,3 +1,4 @@
+//! Original error handling models. Not being used.
 /*
  * Box Platform API
  *

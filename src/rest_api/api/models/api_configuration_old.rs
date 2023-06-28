@@ -1,3 +1,4 @@
+//! Original configuration model. Not being used.
 /*
  * Box Platform API
  *
