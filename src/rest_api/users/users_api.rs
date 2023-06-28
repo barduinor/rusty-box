@@ -90,7 +90,6 @@ pub async fn delete(
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
-    //TODO: these need to go in the query string
     let value = serde_json::json!({
         "notify": notify,
         "force": force,
