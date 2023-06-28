@@ -1,4 +1,5 @@
-#![allow(dead_code)]
+//! Configuration for the Box API client.
+/// Configuration structure for the Box API.
 #[derive(Debug, Clone, Serialize)]
 pub struct Config {
     base_api_url: String,
