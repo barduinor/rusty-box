@@ -15,8 +15,8 @@ pub type Query<'a> = HashMap<&'a str, &'a str>;
 pub type Form<'a> = HashMap<&'a str, &'a str>;
 
 /// This trait represents the interface to be implemented for an HTTP client,
-/// which is kept separate from the Spotify client for cleaner code. Thus, it
-/// also requires other basic traits that are needed for the Spotify client.
+/// which is kept separate from the Box client for cleaner code. Thus, it
+/// also requires other basic traits that are needed for the Box client.
 ///
 /// When a request doesn't need to pass parameters, the empty or default value
 /// of the payload type should be passed, like `json!({})` or `Query::new()`.
