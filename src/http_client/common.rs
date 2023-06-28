@@ -1,3 +1,5 @@
+//! This module contains the common traits and types used by the HTTP clients.
+//! Leaving the door open for developers to implement other http clients.
 use std::collections::HashMap;
 use std::fmt;
 
@@ -5,8 +7,11 @@ use async_trait::async_trait;
 // use maybe_async::maybe_async;
 use serde_json::Value;
 
+/// HTTP headers.
 pub type Headers = HashMap<String, String>;
+/// Query parameters.
 pub type Query<'a> = HashMap<&'a str, &'a str>;
+/// Form parameters.
 pub type Form<'a> = HashMap<&'a str, &'a str>;
 
 /// This trait represents the interface to be implemented for an HTTP client,
