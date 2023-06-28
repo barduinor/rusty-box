@@ -29,6 +29,7 @@ cd my-box-project
 ### Add rusty-box to your dependencies
 
 ```bash
+cargo add dotenv
 cargo add rusty-box
 ```
 ### Create a .dev.env file in the root of your project
