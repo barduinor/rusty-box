@@ -1,34 +1,5 @@
 use crate::auth::{Auth, AuthError};
 use crate::http_client::{Headers, HttpClient};
-use thiserror::Error;
-
-#[derive(Debug, Error)]
-pub enum ClientError {
-    #[error("json parse error: {0}")]
-    ParseJson(#[from] serde_json::Error),
-
-    #[error("url parse error: {0}")]
-    ParseUrl(#[from] url::ParseError),
-
-    // Note that this type is boxed because its size might be very large in
-    // comparison to the rest. For more information visit:
-    // https://rust-lang.github.io/rust-clippy/master/index.html#large_enum_variant
-    #[error("http error: {0}")]
-    Http(Box<AuthError>),
-
-    #[error("input/output error: {0}")]
-    Io(#[from] std::io::Error),
-
-    #[error("cache file error: {0}")]
-    CacheFile(String),
-}
-
-// The conversion has to be done manually because it's in a `Box<T>`
-impl From<AuthError> for ClientError {
-    fn from(err: AuthError) -> Self {
-        Self::Http(Box::new(err))
-    }
-}
 
 #[derive(Debug)]
 pub struct BoxClient<'a> {

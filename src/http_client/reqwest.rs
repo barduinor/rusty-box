@@ -6,7 +6,8 @@ use super::{BaseHttpClient, Form, Headers, Query};
 use std::convert::TryInto;
 use std::time::Duration;
 
-use maybe_async::async_impl;
+use async_trait::async_trait;
+// use maybe_async::async_impl;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
 
@@ -84,7 +85,7 @@ impl ReqwestClient {
     }
 }
 
-#[async_impl]
+#[async_trait]
 impl BaseHttpClient for ReqwestClient {
     type Error = ReqwestError;
 
