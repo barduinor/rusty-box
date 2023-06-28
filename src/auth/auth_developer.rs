@@ -1,9 +1,9 @@
-use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
+use crate::config::Config;
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
 
-use super::{Auth, AuthError};
+use super::{access_token::AccessToken, Auth, AuthError};
 
 #[derive(Debug)]
 pub enum DeveloperTokenError {

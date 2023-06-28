@@ -1,7 +1,8 @@
+use super::access_token::AccessToken;
 use super::{Auth, AuthError};
+use crate::config::Config;
 use crate::http_client::HttpError;
 use crate::http_client::{BaseHttpClient, Form, HttpClient};
-use crate::{config::Config, rest_api::authorization::models::access_token::AccessToken};
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;

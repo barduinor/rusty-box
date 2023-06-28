@@ -10,31 +10,6 @@ use maybe_async::async_impl;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
 
-/// Custom enum that contains all the possible errors that may occur when using
-/// [`reqwest`].
-///
-/// Sample usage:
-///
-/// ```
-/// # #[tokio::main]
-/// # async fn main() {
-/// use rusty_box::http_client::{HttpError, HttpClient, BaseHttpClient};
-///
-/// let client = HttpClient::default();
-/// let response = client.get("wrongurl", None, &Default::default()).await;
-/// match response {
-///     Ok(data) => println!("request succeeded: {:?}", data),
-///     Err(HttpError::Client(e)) => eprintln!("request failed: {}", e),
-///     Err(HttpError::StatusCode(response)) => {
-///         let code = response.status().as_u16();
-///         match response.json::<rusty_box::rest_api::api::models::client_error::ClientError>().await {
-///             Ok(api_error) => eprintln!("status code {}: {:?}", code, api_error),
-///             Err(_) => eprintln!("status code {}", code),
-///         }
-///     },
-/// }
-/// # }
-/// ```
 #[derive(thiserror::Error, Debug)]
 pub enum ReqwestError {
     /// The request couldn't be completed because there was an error when trying
