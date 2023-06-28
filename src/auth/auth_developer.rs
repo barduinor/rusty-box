@@ -11,32 +11,21 @@ pub enum DeveloperTokenError {
 }
 
 #[derive(Debug, Clone, Serialize, Default)]
-// pub struct DeveloperToken<'a> {
-pub struct DeveloperToken {
+pub struct DevAuth {
     config: Config,
-    // access_token: String,
-    // expires_in: u32,
     access_token: AccessToken,
     expires_by: DateTime<Utc>,
-    // store_auth_callable: Option<&'a dyn Fn()>,
 }
 
-// impl<'a> DeveloperToken<'a> {
-impl DeveloperToken {
-    pub fn new(
-        config: Config,
-        developer_token: String,
-        // store_auth_callable: Option<&'a dyn Fn()>,
-    ) -> Self {
+impl DevAuth {
+    pub fn new(config: Config, developer_token: String) -> Self {
         let mut access_token = AccessToken::new();
         access_token.access_token = Some(developer_token);
 
-        DeveloperToken {
+        DevAuth {
             config,
             access_token,
-            // expires_in: 3600,
             expires_by: Utc::now() + Duration::seconds(3600),
-            // store_auth_callable: store_auth_callable,
         }
     }
 
@@ -46,7 +35,7 @@ impl DeveloperToken {
 }
 
 #[async_trait]
-impl<'a> Auth<'a> for DeveloperToken {
+impl<'a> Auth<'a> for DevAuth {
     async fn access_token(&mut self) -> Result<String, AuthError> {
         if self.is_expired() {
             Err(AuthError::Generic {
@@ -91,7 +80,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_dev_token_new() {
-        let mut dev_token = DeveloperToken::new(Config::default(), "test".to_owned());
+        let mut dev_token = DevAuth::new(Config::default(), "test".to_owned());
         let access_token = dev_token.access_token().await.unwrap_or_default();
         assert_eq!(access_token, "test");
         assert!(dev_token.expires_by <= Utc::now() + Duration::seconds(3600));

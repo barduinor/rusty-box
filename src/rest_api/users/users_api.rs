@@ -14,27 +14,14 @@ use std::collections::HashMap;
 use serde_json::json;
 
 use super::models::post_users_request::PostUsersRequest;
-use super::models::post_users_terminate_sessions_request::PostUsersTerminateSessionsRequest;
 use super::models::put_users_id_request::PutUsersIdRequest;
 use super::models::user_full::UserFull;
 use super::models::users::Users;
 
 use crate::auth::AuthError;
+
 use crate::box_client::BoxClient;
 use crate::http_client::BaseHttpClient;
-use crate::rest_api::api::models::client_error::ClientError;
-
-/// struct for passing parameters to the method
-/// DEPRECATED
-#[derive(Clone, Debug, Default)]
-pub struct DeleteUsersIdParams {
-    /// The ID of the user.
-    pub user_id: String,
-    /// Whether the user will receive email notification of the deletion
-    pub notify: Option<bool>,
-    /// Whether the user should be deleted even if this user still own files
-    pub force: Option<bool>,
-}
 
 /// struct for passing parameters to the method [`list`]
 #[derive(Clone, Debug, Default)]
@@ -58,123 +45,42 @@ pub struct GetUsersParams {
     pub marker: Option<String>,
 }
 
-/// struct for passing parameters to the method
-/// DEPRECATED
-#[derive(Clone, Debug, Default)]
-pub struct GetUsersIdParams {
-    /// The ID of the user.
-    pub user_id: String,
-    /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
-    pub fields: Option<Vec<String>>,
-}
-
-/// struct for passing parameters to the method
-/// DEPRECATED
-#[derive(Clone, Debug, Default)]
-pub struct GetUsersMeParams {
-    /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
-    pub fields: Option<Vec<String>>,
-}
-
-/// struct for passing parameters to the method
-/// DEPRECATED
-#[derive(Clone, Debug, Default)]
-pub struct PostUsersParams {
-    /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
-    pub fields: Option<Vec<String>>,
-    pub post_users_request: Option<PostUsersRequest>,
-}
-
-/// struct for passing parameters to the method
-/// DEPRECATED
-#[derive(Clone, Debug, Default)]
-pub struct PostUsersTerminateSessionsParams {
-    pub post_users_terminate_sessions_request: Option<PostUsersTerminateSessionsRequest>,
-}
-
-/// struct for passing parameters to the method
-/// DEPRECATED
-#[derive(Clone, Debug, Default)]
-pub struct PutUsersIdParams {
-    /// The ID of the user.
-    pub user_id: String,
-    /// A comma-separated list of attributes to include in the response. This can be used to request fields that are not normally returned in a standard response.  Be aware that specifying this parameter will have the effect that none of the standard fields are returned in the response unless explicitly specified, instead only fields for the mini representation are returned, additional to the fields requested.
-    pub fields: Option<Vec<String>>,
-    pub put_users_id_request: Option<PutUsersIdRequest>,
-}
-
-/// struct for typed errors of method
-/// DEPRECATED
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum DeleteUsersIdError {
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
-/// struct for typed errors of method [`list`]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum GetUsersError {
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
-/// struct for typed errors of method
-/// DEPRECATED
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum GetUsersIdError {
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
-// struct for typed errors of method [`get_users_me`]
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum GetUsersMeError {
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
-/// struct for typed errors of method
-/// DEPRECATED
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum PostUsersError {
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
-/// struct for typed errors of method
-/// DEPRECATED
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum PostUsersTerminateSessionsError {
-    Status400(ClientError),
-    Status403(ClientError),
-    Status404(ClientError),
-    Status429(ClientError),
-    Status500(ClientError),
-    Status503(ClientError),
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
-/// struct for typed errors of method
-/// DEPRECATED
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(untagged)]
-pub enum PutUsersIdError {
-    Status400(ClientError),
-    Status403(ClientError),
-    DefaultResponse(ClientError),
-    UnknownValue(serde_json::Value),
-}
-
 /// Deletes a user.
 /// By default this will fail if the user still owns any content.
 /// Move their owned content first before proceeding, or use the `force` field to delete the user and their files.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///
+///     let user_id = "12345";
+///     users_api::delete(&mut client, &user_id, None, None).await?;
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn delete(
     client: &mut BoxClient<'_>,
     user_id: &str,
@@ -196,13 +102,54 @@ pub async fn delete(
         Err(e) => Err(AuthError::RequestError(e)),
     }
 }
-// pub async fn delete_users_id(
-//     configuration: &Configuration,
-//     params: DeleteUsersIdParams,
-// ) -> Result<(), Error<DeleteUsersIdError>> {}
 
 /// Returns a list of all users for the Enterprise along with their `user_id`, `public_name`, and `login`.  
 /// The application and the authenticated user need to have the permission to look up users in the entire enterprise.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///
+///     let result = users_api::list(&mut client, None).await?;
+///     println!("Users:");
+///
+///     if let Some(users) = result.entries {
+///         for user in users {
+///             println!(
+///                 "{}\t{}\t{}\t{}",
+///                 user.id.unwrap(),
+///                 user.r#type.to_string(),
+///                 user.name.unwrap(),
+///                 user.login.unwrap(),
+///             );
+///         }
+///     }
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn list(
     client: &mut BoxClient<'_>,
     params: Option<GetUsersParams>,
@@ -267,15 +214,45 @@ pub async fn list(
     }
 }
 
-// pub async fn get_users(
-//     configuration: &Configuration,
-//     params: GetUsersParams,
-// ) -> Result<Users, Error<GetUsersError>> {}
-
 /// Retrieves information about a user in the enterprise.  
 /// The application and the authenticated user need to have the permission to look up users in the entire enterprise.  
 /// This endpoint also returns a limited set of information for external users who are collaborated on content owned by the enterprise for authenticated users with the right scopes.
 /// In this case, disallowed fields will return null instead.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///
+///     let user_id = "123";
+///     
+///     let user = users_api::id(&mut client, &user_id, None).await?;
+///     println!("User:{:#?}", user);
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn id(
     client: &mut BoxClient<'_>,
     user_id: &str,
@@ -304,15 +281,43 @@ pub async fn id(
     }
 }
 
-// pub async fn get_users_id(
-//     configuration: &Configuration,
-//     params: GetUsersIdParams,
-// ) -> Result<UserFull, Error<GetUsersIdError>> {}
-
 /// Retrieves information about the user who is currently authenticated.  
 /// In the case of a client-side authenticated OAuth 2.0 application this will be the user who authorized the app.  
 /// In the case of a JWT, server-side authenticated application this will be the service account that belongs to the application by default.  
 /// Use the `As-User` header to change who this API call is made on behalf of.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///     
+///     let me = users_api::me(&mut client, None).await?;
+///     println!("Me:{:#?}", me);
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn me(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
@@ -342,7 +347,62 @@ pub async fn me(
 
 /// Creates a new managed user in an enterprise.
 /// This endpoint is only available to users and applications with the right admin permissions.
-
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+///     rest_api::users::models::post_users_request
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///     
+///     let new_user_request = post_users_request::PostUsersRequest {
+///         name: "Test User".to_string(),
+///         login: Some("test.user@gmail.local".to_string()),
+///         is_platform_access_only: Some(false),
+///         role: Some(post_users_request::Role::Coadmin),
+///         language: Some("en".to_string()),
+///         is_sync_enabled: Some(true),
+///         job_title: Some("Test Job Title".to_string()),
+///         phone: Some("555-555-5555".to_string()),
+///         address: Some("123 Test St".to_string()),
+///         space_amount: Some(1073741824),
+///         // tracking_codes: Some(vec!["test-tracking-code".to_string()]),
+///         can_see_managed_users: Some(true),
+///         timezone: Some("America/Los_Angeles".to_string()),
+///         is_external_collab_restricted: Some(false),
+///         is_exempt_from_device_limits: Some(false),
+///         is_exempt_from_login_verification: Some(false),
+///         status: Some(post_users_request::Status::Active),
+///         external_app_user_id: Some("test-external-app-user-id".to_string()),
+///         ..Default::default()
+///     };
+///
+///     let new_user = users_api::create(&mut client, None, new_user_request).await?;
+///     println!("New User:{:#?}", new_user);
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn create(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
@@ -379,14 +439,47 @@ pub async fn create(
         Err(e) => Err(AuthError::RequestError(e)),
     }
 }
-// pub async fn post_users(
-//     configuration: &Configuration,
-//     params: PostUsersParams,
-// ) -> Result<User, Error<PostUsersError>> {}
 
 /// Validates the roles and permissions of the user,
 /// and creates asynchronous jobs to terminate the user's sessions.
 /// Returns the status for the POST request.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///     
+///     let by_user_ids = users_api::terminate_sessions_by_user_ids(
+///         &mut client,
+///         vec!["123".to_string(), "456".to_string()],
+///     )
+///     .await?;
+///     assert!(by_user_ids.is_some());
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn terminate_sessions_by_user_ids(
     client: &mut BoxClient<'_>,
     user_ids: Vec<String>,
@@ -408,6 +501,44 @@ pub async fn terminate_sessions_by_user_ids(
 /// Validates the roles and permissions of the user,
 /// and creates asynchronous jobs to terminate the user's sessions.
 /// Returns the status for the POST request.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///     
+///
+///     let by_user_logins = users_api::terminate_sessions_by_user_logins(
+///         &mut client,
+///         vec!["abc@gmail.local".to_string(), "def@gmail.local".to_string()],
+///     )
+///     .await?;
+///     assert!(by_user_logins.is_some());
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn terminate_sessions_by_user_logins(
     client: &mut BoxClient<'_>,
     user_logins: Vec<String>,
@@ -429,6 +560,43 @@ pub async fn terminate_sessions_by_user_logins(
 /// Validates the roles and permissions of the user,
 /// and creates asynchronous jobs to terminate the user's sessions.
 /// Returns the status for the POST request.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///     
+///     let by_group_ids = users_api::terminate_sessions_by_group_ids(
+///         &mut client,
+///         vec!["123".to_string(), "456".to_string()],
+///     )
+///     .await?;
+///     assert!(by_group_ids.is_some());
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn terminate_sessions_by_group_ids(
     client: &mut BoxClient<'_>,
     group_ids: Vec<String>,
@@ -450,6 +618,49 @@ pub async fn terminate_sessions_by_group_ids(
 
 /// Updates a managed or app user in an enterprise.
 /// This endpoint is only available to users and applications with the right admin permissions.
+///
+/// Sample usage:
+/// ```no_run
+/// use rusty_box::{
+///     auth::{
+///         auth_developer::DevAuth,
+///         AuthError,
+///     },
+///     box_client::BoxClient,
+///     config::Config,
+///     rest_api::users::users_api,
+///     rest_api::users::models::put_users_id_request::PutUsersIdRequest
+/// };
+/// use dotenv;
+/// use std::env;
+/// #[tokio::main]
+/// async fn main() -> Result<(), AuthError> {
+///
+///     dotenv::from_filename(".dev.env").ok();
+///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
+///
+///     let config = Config::new();
+///     let auth = DevAuth::new(
+///         config,
+///         access_token,
+///     );
+///     let mut client = BoxClient::new(Box::new(auth));
+///
+///     let user_id = "12345";
+///     
+///     let user_updates = PutUsersIdRequest {
+///         name: Some("Test User Updated".to_string()),
+///         address: Some("456 Test St".to_string()),
+///         ..Default::default()
+///     };
+///
+///     let updated_user =
+///         users_api::update(&mut client, &user_id, None, user_updates).await?;
+///     println!("Updated User:{:#?}", updated_user);
+///
+///     Ok(())
+/// }
+/// ```
 pub async fn update(
     client: &mut BoxClient<'_>,
     user_id: &str,
@@ -487,54 +698,3 @@ pub async fn update(
         Err(e) => Err(AuthError::RequestError(e)),
     }
 }
-// pub async fn put_users_id(
-//     configuration: &Configuration,
-//     params: PutUsersIdParams,
-// ) -> Result<UserFull, Error<PutUsersIdError>> {}
-
-// pub async fn post_users_terminate_sessions(
-//     configuration: &Configuration,
-//     params: PostUsersTerminateSessionsParams,
-// ) -> Result<SessionTerminationMessage, Error<PostUsersTerminateSessionsError>> {
-//     let local_var_configuration = configuration;
-
-//     // unbox the parameters
-//     let post_users_terminate_sessions_request = params.post_users_terminate_sessions_request;
-
-//     let local_var_client = &local_var_configuration.client;
-
-//     let local_var_uri_str = format!(
-//         "{}/users/terminate_sessions",
-//         local_var_configuration.base_path
-//     );
-//     let mut local_var_req_builder =
-//         local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
-
-//     if let Some(ref local_var_user_agent) = local_var_configuration.user_agent {
-//         local_var_req_builder =
-//             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
-//     }
-//     if let Some(ref local_var_token) = local_var_configuration.oauth_access_token {
-//         local_var_req_builder = local_var_req_builder.bearer_auth(local_var_token.to_owned());
-//     };
-//     local_var_req_builder = local_var_req_builder.json(&post_users_terminate_sessions_request);
-
-//     let local_var_req = local_var_req_builder.build()?;
-//     let local_var_resp = local_var_client.execute(local_var_req).await?;
-
-//     let local_var_status = local_var_resp.status();
-//     let local_var_content = local_var_resp.text().await?;
-
-//     if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
-//         serde_json::from_str(&local_var_content).map_err(Error::from)
-//     } else {
-//         let local_var_entity: Option<PostUsersTerminateSessionsError> =
-//             serde_json::from_str(&local_var_content).ok();
-//         let local_var_error = ResponseContent {
-//             status: local_var_status,
-//             content: local_var_content,
-//             entity: local_var_entity,
-//         };
-//         Err(Error::ResponseError(local_var_error))
-//     }
-// }

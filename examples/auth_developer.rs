@@ -2,7 +2,7 @@
 // use dotenv;
 
 use rusty_box::{
-    auth::{auth_developer::DeveloperToken, AuthError},
+    auth::{auth_developer::DevAuth, AuthError},
     box_client::BoxClient,
     config::Config,
     rest_api::users::users_api,
@@ -14,7 +14,7 @@ async fn main() -> Result<(), AuthError> {
     dotenv::from_filename(".dev.env").ok();
 
     let config = Config::new();
-    let auth = DeveloperToken::new(
+    let auth = DevAuth::new(
         config,
         env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set"),
     );
