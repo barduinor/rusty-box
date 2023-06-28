@@ -1,6 +1,8 @@
+//! Box client implementation
 use crate::auth::{Auth, AuthError};
 use crate::http_client::{Headers, HttpClient};
 
+/// Box client implementation
 #[derive(Debug)]
 pub struct BoxClient<'a> {
     pub auth: Box<dyn Auth<'a> + 'static>,
