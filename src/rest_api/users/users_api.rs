@@ -25,7 +25,7 @@ use crate::http_client::BaseHttpClient;
 
 /// struct for passing parameters to the method [`list`]
 #[derive(Clone, Debug, Default)]
-pub struct GetUsersParams {
+pub struct ListUsersParams {
     /// Limits the results to only users who's `name` or `login` start with the search term.  
     /// For externally managed users, the search term needs to completely match the in order to find the user, and it will only return one user at a time.
     pub filter_term: Option<String>,
@@ -152,7 +152,7 @@ pub async fn delete(
 /// ```
 pub async fn list(
     client: &mut BoxClient<'_>,
-    params: Option<GetUsersParams>,
+    params: Option<ListUsersParams>,
 ) -> Result<Users, AuthError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;

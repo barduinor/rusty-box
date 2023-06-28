@@ -1,5 +1,6 @@
 //! Synchronization primitives that have both synchronous and asynchronous variants under the same
 //! interface.
+//! NOT USED YET
 
 // #[cfg(feature = "__sync")]
 // mod blocking;

@@ -1,3 +1,4 @@
+//! Box REST API
 pub mod api;
 
 pub mod authorization;

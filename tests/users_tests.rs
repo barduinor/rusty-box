@@ -27,7 +27,7 @@ async fn users_list() -> Result<(), AuthError> {
         "name".to_string(),
         "login".to_string(),
     ];
-    let params = users_api::GetUsersParams {
+    let params = users_api::ListUsersParams {
         fields: Some(fields),
         ..Default::default()
     };

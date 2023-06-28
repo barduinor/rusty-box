@@ -36,7 +36,7 @@ async fn main() -> Result<(), AuthError> {
         "name".to_string(),
         "login".to_string(),
     ];
-    let params = users_api::GetUsersParams {
+    let params = users_api::ListUsersParams {
         fields: Some(fields),
         limit: Some(100),
         // filter_term: Some("admin".to_string()),
