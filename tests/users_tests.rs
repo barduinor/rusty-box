@@ -1,12 +1,13 @@
 /// Users API tests
 use pretty_assertions::assert_eq;
+use rusty_box::box_client_error::Error;
 use rusty_box::rest_api::users::models::post_users_request;
 use rusty_box::rest_api::users::models::put_users_id_request::PutUsersIdRequest;
 use rusty_box::{self, auth::AuthError, rest_api::users::users_api};
 mod common;
 
 #[tokio::test]
-async fn users_me() -> Result<(), AuthError> {
+async fn users_me() -> Result<(), Error<AuthError>> {
     let mut client = common::box_client::get_box_client()?;
 
     let me = users_api::me(&mut client, None).await?;
@@ -18,7 +19,7 @@ async fn users_me() -> Result<(), AuthError> {
 }
 
 #[tokio::test]
-async fn users_list() -> Result<(), AuthError> {
+async fn users_list() -> Result<(), Error<AuthError>> {
     let mut client = common::box_client::get_box_client()?;
 
     let fields = vec![
@@ -53,7 +54,7 @@ async fn users_list() -> Result<(), AuthError> {
 }
 
 #[tokio::test]
-async fn users_get_by_id() -> Result<(), AuthError> {
+async fn users_get_by_id() -> Result<(), Error<AuthError>> {
     let mut client = common::box_client::get_box_client()?;
 
     let me = users_api::me(&mut client, None).await?;
@@ -82,7 +83,7 @@ async fn users_get_by_id() -> Result<(), AuthError> {
 }
 
 #[tokio::test]
-async fn users_create() -> Result<(), AuthError> {
+async fn users_create() -> Result<(), Error<AuthError>> {
     let mut client = common::box_client::get_box_client()?;
 
     let new_user_request = post_users_request::PostUsersRequest {
@@ -153,7 +154,7 @@ async fn users_create() -> Result<(), AuthError> {
 }
 
 #[tokio::test]
-async fn users_update() -> Result<(), AuthError> {
+async fn users_update() -> Result<(), Error<AuthError>> {
     let mut client = common::box_client::get_box_client()?;
 
     let new_user_request = post_users_request::PostUsersRequest {
@@ -211,7 +212,7 @@ async fn users_update() -> Result<(), AuthError> {
 }
 
 #[tokio::test]
-async fn users_terminate_sessions() -> Result<(), AuthError> {
+async fn users_terminate_sessions() -> Result<(), Error<AuthError>> {
     let mut client = common::box_client::get_box_client()?;
 
     let by_user_ids = users_api::terminate_sessions_by_user_ids(

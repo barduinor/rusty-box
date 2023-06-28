@@ -1,5 +1,6 @@
 //! Box client implementation
 use crate::auth::{Auth, AuthError};
+use crate::box_client_error::Error;
 use crate::http_client::{Headers, HttpClient};
 
 /// Box client implementation
@@ -17,25 +18,25 @@ impl<'a> BoxClient<'a> {
         }
     }
 
-    pub async fn headers(&mut self) -> Result<Headers, AuthError> {
+    // TODO: ERROR HANDLING
+    pub async fn headers(&mut self) -> Result<Headers, Error<AuthError>> {
         let mut headers = Headers::new();
 
         headers.insert("Accept".to_string(), "application/json".to_string());
         headers.insert("Content-Type".to_string(), "application/json".to_string());
         headers.insert("User-Agent".to_string(), self.auth.user_agent());
 
-        let auth_headers = self.auth.auth_header().await?;
+        let auth_headers = self.auth.auth_header().await;
+
+        let auth_headers = match auth_headers {
+            Ok(auth_headers) => auth_headers,
+            Err(e) => return Err(Error::AuthError(e)),
+        };
 
         headers.extend(auth_headers);
         Ok(headers)
     }
 }
-
-// impl BaseClient for BoxClient<'a> {
-//     fn base_api_url(&self) -> String {
-//         self.auth.base_api_url()
-//     }
-// }
 
 #[cfg(test)]
 use crate::auth::auth_ccg::{CCGAuth, SubjectType};

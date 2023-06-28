@@ -21,7 +21,13 @@ use super::models::users::Users;
 use crate::auth::AuthError;
 
 use crate::box_client::BoxClient;
+use crate::box_client_error::Error;
 use crate::http_client::BaseHttpClient;
+
+pub enum UsersError {
+    DefaultResponse(crate::http_client::box_api_error::BoxAPIError),
+    UnknownValue(serde_json::Value),
+}
 
 /// struct for passing parameters to the method [`list`]
 #[derive(Clone, Debug, Default)]
@@ -57,13 +63,14 @@ pub struct ListUsersParams {
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -86,7 +93,7 @@ pub async fn delete(
     user_id: &str,
     notify: Option<bool>,
     force: Option<bool>,
-) -> Result<(), AuthError> {
+) -> Result<(), Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -95,10 +102,11 @@ pub async fn delete(
         "force": force,
     });
 
+    client.http.delete(&uri, Some(&headers), &value).await?;
     let resp = client.http.delete(&uri, Some(&headers), &value).await;
     match resp {
         Ok(_) => Ok(()),
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -113,13 +121,14 @@ pub async fn delete(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -152,7 +161,7 @@ pub async fn delete(
 pub async fn list(
     client: &mut BoxClient<'_>,
     params: Option<ListUsersParams>,
-) -> Result<Users, AuthError> {
+) -> Result<Users, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
@@ -209,7 +218,7 @@ pub async fn list(
             let users = serde_json::from_str::<Users>(&res)?;
             Ok(users)
         }
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -226,13 +235,14 @@ pub async fn list(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -256,7 +266,7 @@ pub async fn id(
     client: &mut BoxClient<'_>,
     user_id: &str,
     fields: Option<Vec<String>>,
-) -> Result<UserFull, AuthError> {
+) -> Result<UserFull, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -276,7 +286,7 @@ pub async fn id(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -293,13 +303,14 @@ pub async fn id(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -320,7 +331,7 @@ pub async fn id(
 pub async fn me(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
-) -> Result<UserFull, AuthError> {
+) -> Result<UserFull, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users/me";
     let headers = client.headers().await?;
 
@@ -340,7 +351,7 @@ pub async fn me(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -355,6 +366,7 @@ pub async fn me(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 ///     rest_api::users::models::post_users_request
@@ -362,7 +374,7 @@ pub async fn me(
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -406,7 +418,7 @@ pub async fn create(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
     user: PostUsersRequest,
-) -> Result<UserFull, AuthError> {
+) -> Result<UserFull, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
@@ -435,7 +447,7 @@ pub async fn create(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -451,13 +463,14 @@ pub async fn create(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -482,7 +495,7 @@ pub async fn create(
 pub async fn terminate_sessions_by_user_ids(
     client: &mut BoxClient<'_>,
     user_ids: Vec<String>,
-) -> Result<Option<String>, AuthError> {
+) -> Result<Option<String>, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -493,7 +506,7 @@ pub async fn terminate_sessions_by_user_ids(
     let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -509,13 +522,14 @@ pub async fn terminate_sessions_by_user_ids(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -541,7 +555,7 @@ pub async fn terminate_sessions_by_user_ids(
 pub async fn terminate_sessions_by_user_logins(
     client: &mut BoxClient<'_>,
     user_logins: Vec<String>,
-) -> Result<Option<String>, AuthError> {
+) -> Result<Option<String>, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -552,7 +566,7 @@ pub async fn terminate_sessions_by_user_logins(
     let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -568,13 +582,14 @@ pub async fn terminate_sessions_by_user_logins(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 /// };
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -600,7 +615,7 @@ pub async fn terminate_sessions_by_group_ids(
     client: &mut BoxClient<'_>,
     group_ids: Vec<String>,
     // fields: Option<Vec<String>>,
-) -> Result<Option<String>, AuthError> {
+) -> Result<Option<String>, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -611,7 +626,7 @@ pub async fn terminate_sessions_by_group_ids(
     let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }
 
@@ -626,6 +641,7 @@ pub async fn terminate_sessions_by_group_ids(
 ///         AuthError,
 ///     },
 ///     box_client::BoxClient,
+///     box_client_error::Error,
 ///     config::Config,
 ///     rest_api::users::users_api,
 ///     rest_api::users::models::put_users_id_request::PutUsersIdRequest
@@ -633,7 +649,7 @@ pub async fn terminate_sessions_by_group_ids(
 /// use dotenv;
 /// use std::env;
 /// #[tokio::main]
-/// async fn main() -> Result<(), AuthError> {
+/// async fn main() -> Result<(), Error<AuthError>> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -665,7 +681,7 @@ pub async fn update(
     user_id: &str,
     fields: Option<Vec<String>>,
     user: PutUsersIdRequest,
-) -> Result<UserFull, AuthError> {
+) -> Result<UserFull, Error<AuthError>> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -694,6 +710,6 @@ pub async fn update(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(AuthError::RequestError(e)),
+        Err(e) => Err(Error::from(e).into()),
     }
 }

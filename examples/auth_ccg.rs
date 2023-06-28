@@ -7,13 +7,14 @@ use rusty_box::{
         AuthError,
     },
     box_client::BoxClient,
+    box_client_error::Error,
     config::Config,
     rest_api::users::users_api,
 };
 use std::env;
 
 #[tokio::main]
-async fn main() -> Result<(), AuthError> {
+async fn main() -> Result<(), Error<AuthError>> {
     dotenv::from_filename(".ccg.env").ok();
 
     let client_id = env::var("CLIENT_ID").expect("CLIENT_ID must be set");
