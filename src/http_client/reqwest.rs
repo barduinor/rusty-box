@@ -1,6 +1,8 @@
 //! The client implementation for the reqwest HTTP client, which is async by
 //! default.
 
+use crate::rest_api::errors::{error_api::BoxAPIError, model::client_error::BoxAPIErrorResponse};
+
 use super::{BaseHttpClient, Form, Headers, Query};
 
 use std::convert::TryInto;
@@ -10,20 +12,20 @@ use async_trait::async_trait;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
 
-#[derive(thiserror::Error, Debug)]
-pub enum ReqwestError {
-    /// The request couldn't be completed because there was an error when trying
-    /// to do so
-    #[error("request: {0}")]
-    Client(#[from] reqwest::Error),
+// #[derive(thiserror::Error, Debug)]
+// pub enum ReqwestError {
+//     /// The request couldn't be completed because there was an error when trying
+//     /// to do so
+//     #[error("request: {0}")]
+//     Client(#[from] reqwest::Error),
 
-    /// The request was made, but the server returned an unsuccessful status
-    /// code, such as 404 or 503. In some cases, the response may contain a
-    /// custom message from Box with more information, which can be
-    /// serialized into `rusty-box::http_client::box_api_error`.
-    #[error("status code {}", reqwest::Response::status(.0))]
-    StatusCode(reqwest::Response),
-}
+//     /// The request was made, but the server returned an unsuccessful status
+//     /// code, such as 404 or 503. In some cases, the response may contain a
+//     /// custom message from Box with more information, which can be
+//     /// serialized into `rusty-box::http_client::box_api_error`.
+//     #[error("status code {}", reqwest::Response::status(.0))]
+//     StatusCode(reqwest::Response),
+// }
 
 #[derive(Debug, Clone)]
 pub struct ReqwestClient {
@@ -49,7 +51,7 @@ impl ReqwestClient {
         url: &str,
         headers: Option<&Headers>,
         add_data: D,
-    ) -> Result<String, ReqwestError>
+    ) -> Result<String, BoxAPIError>
     where
         D: Fn(RequestBuilder) -> RequestBuilder,
     {
@@ -74,29 +76,22 @@ impl ReqwestClient {
         // Finally performing the request and handling the response
         log::info!("Making request {:?}", request);
         let response = request.send().await?;
+        let status = response.status();
+        let resp_text = response.text().await?;
 
-        // Making sure that the status code is OK - INCORRECT
-        // if response.status().is_success() {
-        //     response.text().await.map_err(Into::into)
-        // } else {
-        //     Err(ReqwestError::StatusCode(response))
-        // }
-
-        // We want to bubble up 400 and 500 errors
-        // so it can handle the Box API Errors
-        response.text().await.map_err(Into::into)
-
-        // if !response.status().is_client_error() && !response.status().is_server_error() {
-        //     response.text().await.map_err(Into::into)
-        // } else {
-        //     Err(ReqwestError::StatusCode(response))
-        // }
+        // Making sure that the status code is OK
+        if status.is_success() {
+            Ok(resp_text)
+        } else {
+            let resp_error = serde_json::from_str::<BoxAPIErrorResponse>(&resp_text)?;
+            Err(BoxAPIError::ResponseError(resp_error))
+        }
     }
 }
 
 #[async_trait]
 impl BaseHttpClient for ReqwestClient {
-    type Error = ReqwestError;
+    type Error = BoxAPIError;
 
     #[inline]
     async fn get(

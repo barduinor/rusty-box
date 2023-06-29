@@ -18,14 +18,12 @@ use super::models::put_users_id_request::PutUsersIdRequest;
 use super::models::user_full::UserFull;
 use super::models::users::Users;
 
-use crate::auth::AuthError;
-
 use crate::box_client::BoxClient;
-use crate::box_client_error::Error;
 use crate::http_client::BaseHttpClient;
+use crate::rest_api::errors::error_api::BoxAPIError;
 
 pub enum UsersError {
-    DefaultResponse(crate::http_client::box_api_error::BoxAPIError),
+    DefaultResponse(BoxAPIError),
     UnknownValue(serde_json::Value),
 }
 
@@ -93,7 +91,7 @@ pub async fn delete(
     user_id: &str,
     notify: Option<bool>,
     force: Option<bool>,
-) -> Result<(), Error<AuthError>> {
+) -> Result<(), BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -106,7 +104,7 @@ pub async fn delete(
     let resp = client.http.delete(&uri, Some(&headers), &value).await;
     match resp {
         Ok(_) => Ok(()),
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }
 
@@ -161,7 +159,7 @@ pub async fn delete(
 pub async fn list(
     client: &mut BoxClient<'_>,
     params: Option<ListUsersParams>,
-) -> Result<Users, Error<AuthError>> {
+) -> Result<Users, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
@@ -211,15 +209,10 @@ pub async fn list(
         payload.insert("marker", marker.as_str());
     }
 
-    let resp = client.http.get(&uri, Some(&headers), &payload).await;
+    let resp = client.http.get(&uri, Some(&headers), &payload).await?;
 
-    match resp {
-        Ok(res) => {
-            let users = serde_json::from_str::<Users>(&res)?;
-            Ok(users)
-        }
-        Err(e) => Err(Error::from(e).into()),
-    }
+    let users = serde_json::from_str::<Users>(&resp)?;
+    Ok(users)
 }
 
 /// Retrieves information about a user in the enterprise.  
@@ -266,7 +259,7 @@ pub async fn id(
     client: &mut BoxClient<'_>,
     user_id: &str,
     fields: Option<Vec<String>>,
-) -> Result<UserFull, Error<AuthError>> {
+) -> Result<UserFull, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -286,7 +279,7 @@ pub async fn id(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }
 
@@ -331,7 +324,7 @@ pub async fn id(
 pub async fn me(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
-) -> Result<UserFull, Error<AuthError>> {
+) -> Result<UserFull, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users/me";
     let headers = client.headers().await?;
 
@@ -352,7 +345,7 @@ pub async fn me(
             Ok(user)
         }
         Err(e) => {
-            let err = Err(Error::from(e).into());
+            let err = Err(e);
             err
         }
     }
@@ -421,7 +414,7 @@ pub async fn create(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
     user: PostUsersRequest,
-) -> Result<UserFull, Error<AuthError>> {
+) -> Result<UserFull, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
@@ -450,7 +443,7 @@ pub async fn create(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }
 
@@ -498,7 +491,7 @@ pub async fn create(
 pub async fn terminate_sessions_by_user_ids(
     client: &mut BoxClient<'_>,
     user_ids: Vec<String>,
-) -> Result<Option<String>, Error<AuthError>> {
+) -> Result<Option<String>, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -509,7 +502,7 @@ pub async fn terminate_sessions_by_user_ids(
     let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }
 
@@ -558,7 +551,7 @@ pub async fn terminate_sessions_by_user_ids(
 pub async fn terminate_sessions_by_user_logins(
     client: &mut BoxClient<'_>,
     user_logins: Vec<String>,
-) -> Result<Option<String>, Error<AuthError>> {
+) -> Result<Option<String>, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -569,7 +562,7 @@ pub async fn terminate_sessions_by_user_logins(
     let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }
 
@@ -618,7 +611,7 @@ pub async fn terminate_sessions_by_group_ids(
     client: &mut BoxClient<'_>,
     group_ids: Vec<String>,
     // fields: Option<Vec<String>>,
-) -> Result<Option<String>, Error<AuthError>> {
+) -> Result<Option<String>, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -629,7 +622,7 @@ pub async fn terminate_sessions_by_group_ids(
     let resp = client.http.post(&uri, Some(&headers), None, &value).await;
     match resp {
         Ok(res) => Ok(Some(res)),
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }
 
@@ -684,7 +677,7 @@ pub async fn update(
     user_id: &str,
     fields: Option<Vec<String>>,
     user: PutUsersIdRequest,
-) -> Result<UserFull, Error<AuthError>> {
+) -> Result<UserFull, BoxAPIError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -713,6 +706,6 @@ pub async fn update(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => Err(e),
     }
 }

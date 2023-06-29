@@ -11,7 +11,7 @@
 /// ClientError : A generic error
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
-pub struct ClientError {
+pub struct BoxAPIErrorResponse {
     /// `error`
     #[serde(rename = "type", skip_serializing_if = "Option::is_none")]
     pub object_type: Option<ObjectType>,
@@ -34,10 +34,10 @@ pub struct ClientError {
     pub request_id: Option<String>,
 }
 
-impl ClientError {
+impl BoxAPIErrorResponse {
     /// A generic error
-    pub fn new() -> ClientError {
-        ClientError {
+    pub fn new() -> BoxAPIErrorResponse {
+        BoxAPIErrorResponse {
             object_type: None,
             status: None,
             code: None,

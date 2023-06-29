@@ -1,5 +1,6 @@
-use std::error;
 use std::fmt;
+
+use super::model::client_error::BoxAPIErrorResponse;
 
 #[derive(Debug, Clone)]
 pub struct ResponseContent<T> {
@@ -8,50 +9,56 @@ pub struct ResponseContent<T> {
     pub entity: Option<T>,
 }
 
-#[derive(Debug)]
-pub enum BoxAPIError<T> {
+// #[derive(Debug)]
+pub enum BoxAPIError {
     Reqwest(reqwest::Error),
     Serde(serde_json::Error),
     Io(std::io::Error),
-    ResponseError(ResponseContent<T>),
+    ResponseError(BoxAPIErrorResponse),
 }
 
-impl<T> fmt::Display for BoxAPIError<T> {
+impl fmt::Display for BoxAPIErrorResponse {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "APIError {{ object_type: {:?}, status: {:?}, code: {:?}, message: {:?}, context_info: {:?}, help_url: {:?}, request_id: {:?} }}", self.object_type, self.status, self.code, self.message, self.context_info, self.help_url, self.request_id)
+    }
+}
+
+impl fmt::Display for BoxAPIError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
             BoxAPIError::Reqwest(e) => ("reqwest", e.to_string()),
             BoxAPIError::Serde(e) => ("serde", e.to_string()),
             BoxAPIError::Io(e) => ("IO", e.to_string()),
-            BoxAPIError::ResponseError(e) => ("response", format!("status code {}", e.status)),
+            BoxAPIError::ResponseError(e) => ("API Error", e.to_string()),
+        };
+        write!(f, "error in {}: {}", module, e)
+    }
+}
+impl fmt::Debug for BoxAPIError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let (module, e) = match self {
+            BoxAPIError::Reqwest(e) => ("reqwest", e.to_string()),
+            BoxAPIError::Serde(e) => ("serde", e.to_string()),
+            BoxAPIError::Io(e) => ("IO", e.to_string()),
+            BoxAPIError::ResponseError(e) => ("API Error", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
     }
 }
 
-impl<T: fmt::Debug> error::Error for BoxAPIError<T> {
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        Some(match self {
-            BoxAPIError::Reqwest(e) => e,
-            BoxAPIError::Serde(e) => e,
-            BoxAPIError::Io(e) => e,
-            BoxAPIError::ResponseError(_) => return None,
-        })
-    }
-}
-
-impl<T> From<reqwest::Error> for BoxAPIError<T> {
+impl From<reqwest::Error> for BoxAPIError {
     fn from(e: reqwest::Error) -> Self {
         BoxAPIError::Reqwest(e)
     }
 }
 
-impl<T> From<serde_json::Error> for BoxAPIError<T> {
+impl From<serde_json::Error> for BoxAPIError {
     fn from(e: serde_json::Error) -> Self {
         BoxAPIError::Serde(e)
     }
 }
 
-impl<T> From<std::io::Error> for BoxAPIError<T> {
+impl From<std::io::Error> for BoxAPIError {
     fn from(e: std::io::Error) -> Self {
         BoxAPIError::Io(e)
     }

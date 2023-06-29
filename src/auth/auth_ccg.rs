@@ -2,7 +2,6 @@
 use super::access_token::AccessToken;
 use super::{Auth, AuthError};
 use crate::config::Config;
-use crate::http_client::HttpError;
 use crate::http_client::{BaseHttpClient, Form, HttpClient};
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};

@@ -1,6 +1,6 @@
 //! Box client implementation
 use crate::auth::{Auth, AuthError};
-use crate::box_client_error::Error;
+// use crate::box_client_error::Error;
 use crate::http_client::{Headers, HttpClient};
 
 /// Box client implementation

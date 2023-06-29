@@ -1,7 +1,10 @@
 //! Box API authentication
 use async_trait::async_trait;
 
-use crate::http_client::{self, Headers};
+use crate::{
+    http_client::{self, Headers},
+    rest_api::errors::error_api::BoxAPIError,
+};
 
 pub mod access_token;
 pub mod auth_ccg;
@@ -27,9 +30,7 @@ pub enum AuthError {
 
     #[error("Generic: {message}")]
     Generic { message: String },
-
-    #[error("request: {0}")]
-    RequestError(#[from] http_client::reqwest::ReqwestError),
+    // RequestError(#[from] BoxAPIError),
 }
 
 /// Trait for authentication methods
