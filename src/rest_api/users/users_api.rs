@@ -351,7 +351,10 @@ pub async fn me(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => Err(Error::from(e).into()),
+        Err(e) => {
+            let err = Err(Error::from(e).into());
+            err
+        }
     }
 }
 

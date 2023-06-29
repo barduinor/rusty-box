@@ -75,12 +75,22 @@ impl ReqwestClient {
         log::info!("Making request {:?}", request);
         let response = request.send().await?;
 
-        // Making sure that the status code is OK
-        if response.status().is_success() {
-            response.text().await.map_err(Into::into)
-        } else {
-            Err(ReqwestError::StatusCode(response))
-        }
+        // Making sure that the status code is OK - INCORRECT
+        // if response.status().is_success() {
+        //     response.text().await.map_err(Into::into)
+        // } else {
+        //     Err(ReqwestError::StatusCode(response))
+        // }
+
+        // We want to bubble up 400 and 500 errors
+        // so it can handle the Box API Errors
+        response.text().await.map_err(Into::into)
+
+        // if !response.status().is_client_error() && !response.status().is_server_error() {
+        //     response.text().await.map_err(Into::into)
+        // } else {
+        //     Err(ReqwestError::StatusCode(response))
+        // }
     }
 }
 
