@@ -1,7 +1,7 @@
 //! The client implementation for the reqwest HTTP client, which is async by
 //! default.
 
-use crate::rest_api::errors::{error_api::AuthError, model::client_error::BoxAPIErrorResponse};
+use crate::rest_api::errors::{error_api::BoxAPIError, model::client_error::BoxAPIErrorResponse};
 
 use super::{BaseHttpClient, Form, Headers, Query};
 
@@ -51,7 +51,7 @@ impl ReqwestClient {
         url: &str,
         headers: Option<&Headers>,
         add_data: D,
-    ) -> Result<String, AuthError>
+    ) -> Result<String, BoxAPIError>
     where
         D: Fn(RequestBuilder) -> RequestBuilder,
     {
@@ -84,14 +84,14 @@ impl ReqwestClient {
             Ok(resp_text)
         } else {
             let resp_error = serde_json::from_str::<BoxAPIErrorResponse>(&resp_text)?;
-            Err(AuthError::ResponseError(resp_error))
+            Err(BoxAPIError::ResponseError(resp_error))
         }
     }
 }
 
 #[async_trait]
 impl BaseHttpClient for ReqwestClient {
-    type Error = AuthError;
+    type Error = BoxAPIError;
 
     #[inline]
     async fn get(

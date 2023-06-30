@@ -1,7 +1,9 @@
 //! Box client implementation
-use crate::auth::{Auth, AuthError};
-// use crate::box_client_error::Error;
-use crate::http_client::{Headers, HttpClient};
+use crate::{
+    auth::Auth,
+    http_client::{Headers, HttpClient},
+    rest_api::errors::error_api::BoxAPIError,
+};
 
 /// Box client implementation
 #[derive(Debug)]
@@ -19,7 +21,7 @@ impl<'a> BoxClient<'a> {
     }
 
     // TODO: ERROR HANDLING
-    pub async fn headers(&mut self) -> Result<Headers, Error<AuthError>> {
+    pub async fn headers(&mut self) -> Result<Headers, BoxAPIError> {
         let mut headers = Headers::new();
 
         headers.insert("Accept".to_string(), "application/json".to_string());
@@ -30,7 +32,7 @@ impl<'a> BoxClient<'a> {
 
         let auth_headers = match auth_headers {
             Ok(auth_headers) => auth_headers,
-            Err(e) => return Err(Error::AuthError(e)),
+            Err(e) => return Err(BoxAPIError::AuthError(e)),
         };
 
         headers.extend(auth_headers);

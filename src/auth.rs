@@ -9,7 +9,7 @@ use async_trait::async_trait;
 
 use crate::http_client::Headers;
 
-use self::auth_errors::AuthError;
+pub use self::auth_errors::AuthError;
 
 /// Trait for authentication methods
 #[async_trait]

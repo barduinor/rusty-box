@@ -98,6 +98,8 @@ pub enum Code {
     ItemNameInvalid,
     #[serde(rename = "insufficient_scope")]
     InsufficientScope,
+    #[serde(rename = "user_login_already_used")]
+    UserLoginAlreadyUsed,
 }
 
 impl Default for Code {

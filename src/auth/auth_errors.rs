@@ -24,9 +24,8 @@ impl fmt::Display for AuthErrorResponse {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(
             f,
-            "AuthErrorMessage: {} ({})",
-            self.error.unwrap_or_default(),
-            self.error_description.unwrap_or_default()
+            "AuthErrorMessage: {:?} ({:?})",
+            self.error, self.error_description,
         )
     }
 }
