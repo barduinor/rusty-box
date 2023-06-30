@@ -7,7 +7,7 @@ pub mod config;
 pub mod rest_api;
 
 // Top-Lebel re-exports
-pub use crate::client::client::BoxClient;
+pub use crate::client::box_client::BoxClient;
 pub use crate::client::client_error::BoxAPIError;
 
 pub use crate::auth::auth_errors::AuthError;

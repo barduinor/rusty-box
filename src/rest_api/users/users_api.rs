@@ -18,7 +18,7 @@ use super::models::put_users_id_request::PutUsersIdRequest;
 use super::models::user_full::UserFull;
 use super::models::users::Users;
 
-use crate::client::client::BoxClient;
+use crate::client::box_client::BoxClient;
 use crate::client::client_error::BoxAPIError;
 
 pub enum UsersError {
@@ -315,10 +315,7 @@ pub async fn me(
             let user = serde_json::from_str::<UserFull>(&res)?;
             Ok(user)
         }
-        Err(e) => {
-            let err = Err(e);
-            err
-        }
+        Err(e) => Err(e),
     }
 }
 

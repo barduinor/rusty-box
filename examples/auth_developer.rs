@@ -3,7 +3,7 @@
 
 use rusty_box::{
     auth::auth_developer::DevAuth,
-    client::{client::BoxClient, client_error::BoxAPIError},
+    client::{box_client::BoxClient, client_error::BoxAPIError},
     config::Config,
     rest_api::users::users_api,
 };
