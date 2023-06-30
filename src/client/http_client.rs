@@ -1,38 +1,29 @@
 //! The client implementation for the reqwest HTTP client, which is async by
 //! default.
 
-use super::{BaseHttpClient, Form, Headers, Query};
+use std::{collections::HashMap, time::Duration};
 
-use std::convert::TryInto;
-use std::time::Duration;
-
-use async_trait::async_trait;
-// use maybe_async::async_impl;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
 
-#[derive(thiserror::Error, Debug)]
-pub enum ReqwestError {
-    /// The request couldn't be completed because there was an error when trying
-    /// to do so
-    #[error("request: {0}")]
-    Client(#[from] reqwest::Error),
+use crate::client::client_error_model::BoxAPIErrorResponse;
 
-    /// The request was made, but the server returned an unsuccessful status
-    /// code, such as 404 or 503. In some cases, the response may contain a
-    /// custom message from Box with more information, which can be
-    /// serialized into `rusty-box::AuthError` (not yet really).
-    #[error("status code {}", reqwest::Response::status(.0))]
-    StatusCode(reqwest::Response),
-}
+use super::client_error::BoxAPIError;
+
+/// HTTP headers.
+pub type Headers = HashMap<String, String>;
+/// Query parameters.
+pub type Query<'a> = HashMap<&'a str, &'a str>;
+/// Form parameters.
+pub type Form<'a> = HashMap<&'a str, &'a str>;
 
 #[derive(Debug, Clone)]
-pub struct ReqwestClient {
+pub struct HttpClient {
     /// reqwest needs an instance of its client to perform requests.
     client: reqwest::Client,
 }
 
-impl Default for ReqwestClient {
+impl Default for HttpClient {
     fn default() -> Self {
         let client = reqwest::ClientBuilder::new()
             .timeout(Duration::from_secs(10))
@@ -43,14 +34,14 @@ impl Default for ReqwestClient {
     }
 }
 
-impl ReqwestClient {
+impl HttpClient {
     async fn request<D>(
         &self,
         method: Method,
         url: &str,
         headers: Option<&Headers>,
         add_data: D,
-    ) -> Result<String, ReqwestError>
+    ) -> Result<String, BoxAPIError>
     where
         D: Fn(RequestBuilder) -> RequestBuilder,
     {
@@ -75,39 +66,41 @@ impl ReqwestClient {
         // Finally performing the request and handling the response
         log::info!("Making request {:?}", request);
         let response = request.send().await?;
+        let status = response.status();
+        let resp_text = response.text().await?;
 
         // Making sure that the status code is OK
-        if response.status().is_success() {
-            response.text().await.map_err(Into::into)
+        if status.is_success() {
+            Ok(resp_text)
         } else {
-            Err(ReqwestError::StatusCode(response))
+            let resp_error = serde_json::from_str::<BoxAPIErrorResponse>(&resp_text)?;
+            Err(BoxAPIError::ResponseError(resp_error))
         }
     }
 }
 
-#[async_trait]
-impl BaseHttpClient for ReqwestClient {
-    type Error = ReqwestError;
+impl HttpClient {
+    // type Error = BoxAPIError;
 
     #[inline]
-    async fn get(
+    pub async fn get(
         &self,
         url: &str,
         headers: Option<&Headers>,
-        query: &Query,
-    ) -> Result<String, Self::Error> {
+        query: &Query<'_>,
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::GET, url, headers, |req| req.query(query))
             .await
     }
 
     #[inline]
-    async fn post(
+    pub async fn post(
         &self,
         url: &str,
         headers: Option<&Headers>,
-        query: Option<&Query>,
+        query: Option<&Query<'_>>,
         payload: &Value,
-    ) -> Result<String, Self::Error> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::POST, url, headers, |req| {
             req.query(&query).json(payload)
         })
@@ -115,24 +108,24 @@ impl BaseHttpClient for ReqwestClient {
     }
 
     #[inline]
-    async fn post_form(
+    pub async fn post_form(
         &self,
         url: &str,
         headers: Option<&Headers>,
         payload: &Form<'_>,
-    ) -> Result<String, Self::Error> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::POST, url, headers, |req| req.form(payload))
             .await
     }
 
     #[inline]
-    async fn put(
+    pub async fn put(
         &self,
         url: &str,
         headers: Option<&Headers>,
-        query: Option<&Query>,
+        query: Option<&Query<'_>>,
         payload: &Value,
-    ) -> Result<String, Self::Error> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::PUT, url, headers, |req| {
             req.query(&query).json(payload)
         })
@@ -140,12 +133,12 @@ impl BaseHttpClient for ReqwestClient {
     }
 
     #[inline]
-    async fn delete(
+    pub async fn delete(
         &self,
         url: &str,
         headers: Option<&Headers>,
         payload: &Value,
-    ) -> Result<String, Self::Error> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::DELETE, url, headers, |req| req.json(payload))
             .await
     }

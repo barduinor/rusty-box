@@ -1,13 +1,6 @@
 use std::env;
 
-use rusty_box::{
-    auth::{
-        auth_ccg::{CCGAuth, SubjectType},
-        AuthError,
-    },
-    box_client::BoxClient,
-    config::Config,
-};
+use rusty_box::{AuthError, BoxClient, CCGAuth, Config, SubjectType};
 
 pub fn get_box_client() -> Result<BoxClient<'static>, AuthError> {
     dotenv::from_filename(".ccg.env").ok();

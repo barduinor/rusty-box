@@ -1,3 +1,26 @@
+### 0.3.0-alpha
+### Refactor:
+Completed refactoring of the error handle.
+
+Now Auth implements it's own error handle and Client implements it's own error handle.
+
+Created 2 different rqwest clients implementations. One for Auth and one for Client.
+
+Added re-exports at lib level so use statements are cleaner.
+
+
+* Auth
+    * AuthClient
+    * AuthError
+    * AuthErrorResponse
+* Client
+    * Client
+    * ClientError
+    * ClientErrorResponse
+
+
+
+
 ## 0.2.0-alpha
 ### Endpoints:
 - Added `users_api::create`

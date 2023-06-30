@@ -10,7 +10,7 @@
 
 use super::{
     put_users_id_request_notification_email::PutUsersIdRequestNotificationEmail,
-    tracking_code::TrackingCode,
+    tracking_code::TrackingCode, Role, Status,
 };
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
@@ -132,38 +132,5 @@ impl PutUsersIdRequest {
             notification_email: None,
             external_app_user_id: None,
         }
-    }
-}
-
-/// The user’s enterprise role
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Role {
-    #[serde(rename = "coadmin")]
-    Coadmin,
-    #[serde(rename = "user")]
-    User,
-}
-
-impl Default for Role {
-    fn default() -> Role {
-        Self::Coadmin
-    }
-}
-/// The user's account status
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Status {
-    #[serde(rename = "active")]
-    Active,
-    #[serde(rename = "inactive")]
-    Inactive,
-    #[serde(rename = "cannot_delete_edit")]
-    CannotDeleteEdit,
-    #[serde(rename = "cannot_delete_edit_upload")]
-    CannotDeleteEditUpload,
-}
-
-impl Default for Status {
-    fn default() -> Status {
-        Self::Active
     }
 }

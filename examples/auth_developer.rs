@@ -2,15 +2,15 @@
 // use dotenv;
 
 use rusty_box::{
-    auth::{auth_developer::DevAuth, AuthError},
-    box_client::BoxClient,
+    auth::auth_developer::DevAuth,
+    client::{box_client::BoxClient, client_error::BoxAPIError},
     config::Config,
     rest_api::users::users_api,
 };
 use std::env;
 
 #[tokio::main]
-async fn main() -> Result<(), AuthError> {
+async fn main() -> Result<(), BoxAPIError> {
     dotenv::from_filename(".dev.env").ok();
 
     let config = Config::new();
