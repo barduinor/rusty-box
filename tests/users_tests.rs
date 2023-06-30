@@ -1,7 +1,7 @@
 /// Users API tests
 use pretty_assertions::assert_eq;
 use rusty_box::{
-    users::models::{post_users_request::*, PutUsersIdRequest},
+    users::models::{PostUsersRequest, PutUsersIdRequest, Role, Status},
     users_api, BoxAPIError,
 };
 
@@ -133,10 +133,7 @@ async fn users_create() -> Result<(), BoxAPIError> {
     assert_eq!(new_user.address.unwrap(), "123 Test St");
     assert_eq!(new_user.space_amount.unwrap(), 1073741824);
     assert_eq!(new_user.timezone.unwrap(), "America/Los_Angeles");
-    assert_eq!(
-        new_user.status.unwrap(),
-        rusty_box::rest_api::users::models::user_full::Status::Active
-    );
+    assert_eq!(new_user.status.unwrap(), Status::Active);
 
     // fields not included by default
     // assert_eq!(new_user.role.unwrap(), user_full::Role::Coadmin); // not normaly returned

@@ -324,7 +324,7 @@ pub async fn me(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api,users::models::{post_users_request::*, PutUsersIdRequest},};
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api, users::models::{PostUsersRequest, Role, Status}};
 ///
 /// use dotenv;
 /// use std::env;
@@ -571,7 +571,7 @@ pub async fn terminate_sessions_by_group_ids(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{Config, DevAuth, BoxClient, BoxAPIError, users_api, users::models::{post_users_request::*, PutUsersIdRequest},};
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api, users::models::{PutUsersIdRequest, Role, Status}};
 /// use dotenv;
 /// use std::env;
 ///
