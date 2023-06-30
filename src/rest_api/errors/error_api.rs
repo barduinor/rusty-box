@@ -10,7 +10,7 @@ pub struct ResponseContent<T> {
 }
 
 // #[derive(Debug)]
-pub enum BoxAPIError {
+pub enum AuthError {
     Network(reqwest::Error),
     Serde(serde_json::Error),
     Io(std::io::Error),
@@ -23,49 +23,49 @@ impl fmt::Display for BoxAPIErrorResponse {
     }
 }
 
-impl fmt::Display for BoxAPIError {
+impl fmt::Display for AuthError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
-            BoxAPIError::Network(e) => ("reqwest", e.to_string()),
-            BoxAPIError::Serde(e) => ("serde", e.to_string()),
-            BoxAPIError::Io(e) => ("IO", e.to_string()),
-            BoxAPIError::ResponseError(e) => ("API Error", e.to_string()),
+            AuthError::Network(e) => ("reqwest", e.to_string()),
+            AuthError::Serde(e) => ("serde", e.to_string()),
+            AuthError::Io(e) => ("IO", e.to_string()),
+            AuthError::ResponseError(e) => ("API Error", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
     }
 }
-impl fmt::Debug for BoxAPIError {
+impl fmt::Debug for AuthError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
-            BoxAPIError::Network(e) => ("reqwest", e.to_string()),
-            BoxAPIError::Serde(e) => ("serde", e.to_string()),
-            BoxAPIError::Io(e) => ("IO", e.to_string()),
-            BoxAPIError::ResponseError(e) => ("API Error", e.to_string()),
+            AuthError::Network(e) => ("reqwest", e.to_string()),
+            AuthError::Serde(e) => ("serde", e.to_string()),
+            AuthError::Io(e) => ("IO", e.to_string()),
+            AuthError::ResponseError(e) => ("API Error", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
     }
 }
 
-impl From<reqwest::Error> for BoxAPIError {
+impl From<reqwest::Error> for AuthError {
     fn from(e: reqwest::Error) -> Self {
-        BoxAPIError::Network(e)
+        AuthError::Network(e)
     }
 }
 
-impl From<serde_json::Error> for BoxAPIError {
+impl From<serde_json::Error> for AuthError {
     fn from(e: serde_json::Error) -> Self {
-        BoxAPIError::Serde(e)
+        AuthError::Serde(e)
     }
 }
 
-impl From<std::io::Error> for BoxAPIError {
+impl From<std::io::Error> for AuthError {
     fn from(e: std::io::Error) -> Self {
-        BoxAPIError::Io(e)
+        AuthError::Io(e)
     }
 }
-impl From<BoxAPIErrorResponse> for BoxAPIError {
+impl From<BoxAPIErrorResponse> for AuthError {
     fn from(e: BoxAPIErrorResponse) -> Self {
-        BoxAPIError::ResponseError(e)
+        AuthError::ResponseError(e)
     }
 }
 

@@ -20,10 +20,10 @@ use super::models::users::Users;
 
 use crate::box_client::BoxClient;
 use crate::http_client::BaseHttpClient;
-use crate::rest_api::errors::error_api::BoxAPIError;
+use crate::rest_api::errors::error_api::AuthError;
 
 pub enum UsersError {
-    DefaultResponse(BoxAPIError),
+    DefaultResponse(AuthError),
     UnknownValue(serde_json::Value),
 }
 
@@ -91,7 +91,7 @@ pub async fn delete(
     user_id: &str,
     notify: Option<bool>,
     force: Option<bool>,
-) -> Result<(), BoxAPIError> {
+) -> Result<(), AuthError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -159,7 +159,7 @@ pub async fn delete(
 pub async fn list(
     client: &mut BoxClient<'_>,
     params: Option<ListUsersParams>,
-) -> Result<Users, BoxAPIError> {
+) -> Result<Users, AuthError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
@@ -259,7 +259,7 @@ pub async fn id(
     client: &mut BoxClient<'_>,
     user_id: &str,
     fields: Option<Vec<String>>,
-) -> Result<UserFull, BoxAPIError> {
+) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 
@@ -324,7 +324,7 @@ pub async fn id(
 pub async fn me(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
-) -> Result<UserFull, BoxAPIError> {
+) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users/me";
     let headers = client.headers().await?;
 
@@ -414,7 +414,7 @@ pub async fn create(
     client: &mut BoxClient<'_>,
     fields: Option<Vec<String>>,
     user: PostUsersRequest,
-) -> Result<UserFull, BoxAPIError> {
+) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users";
     let headers = client.headers().await?;
 
@@ -491,7 +491,7 @@ pub async fn create(
 pub async fn terminate_sessions_by_user_ids(
     client: &mut BoxClient<'_>,
     user_ids: Vec<String>,
-) -> Result<Option<String>, BoxAPIError> {
+) -> Result<Option<String>, AuthError> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -551,7 +551,7 @@ pub async fn terminate_sessions_by_user_ids(
 pub async fn terminate_sessions_by_user_logins(
     client: &mut BoxClient<'_>,
     user_logins: Vec<String>,
-) -> Result<Option<String>, BoxAPIError> {
+) -> Result<Option<String>, AuthError> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -611,7 +611,7 @@ pub async fn terminate_sessions_by_group_ids(
     client: &mut BoxClient<'_>,
     group_ids: Vec<String>,
     // fields: Option<Vec<String>>,
-) -> Result<Option<String>, BoxAPIError> {
+) -> Result<Option<String>, AuthError> {
     let uri = client.auth.base_api_url() + "/users/terminate_sessions";
     let headers = client.headers().await?;
 
@@ -677,7 +677,7 @@ pub async fn update(
     user_id: &str,
     fields: Option<Vec<String>>,
     user: PutUsersIdRequest,
-) -> Result<UserFull, BoxAPIError> {
+) -> Result<UserFull, AuthError> {
     let uri = client.auth.base_api_url() + "/users" + format!("/{}", user_id).as_str();
     let headers = client.headers().await?;
 

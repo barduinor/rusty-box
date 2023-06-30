@@ -1,7 +1,5 @@
 use std::fmt;
 
-use crate::rest_api::errors::error_api::BoxAPIError;
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct AuthErrorResponse {
     /// The type of the error returned.

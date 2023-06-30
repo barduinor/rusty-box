@@ -1,6 +1,7 @@
 //! Box API authentication
 pub mod access_token;
 pub mod auth_ccg;
+pub mod auth_client;
 pub mod auth_developer;
 pub mod auth_errors;
 

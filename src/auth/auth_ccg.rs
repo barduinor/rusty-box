@@ -1,8 +1,10 @@
 //! Client Credentials Grant (CCG) authentication
 use super::access_token::AccessToken;
+use super::auth_client::AuthClient;
 use super::{Auth, AuthError};
 use crate::config::Config;
-use crate::http_client::{BaseHttpClient, Form, HttpClient};
+use crate::http_client::{BaseHttpClient, Form};
+
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
 use serde::Serialize;
@@ -38,7 +40,7 @@ pub struct CCGAuth {
     access_token: AccessToken,
     expires_by: DateTime<Utc>,
     #[serde(skip)]
-    client: HttpClient,
+    client: AuthClient,
 }
 
 impl CCGAuth {
@@ -57,7 +59,7 @@ impl CCGAuth {
             box_subject_id,
             access_token: AccessToken::new(),
             expires_by: Utc::now(),
-            client: HttpClient::default(),
+            client: AuthClient::default(),
         }
     }
 
@@ -85,12 +87,8 @@ impl CCGAuth {
 
         let data = match response {
             Ok(data) => data,
-            Err(e) => Err(AuthError::ResponseError(e)),
-            // Err(HttpError::Client(e)) => return Err(AuthError::Network(e)),
-            Err(HttpError::StatusCode(e)) => return Err(AuthError::StatusCode(e)),
+            Err(e) => return Err(e),
         };
-
-        // let xx = serde_json::from_str::<AccessToken>(&data)?;
 
         let access_token = match serde_json::from_str::<AccessToken>(&data) {
             Ok(access_token) => access_token,
@@ -111,19 +109,12 @@ impl<'a> Auth<'a> for CCGAuth {
         if self.is_expired() {
             match self.fetch_access_token().await {
                 Ok(access_token) => Ok(access_token.access_token.unwrap_or_default()),
-                Err(e) => {
-                    let error = format!("Error fetching access token: {:?}", e);
-                    Err(AuthError::Generic { message: error })
-                }
+                Err(e) => Err(e),
             }
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
-                None => {
-                    return Err(AuthError::Generic {
-                        message: "CCG token is not set".to_owned(),
-                    })
-                }
+                None => return Err(AuthError::Token("CCG token is not set".to_owned())),
             };
             Ok(access_token)
         }
@@ -133,9 +124,7 @@ impl<'a> Auth<'a> for CCGAuth {
         self.access_token().await?;
         match serde_json::to_string(&self) {
             Ok(json) => Ok(json),
-            Err(e) => Err(AuthError::Generic {
-                message: e.to_string(),
-            }),
+            Err(e) => Err(AuthError::Serde(e)),
         }
     }
 

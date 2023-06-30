@@ -1,9 +1,10 @@
 //! The client implementation for the reqwest HTTP client, which is async by
 //! default.
 
-use crate::rest_api::errors::{error_api::AuthError, model::client_error::BoxAPIErrorResponse};
-
-use super::{BaseHttpClient, Form, Headers, Query};
+use crate::{
+    auth::auth_errors::AuthErrorResponse,
+    http_client::{BaseHttpClient, Form, Headers, Query},
+};
 
 use std::convert::TryInto;
 use std::time::Duration;
@@ -11,6 +12,8 @@ use std::time::Duration;
 use async_trait::async_trait;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
+
+use super::auth_errors::AuthError;
 
 // #[derive(thiserror::Error, Debug)]
 // pub enum ReqwestError {
@@ -28,12 +31,12 @@ use serde_json::Value;
 // }
 
 #[derive(Debug, Clone)]
-pub struct ReqwestClient {
+pub struct AuthClient {
     /// reqwest needs an instance of its client to perform requests.
     client: reqwest::Client,
 }
 
-impl Default for ReqwestClient {
+impl Default for AuthClient {
     fn default() -> Self {
         let client = reqwest::ClientBuilder::new()
             .timeout(Duration::from_secs(10))
@@ -44,7 +47,7 @@ impl Default for ReqwestClient {
     }
 }
 
-impl ReqwestClient {
+impl AuthClient {
     async fn request<D>(
         &self,
         method: Method,
@@ -83,14 +86,14 @@ impl ReqwestClient {
         if status.is_success() {
             Ok(resp_text)
         } else {
-            let resp_error = serde_json::from_str::<BoxAPIErrorResponse>(&resp_text)?;
+            let resp_error = serde_json::from_str::<AuthErrorResponse>(&resp_text)?;
             Err(AuthError::ResponseError(resp_error))
         }
     }
 }
 
 #[async_trait]
-impl BaseHttpClient for ReqwestClient {
+impl BaseHttpClient for AuthClient {
     type Error = AuthError;
 
     #[inline]
@@ -153,6 +156,4 @@ impl BaseHttpClient for ReqwestClient {
         self.request(Method::DELETE, url, headers, |req| req.json(payload))
             .await
     }
-
-    // TODO: implement method OPTION for reqwest
 }
