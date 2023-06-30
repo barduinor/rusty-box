@@ -54,20 +54,13 @@ pub struct ListUsersParams {
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -112,20 +105,13 @@ pub async fn delete(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -221,20 +207,13 @@ pub async fn list(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -289,20 +268,13 @@ pub async fn id(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
-/// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+///
+///  #[tokio::main]
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -355,21 +327,13 @@ pub async fn me(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-///     rest_api::users::models::post_users_request
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api,users::models::{post_users_request::*, PutUsersIdRequest},};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -381,11 +345,11 @@ pub async fn me(
 ///     );
 ///     let mut client = BoxClient::new(Box::new(auth));
 ///     
-///     let new_user_request = post_users_request::PostUsersRequest {
+///     let new_user_request = PostUsersRequest {
 ///         name: "Test User".to_string(),
 ///         login: Some("test.user@gmail.local".to_string()),
 ///         is_platform_access_only: Some(false),
-///         role: Some(post_users_request::Role::Coadmin),
+///         role: Some(Role::Coadmin),
 ///         language: Some("en".to_string()),
 ///         is_sync_enabled: Some(true),
 ///         job_title: Some("Test Job Title".to_string()),
@@ -398,7 +362,7 @@ pub async fn me(
 ///         is_external_collab_restricted: Some(false),
 ///         is_exempt_from_device_limits: Some(false),
 ///         is_exempt_from_login_verification: Some(false),
-///         status: Some(post_users_request::Status::Active),
+///         status: Some(Status::Active),
 ///         external_app_user_id: Some("test-external-app-user-id".to_string()),
 ///         ..Default::default()
 ///     };
@@ -451,21 +415,15 @@ pub async fn create(
 /// Returns the status for the POST request.
 ///
 /// Sample usage:
+///
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -511,20 +469,13 @@ pub async fn terminate_sessions_by_user_ids(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -571,20 +522,13 @@ pub async fn terminate_sessions_by_user_logins(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient,BoxAPIError, users_api};
+///
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");
@@ -630,21 +574,12 @@ pub async fn terminate_sessions_by_group_ids(
 ///
 /// Sample usage:
 /// ```no_run
-/// use rusty_box::{
-///     auth::{
-///         auth_developer::DevAuth,
-///         AuthError,
-///     },
-///     box_client::BoxClient,
-///     box_client_error::Error,
-///     config::Config,
-///     rest_api::users::users_api,
-///     rest_api::users::models::put_users_id_request::PutUsersIdRequest
-/// };
+/// use rusty_box::{Config, DevAuth, BoxClient, BoxAPIError, users_api, users::models::{post_users_request::*, PutUsersIdRequest},};
 /// use dotenv;
 /// use std::env;
+///
 /// #[tokio::main]
-/// async fn main() -> Result<(), Error<AuthError>> {
+/// async fn main() -> Result<(), BoxAPIError> {
 ///
 ///     dotenv::from_filename(".dev.env").ok();
 ///     let access_token = env::var("DEVELOPER_TOKEN").expect("DEVELOPER_TOKEN must be set");

@@ -7,8 +7,9 @@ pub mod auth_errors;
 
 use async_trait::async_trait;
 
+use crate::AuthError;
+
 use self::auth_client::Headers;
-pub use self::auth_errors::AuthError;
 
 /// Trait for authentication methods
 #[async_trait]

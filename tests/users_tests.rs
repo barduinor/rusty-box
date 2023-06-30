@@ -1,10 +1,11 @@
 /// Users API tests
 use pretty_assertions::assert_eq;
+use rusty_box::{
+    users::models::{post_users_request::*, PutUsersIdRequest},
+    users_api, BoxAPIError,
+};
 
-use rusty_box::client::client_error::BoxAPIError;
-use rusty_box::rest_api::users::models::post_users_request;
-use rusty_box::rest_api::users::models::put_users_id_request::PutUsersIdRequest;
-use rusty_box::{self, rest_api::users::users_api};
+use crate::common::user_utils::delete_user_by_login;
 mod common;
 
 #[tokio::test]
@@ -87,11 +88,13 @@ async fn users_get_by_id() -> Result<(), BoxAPIError> {
 async fn users_create() -> Result<(), BoxAPIError> {
     let mut client = common::box_client::get_box_client()?;
 
-    let new_user_request = post_users_request::PostUsersRequest {
+    delete_user_by_login(&mut client, "test.user@gmail.local").await?;
+
+    let new_user_request = PostUsersRequest {
         name: "Test User".to_string(),
         login: Some("test.user@gmail.local".to_string()),
         is_platform_access_only: Some(false),
-        role: Some(post_users_request::Role::Coadmin),
+        role: Some(Role::Coadmin),
         language: Some("en".to_string()),
         is_sync_enabled: Some(true),
         job_title: Some("Test Job Title".to_string()),
@@ -104,7 +107,7 @@ async fn users_create() -> Result<(), BoxAPIError> {
         is_external_collab_restricted: Some(false),
         is_exempt_from_device_limits: Some(false),
         is_exempt_from_login_verification: Some(false),
-        status: Some(post_users_request::Status::Active),
+        status: Some(Status::Active),
         external_app_user_id: Some("test-external-app-user-id".to_string()),
 
         ..Default::default()
@@ -158,11 +161,13 @@ async fn users_create() -> Result<(), BoxAPIError> {
 async fn users_update() -> Result<(), BoxAPIError> {
     let mut client = common::box_client::get_box_client()?;
 
-    let new_user_request = post_users_request::PostUsersRequest {
+    delete_user_by_login(&mut client, "test.user.to.update@gmail.local").await?;
+
+    let new_user_request = PostUsersRequest {
         name: "Test User To Update".to_string(),
         login: Some("test.user.to.update@gmail.local".to_string()),
         is_platform_access_only: Some(false),
-        role: Some(post_users_request::Role::Coadmin),
+        role: Some(Role::Coadmin),
         language: Some("en".to_string()),
         is_sync_enabled: Some(true),
         job_title: Some("Test Job Title".to_string()),
@@ -175,7 +180,7 @@ async fn users_update() -> Result<(), BoxAPIError> {
         is_external_collab_restricted: Some(false),
         is_exempt_from_device_limits: Some(false),
         is_exempt_from_login_verification: Some(false),
-        status: Some(post_users_request::Status::Active),
+        status: Some(Status::Active),
         external_app_user_id: Some("test-external-app-user-id".to_string()),
 
         ..Default::default()
