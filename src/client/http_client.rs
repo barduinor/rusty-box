@@ -1,15 +1,12 @@
 //! The client implementation for the reqwest HTTP client, which is async by
 //! default.
 
-use crate::auth::auth_errors::AuthErrorResponse;
+use crate::rest_api::errors::{error_api::BoxAPIError, model::client_error::BoxAPIErrorResponse};
 
-use std::time::Duration;
-use std::{collections::HashMap, convert::TryInto};
+use std::{collections::HashMap, time::Duration};
 
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
-
-use super::auth_errors::AuthError;
 
 /// HTTP headers.
 pub type Headers = HashMap<String, String>;
@@ -19,12 +16,12 @@ pub type Query<'a> = HashMap<&'a str, &'a str>;
 pub type Form<'a> = HashMap<&'a str, &'a str>;
 
 #[derive(Debug, Clone)]
-pub struct AuthClient {
+pub struct HttpClient {
     /// reqwest needs an instance of its client to perform requests.
     client: reqwest::Client,
 }
 
-impl Default for AuthClient {
+impl Default for HttpClient {
     fn default() -> Self {
         let client = reqwest::ClientBuilder::new()
             .timeout(Duration::from_secs(10))
@@ -35,14 +32,14 @@ impl Default for AuthClient {
     }
 }
 
-impl AuthClient {
+impl HttpClient {
     async fn request<D>(
         &self,
         method: Method,
         url: &str,
         headers: Option<&Headers>,
         add_data: D,
-    ) -> Result<String, AuthError>
+    ) -> Result<String, BoxAPIError>
     where
         D: Fn(RequestBuilder) -> RequestBuilder,
     {
@@ -74,14 +71,14 @@ impl AuthClient {
         if status.is_success() {
             Ok(resp_text)
         } else {
-            let resp_error = serde_json::from_str::<AuthErrorResponse>(&resp_text)?;
-            Err(AuthError::ResponseError(resp_error))
+            let resp_error = serde_json::from_str::<BoxAPIErrorResponse>(&resp_text)?;
+            Err(BoxAPIError::ResponseError(resp_error))
         }
     }
 }
 
-impl AuthClient {
-    // type Error = AuthError;
+impl HttpClient {
+    // type Error = BoxAPIError;
 
     #[inline]
     pub async fn get(
@@ -89,7 +86,7 @@ impl AuthClient {
         url: &str,
         headers: Option<&Headers>,
         query: &Query<'_>,
-    ) -> Result<String, AuthError> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::GET, url, headers, |req| req.query(query))
             .await
     }
@@ -101,7 +98,7 @@ impl AuthClient {
         headers: Option<&Headers>,
         query: Option<&Query<'_>>,
         payload: &Value,
-    ) -> Result<String, AuthError> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::POST, url, headers, |req| {
             req.query(&query).json(payload)
         })
@@ -114,7 +111,7 @@ impl AuthClient {
         url: &str,
         headers: Option<&Headers>,
         payload: &Form<'_>,
-    ) -> Result<String, AuthError> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::POST, url, headers, |req| req.form(payload))
             .await
     }
@@ -126,7 +123,7 @@ impl AuthClient {
         headers: Option<&Headers>,
         query: Option<&Query<'_>>,
         payload: &Value,
-    ) -> Result<String, AuthError> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::PUT, url, headers, |req| {
             req.query(&query).json(payload)
         })
@@ -139,8 +136,10 @@ impl AuthClient {
         url: &str,
         headers: Option<&Headers>,
         payload: &Value,
-    ) -> Result<String, AuthError> {
+    ) -> Result<String, BoxAPIError> {
         self.request(Method::DELETE, url, headers, |req| req.json(payload))
             .await
     }
+
+    // TODO: implement method OPTION for reqwest
 }

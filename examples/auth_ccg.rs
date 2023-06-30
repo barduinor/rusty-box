@@ -3,7 +3,7 @@
 
 use rusty_box::{
     auth::auth_ccg::{CCGAuth, SubjectType},
-    box_client::BoxClient,
+    client::client::BoxClient,
     config::Config,
     rest_api::{errors::error_api::BoxAPIError, users::users_api},
 };

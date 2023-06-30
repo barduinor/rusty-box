@@ -1,9 +1,8 @@
 //! Client Credentials Grant (CCG) authentication
 use super::access_token::AccessToken;
-use super::auth_client::AuthClient;
+use super::auth_client::{AuthClient, Form};
 use super::{Auth, AuthError};
 use crate::config::Config;
-use crate::http_client::{BaseHttpClient, Form};
 
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};

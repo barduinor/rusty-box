@@ -5,7 +5,7 @@ use rusty_box::{
         auth_ccg::{CCGAuth, SubjectType},
         AuthError,
     },
-    box_client::BoxClient,
+    client::client::BoxClient,
     config::Config,
 };
 

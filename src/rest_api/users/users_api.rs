@@ -18,8 +18,7 @@ use super::models::put_users_id_request::PutUsersIdRequest;
 use super::models::user_full::UserFull;
 use super::models::users::Users;
 
-use crate::box_client::BoxClient;
-use crate::http_client::BaseHttpClient;
+use crate::client::client::BoxClient;
 use crate::rest_api::errors::error_api::BoxAPIError;
 
 pub enum UsersError {
