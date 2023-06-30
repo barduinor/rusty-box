@@ -1,37 +1,14 @@
 //! Box API authentication
-use async_trait::async_trait;
-
-use crate::{
-    http_client::{self, Headers},
-    rest_api::errors::error_api::BoxAPIError,
-};
-
 pub mod access_token;
 pub mod auth_ccg;
 pub mod auth_developer;
+pub mod auth_errors;
 
-/// Box API errors
-#[derive(thiserror::Error, Debug)]
-pub enum AuthError {
-    /// The request couldn't be completed because there was an error when trying
-    /// to do so
-    #[error("request: {0}")]
-    Client(#[from] reqwest::Error),
+use async_trait::async_trait;
 
-    /// The request was made, but the server returned an unsuccessful status
-    /// code, such as 404 or 503. In some cases, the response may contain a
-    /// custom message from Box.com with more information, which can be
-    /// serialized into `Box_model::ApiError`.
-    #[error("status code {}", reqwest::Response::status(.0))]
-    StatusCode(reqwest::Response),
+use crate::http_client::Headers;
 
-    #[error("json parse error: {0}")]
-    ParseJson(#[from] serde_json::Error),
-
-    #[error("Generic: {message}")]
-    Generic { message: String },
-    // RequestError(#[from] BoxAPIError),
-}
+use self::auth_errors::AuthError;
 
 /// Trait for authentication methods
 #[async_trait]
@@ -40,7 +17,6 @@ pub trait Auth<'a> {
     async fn to_json(&mut self) -> Result<String, AuthError>;
     fn base_api_url(&self) -> String;
     fn user_agent(&self) -> String;
-    // async fn auth_header(&mut self) -> Result<Headers, AuthError>;
 }
 
 impl dyn Auth<'_> {

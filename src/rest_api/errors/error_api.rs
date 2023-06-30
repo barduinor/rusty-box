@@ -11,7 +11,7 @@ pub struct ResponseContent<T> {
 
 // #[derive(Debug)]
 pub enum BoxAPIError {
-    Reqwest(reqwest::Error),
+    Network(reqwest::Error),
     Serde(serde_json::Error),
     Io(std::io::Error),
     ResponseError(BoxAPIErrorResponse),
@@ -26,7 +26,7 @@ impl fmt::Display for BoxAPIErrorResponse {
 impl fmt::Display for BoxAPIError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
-            BoxAPIError::Reqwest(e) => ("reqwest", e.to_string()),
+            BoxAPIError::Network(e) => ("reqwest", e.to_string()),
             BoxAPIError::Serde(e) => ("serde", e.to_string()),
             BoxAPIError::Io(e) => ("IO", e.to_string()),
             BoxAPIError::ResponseError(e) => ("API Error", e.to_string()),
@@ -37,7 +37,7 @@ impl fmt::Display for BoxAPIError {
 impl fmt::Debug for BoxAPIError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let (module, e) = match self {
-            BoxAPIError::Reqwest(e) => ("reqwest", e.to_string()),
+            BoxAPIError::Network(e) => ("reqwest", e.to_string()),
             BoxAPIError::Serde(e) => ("serde", e.to_string()),
             BoxAPIError::Io(e) => ("IO", e.to_string()),
             BoxAPIError::ResponseError(e) => ("API Error", e.to_string()),
@@ -48,7 +48,7 @@ impl fmt::Debug for BoxAPIError {
 
 impl From<reqwest::Error> for BoxAPIError {
     fn from(e: reqwest::Error) -> Self {
-        BoxAPIError::Reqwest(e)
+        BoxAPIError::Network(e)
     }
 }
 
@@ -61,6 +61,11 @@ impl From<serde_json::Error> for BoxAPIError {
 impl From<std::io::Error> for BoxAPIError {
     fn from(e: std::io::Error) -> Self {
         BoxAPIError::Io(e)
+    }
+}
+impl From<BoxAPIErrorResponse> for BoxAPIError {
+    fn from(e: BoxAPIErrorResponse) -> Self {
+        BoxAPIError::ResponseError(e)
     }
 }
 

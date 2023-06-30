@@ -85,7 +85,8 @@ impl CCGAuth {
 
         let data = match response {
             Ok(data) => data,
-            Err(HttpError::Client(e)) => return Err(AuthError::Client(e)),
+            Err(e) => Err(AuthError::ResponseError(e)),
+            // Err(HttpError::Client(e)) => return Err(AuthError::Network(e)),
             Err(HttpError::StatusCode(e)) => return Err(AuthError::StatusCode(e)),
         };
 
@@ -94,8 +95,7 @@ impl CCGAuth {
         let access_token = match serde_json::from_str::<AccessToken>(&data) {
             Ok(access_token) => access_token,
             Err(e) => {
-                let error = format!("Error parsing access token: {:?}", e);
-                return Err(AuthError::Generic { message: error });
+                return Err(AuthError::Serde(e));
             }
         };
         let expires_in = access_token.expires_in.unwrap_or_default();
