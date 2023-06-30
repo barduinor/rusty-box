@@ -28,12 +28,7 @@ impl<'a> BoxClient<'a> {
         headers.insert("Content-Type".to_string(), "application/json".to_string());
         headers.insert("User-Agent".to_string(), self.auth.user_agent());
 
-        let auth_headers = self.auth.auth_header().await;
-
-        let auth_headers = match auth_headers {
-            Ok(auth_headers) => auth_headers,
-            Err(e) => return Err(BoxAPIError::AuthError(e)),
-        };
+        let auth_headers = self.auth.auth_header().await?;
 
         headers.extend(auth_headers);
         Ok(headers)

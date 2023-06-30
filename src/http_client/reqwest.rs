@@ -12,21 +12,6 @@ use async_trait::async_trait;
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
 
-// #[derive(thiserror::Error, Debug)]
-// pub enum ReqwestError {
-//     /// The request couldn't be completed because there was an error when trying
-//     /// to do so
-//     #[error("request: {0}")]
-//     Client(#[from] reqwest::Error),
-
-//     /// The request was made, but the server returned an unsuccessful status
-//     /// code, such as 404 or 503. In some cases, the response may contain a
-//     /// custom message from Box with more information, which can be
-//     /// serialized into `rusty-box::http_client::box_api_error`.
-//     #[error("status code {}", reqwest::Response::status(.0))]
-//     StatusCode(reqwest::Response),
-// }
-
 #[derive(Debug, Clone)]
 pub struct ReqwestClient {
     /// reqwest needs an instance of its client to perform requests.
