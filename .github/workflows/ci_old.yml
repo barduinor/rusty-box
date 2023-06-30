@@ -85,10 +85,8 @@ jobs:
                         ${{ runner.os }}-sccache-
       - name: Start sccache server
         run: sccache --start-server
-      - name: check-clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
-      # - name: ${{ matrix.make.name }}
-      #   run: make ${{ matrix.make.task }}
+      - name: ${{ matrix.make.name }}
+        run: make ${{ matrix.make.task }}
       - name: Print sccache stats
         run: sccache --show-stats
       - name: Stop sccache server
