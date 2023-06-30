@@ -2,7 +2,7 @@ use std::fmt;
 
 use crate::auth::auth_errors::AuthError;
 
-use super::model::client_error::BoxAPIErrorResponse;
+use super::client_error_model::BoxAPIErrorResponse;
 
 #[derive(Debug, Clone)]
 pub struct ResponseContent<T> {

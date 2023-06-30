@@ -19,7 +19,7 @@ use super::models::user_full::UserFull;
 use super::models::users::Users;
 
 use crate::client::client::BoxClient;
-use crate::rest_api::errors::error_api::BoxAPIError;
+use crate::client::client_error::BoxAPIError;
 
 pub enum UsersError {
     DefaultResponse(BoxAPIError),

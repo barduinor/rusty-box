@@ -1,12 +1,14 @@
 //! The client implementation for the reqwest HTTP client, which is async by
 //! default.
 
-use crate::rest_api::errors::{error_api::BoxAPIError, model::client_error::BoxAPIErrorResponse};
-
 use std::{collections::HashMap, time::Duration};
 
 use reqwest::{Method, RequestBuilder};
 use serde_json::Value;
+
+use crate::client::client_error_model::BoxAPIErrorResponse;
+
+use super::client_error::BoxAPIError;
 
 /// HTTP headers.
 pub type Headers = HashMap<String, String>;

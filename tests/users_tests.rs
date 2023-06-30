@@ -1,6 +1,7 @@
 /// Users API tests
 use pretty_assertions::assert_eq;
-use rusty_box::rest_api::errors::error_api::BoxAPIError;
+
+use rusty_box::client::client_error::BoxAPIError;
 use rusty_box::rest_api::users::models::post_users_request;
 use rusty_box::rest_api::users::models::put_users_id_request::PutUsersIdRequest;
 use rusty_box::{self, rest_api::users::users_api};

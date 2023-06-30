@@ -1,5 +1,4 @@
 //! Box client implementation
-use crate::{auth::Auth, rest_api::errors::error_api::BoxAPIError};
 
 /// Box client implementation
 #[derive(Debug)]
@@ -33,8 +32,12 @@ impl<'a> BoxClient<'a> {
 
 #[cfg(test)]
 use crate::auth::auth_ccg::{CCGAuth, SubjectType};
+use crate::auth::Auth;
 
-use super::http_client::{Headers, HttpClient};
+use super::{
+    client_error::BoxAPIError,
+    http_client::{Headers, HttpClient},
+};
 
 #[tokio::test]
 async fn test_create_client_ccg() {

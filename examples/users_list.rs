@@ -2,9 +2,9 @@ use std::env;
 
 use rusty_box::{
     auth::auth_ccg::{CCGAuth, SubjectType},
-    client::client::BoxClient,
+    client::{client::BoxClient, client_error::BoxAPIError},
     config::Config,
-    rest_api::{errors::error_api::BoxAPIError, users::users_api},
+    rest_api::users::users_api,
 };
 
 #[tokio::main]
