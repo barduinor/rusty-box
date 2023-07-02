@@ -60,6 +60,13 @@ jobs:
     #     brew update
     #     brew install sccache          
 
+    - name: Install Rust ${{ matrix.rust }}
+      uses: actions-rs/toolchain@v1
+      with:
+        toolchain: ${{ matrix.rust }}
+        profile: minimal
+        override: true
+
     - name: Cache cargo registry
       uses: actions/cache@v2
       continue-on-error: false
