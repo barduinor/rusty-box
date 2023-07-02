@@ -18,19 +18,19 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-        #   os: [ubuntu-latest, macos-latest]
-          os: [ubuntu-latest]
+          os: [ubuntu-latest, macos-latest]
+        #   os: [ubuntu-latest]
           rust: [stable]
           include:
             - os: ubuntu-latest
               sccache-path: /home/runner/.cache/sccache
-            # - os: macos-latest
-            #   sccache-path: /Users/runner/Library/Caches/Mozilla.sccache
-        #   exclude:
-        #     - os: macos-latest
-        #       rust: stable
-        #       make:
-        #         name: Clippy
+            - os: macos-latest
+              sccache-path: /Users/runner/Library/Caches/Mozilla.sccache
+          exclude:
+            - os: macos-latest
+              rust: stable
+              make:
+                name: Clippy
     
     env:
         RUST_BACKTRACE: full
@@ -54,11 +54,11 @@ jobs:
         mv -f $SCCACHE_FILE/sccache $HOME/.local/bin/sccache
         echo "$HOME/.local/bin" >> $GITHUB_PATH          
             
-    # - name: Install sccache (macos-latest)
-    #   if: matrix.os == 'macos-latest'
-    #   run: |
-    #     brew update
-    #     brew install sccache          
+    - name: Install sccache (macos-latest)
+      if: matrix.os == 'macos-latest'
+      run: |
+        brew update
+        brew install sccache          
 
     - name: Install Rust ${{ matrix.rust }}
       uses: actions-rs/toolchain@v1
