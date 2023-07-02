@@ -26,6 +26,11 @@ jobs:
     - name: Clippy
       run: cargo clippy --no-deps -- -D warnings
 
+    - name: Create .ccg.env from secrets
+      run: |
+        echo "${{secrets.CCG_ENV}}"
+        echo "${{secrets.CCG_ENV}}" | base64 -d > .ccg.env
+    
     - name: Run tests
       run: cargo test --tests
 
