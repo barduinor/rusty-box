@@ -18,8 +18,8 @@ jobs:
     strategy:
         fail-fast: false
         matrix:
-          os: [ubuntu-latest, macos-latest]
-        #   os: [ubuntu-latest]
+        #   os: [ubuntu-latest, macos-latest]
+          os: [ubuntu-latest]
           rust: [stable]
           include:
             - os: ubuntu-latest
@@ -89,8 +89,8 @@ jobs:
     - name: Start sccache server
       run: sccache --start-server
 
-    # - name: Build
-    #   run: cargo build
+    - name: Build
+      run: cargo build
 
     - name: Code Formatting
       run: cargo fmt -- --check
