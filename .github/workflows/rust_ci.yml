@@ -21,7 +21,7 @@ jobs:
       run: cargo build
 
     - name: Code Formatting
-      run: cargo fmt --no-deps -- --check
+      run: cargo fmt -- --no-deps --check
 
     - name: Clippy
       run: cargo clippy --no-deps -- -D warnings
