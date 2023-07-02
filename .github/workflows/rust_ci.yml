@@ -35,4 +35,4 @@ jobs:
       run: cargo test --tests
 
     - name: Doc testts
-      run: cargo test --doc --no-deps
+      run: cargo test --doc
