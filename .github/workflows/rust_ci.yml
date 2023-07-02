@@ -113,3 +113,6 @@ jobs:
       run: sccache --show-stats
     - name: Stop sccache server
       run: sccache --stop-server || true
+
+    - name: Done
+      run: echo "Done"
