@@ -52,7 +52,7 @@ jobs:
         mkdir -p $HOME/.local/bin
         echo "$LINK/v$SCCACHE_VERSION/$SCCACHE_FILE.tar.gz"
 
-        curl -L "$LINK/$SCCACHE_VERSION/$SCCACHE_FILE.tar.gz" | tar xz
+        curl -L "$LINK/v$SCCACHE_VERSION/$SCCACHE_FILE.tar.gz" | tar xz
         mv -f $SCCACHE_FILE/sccache $HOME/.local/bin/sccache
         echo "$HOME/.local/bin" >> $GITHUB_PATH          
             
