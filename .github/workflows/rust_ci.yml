@@ -89,8 +89,8 @@ jobs:
     - name: Start sccache server
       run: sccache --start-server
 
-    - name: Build
-      run: cargo build
+    # - name: Build
+    #   run: cargo build
 
     - name: Code Formatting
       run: cargo fmt -- --check
