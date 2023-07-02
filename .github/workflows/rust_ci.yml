@@ -16,7 +16,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Build
-      run: cargo build --verbose
+      run: cargo build
+
+    - name: Code Formatting
+      run: cargo fmt --no-deps -- --check
+
+    - name: Clippy
+      run: cargo clippy --no-deps -- -D warnings
+
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --tests
+
+    - name: Doc testts
+      run: cargo test --doc --no-deps
