@@ -68,8 +68,49 @@ impl OAuth {
         Ok((url, local_state.to_owned()))
     }
 
+    pub async fn request_access_token(
+        &mut self,
+        client_id: String,
+        client_secret: String,
+        code: String,
+    ) -> Result<AccessToken, AuthError> {
+        let url = self.config.oauth2_api_url.clone() + "/token";
+
+        let headers = None; // TODO: Add headers to rquest
+
+        let mut payload = Form::new();
+        payload.insert("client_id", &client_id);
+        payload.insert("client_secret", &client_secret);
+        payload.insert("grant_type", "authorization_code");
+        payload.insert("code", &code);
+
+        let now = Utc::now();
+
+        let response = self.client.post_form(&url, headers, &payload).await;
+
+        let data = match response {
+            Ok(data) => data,
+            Err(e) => return Err(e),
+        };
+
+        let access_token = match serde_json::from_str::<AccessToken>(&data) {
+            Ok(access_token) => access_token,
+            Err(e) => {
+                return Err(AuthError::Serde(e));
+            }
+        };
+        let expires_in = access_token.expires_in.unwrap_or_default();
+        self.expires_by = now + Duration::seconds(expires_in);
+        self.access_token = access_token.clone();
+        Ok(access_token)
+    }
+
+    pub fn set_access_token(&mut self, access_token: AccessToken) {
+        self.access_token = access_token;
+    }
+
     async fn refresh_access_token(&mut self) -> Result<AccessToken, AuthError> {
-        let url = &(self.config.oauth2_api_url.clone() + "/token");
+        let url = self.config.oauth2_api_url.clone() + "/token";
 
         let refresh_token = self.access_token.refresh_token.clone().unwrap_or_default();
 
@@ -84,7 +125,7 @@ impl OAuth {
 
         let now = Utc::now();
 
-        let response = self.client.post_form(url, headers, &payload).await;
+        let response = self.client.post_form(&url, headers, &payload).await;
 
         let data = match response {
             Ok(data) => data,
@@ -151,8 +192,6 @@ fn generate_state(length: u8) -> String {
 }
 
 #[cfg(test)]
-use std::env;
-
 #[test]
 fn test_generate_state() {
     let state = generate_state(16);
@@ -244,8 +283,8 @@ fn test_authorization_url_scope() {
     // check if auth_url does not contain optional scope or redirect_url
 }
 
-#[tokio::test]
-async fn test_oauth_new() {
+#[test]
+fn test_oauth_new() {
     let config = Config::new();
     let client_id = "client_id".to_owned();
     let client_secret = "client_secret".to_owned();
@@ -255,23 +294,16 @@ async fn test_oauth_new() {
     assert_eq!(auth.client_secret, "client_secret".to_owned());
 }
 
-#[tokio::test]
-async fn test_oauth_refresh() {
-    dotenv::from_filename(".ccg.env").ok(); //TODO: refactor test
+#[test]
+fn test_oauth_set_access_token() {
     let config = Config::new();
-    let client_id = env::var("CLIENT_ID").expect("CLIENT_ID must be set");
-    let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set");
+    let mut auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+    let access_token = AccessToken {
+        access_token: Some("access_token".to_owned()),
+        refresh_token: Some("refresh_token".to_owned()),
+        ..Default::default()
+    };
+    auth.set_access_token(access_token.clone());
 
-    let mut auth = OAuth::new(config, client_id, client_secret);
-
-    let access_token = auth.access_token().await;
-    // println!("access_token: {:#?}", access_token);
-
-    assert!(access_token.is_ok());
-    assert!(!auth.is_expired());
-    assert!(auth.access_token.access_token.is_some());
-    assert_eq!(
-        access_token.unwrap(),
-        auth.access_token.access_token.unwrap()
-    );
+    assert_eq!(auth.access_token, access_token);
 }
