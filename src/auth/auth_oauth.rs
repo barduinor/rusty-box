@@ -55,7 +55,7 @@ impl OAuth {
         };
 
         let local_state = match state {
-            Some(state) => state.clone(),
+            Some(state) => state,
             None => "box_csrf_token_".to_string() + &generate_state(16),
         };
         let url = url + "&state=" + local_state.as_str();
@@ -65,7 +65,7 @@ impl OAuth {
             None => url,
         };
 
-        Ok((url, local_state.to_owned()))
+        Ok((url, local_state))
     }
 
     pub async fn request_access_token(
