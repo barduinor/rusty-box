@@ -16,10 +16,8 @@ pub struct OAuth {
     pub config: Config,
     client_id: String,
     client_secret: String,
-    // redirect_uri: String, // TODO: use URL type?
     access_token: AccessToken,
     expires_by: DateTime<Utc>,
-    scope: Option<String>, // TODO: vector of strings?
 
     #[serde(skip)]
     client: AuthClient,
@@ -33,7 +31,6 @@ impl OAuth {
             client_secret,
             access_token: AccessToken::new(),
             expires_by: Utc::now(),
-            scope: None,
             client: AuthClient::default(),
         }
     }
@@ -42,28 +39,33 @@ impl OAuth {
         Utc::now() > self.expires_by
     }
 
-    pub fn authorization_url(&self, state: Option<String>, redirect_url: Option<String>) -> String {
+    pub fn authorization_url(
+        &self,
+        scope: Option<String>, // TODO: vector of strings?
+        state: Option<String>,
+        redirect_url: Option<String>,
+    ) -> Result<(String, String), AuthError> {
         let url = self.config.oauth2_authorize_url.clone();
         let url = url + "?client_id=" + &self.client_id;
         let url = url + "&response_type=code";
 
-        let local_scope = self.scope.clone();
-        let url = match local_scope {
-            Some(local_scope) => url + "&scope=" + local_scope.as_str(),
+        let url = match scope {
+            Some(scope) => url + "&scope=" + scope.as_str(),
             None => url,
         };
 
-        let url = match state {
-            Some(state) => url + "&state=" + state.as_str(),
-            None => url + "&state=" + "box_csrf_token_" + &generate_state(16),
+        let local_state = match state {
+            Some(state) => state.clone(),
+            None => "box_csrf_token_".to_string() + &generate_state(16),
         };
+        let url = url + "&state=" + local_state.as_str();
 
         let url = match redirect_url {
             Some(redirect_url) => url + "&redirect_uri=" + &urlencode(redirect_url.as_str()),
             None => url,
         };
 
-        url
+        Ok((url, local_state.to_owned()))
     }
 
     async fn refresh_access_token(&mut self) -> Result<AccessToken, AuthError> {
@@ -169,16 +171,77 @@ fn test_authorization_url_default() {
     let config = Config::new();
     let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
 
-    let auth_url = auth.authorization_url(None, None);
+    let (auth_url, state) = auth.authorization_url(None, None, None).unwrap_or_default();
 
     // check if auth_url contains all required params
     assert!(auth_url.contains("client_id=client_id"));
     assert!(auth_url.contains("response_type=code"));
     assert!(auth_url.contains("state=box_csrf_token_"));
+    assert!(state.contains("box_csrf_token_"));
 
     // check if auth_url does not contain optional scope or redirect_url
     assert!(!auth_url.contains("scope="));
     assert!(!auth_url.contains("redirect_uri="));
+}
+
+#[test]
+fn test_authorization_url_state() {
+    let config = Config::new();
+    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+
+    let (auth_url, state) = auth
+        .authorization_url(None, Some("ABCDEF".to_string()), None)
+        .unwrap_or_default();
+
+    // check if auth_url contains all required params
+    assert!(auth_url.contains("client_id=client_id"));
+    assert!(auth_url.contains("response_type=code"));
+    assert!(auth_url.contains("state=ABCDEF"));
+    assert_eq!(state, "ABCDEF");
+
+    // check if auth_url does not contain optional scope or redirect_url
+    assert!(!auth_url.contains("scope="));
+    assert!(!auth_url.contains("redirect_uri="));
+}
+
+#[test]
+fn test_authorization_url_redirect() {
+    let config = Config::new();
+    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+
+    let (auth_url, state) = auth
+        .authorization_url(None, None, Some("https://example.com".to_string()))
+        .unwrap_or_default();
+
+    let encoded_redirect = "redirect_uri=".to_string() + &urlencode("https://example.com");
+
+    // check if auth_url contains all required params
+    assert!(auth_url.contains("client_id=client_id"));
+    assert!(auth_url.contains("response_type=code"));
+    assert!(auth_url.contains("state=box_csrf_token_"));
+    assert!(state.contains("box_csrf_token_"));
+    assert!(auth_url.contains(&encoded_redirect));
+
+    // check if auth_url does not contain optional scope or redirect_url
+    assert!(!auth_url.contains("scope="));
+}
+#[test]
+fn test_authorization_url_scope() {
+    let config = Config::new();
+    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+
+    let (auth_url, state) = auth
+        .authorization_url(Some("admin_readwrite".to_string()), None, None)
+        .unwrap_or_default();
+
+    // check if auth_url contains all required params
+    assert!(auth_url.contains("client_id=client_id"));
+    assert!(auth_url.contains("response_type=code"));
+    assert!(auth_url.contains("state=box_csrf_token_"));
+    assert!(state.contains("box_csrf_token_"));
+    assert!(auth_url.contains("scope=admin_readwrite"));
+
+    // check if auth_url does not contain optional scope or redirect_url
 }
 
 #[tokio::test]
