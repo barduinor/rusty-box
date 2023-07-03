@@ -1,0 +1,214 @@
+//! Client Credentials Grant (CCG) authentication
+use super::access_token::AccessToken;
+use super::auth_client::{AuthClient, Form};
+use super::{Auth, AuthError};
+use crate::config::Config;
+
+use async_trait::async_trait;
+use chrono::{DateTime, Duration, Utc};
+use rand::distributions::Alphanumeric;
+use rand::Rng;
+use serde::Serialize;
+
+/// Client Credentials Grant (CCG) authentication
+#[derive(Debug, Clone, Serialize, Default)]
+pub struct OAuth {
+    pub config: Config,
+    client_id: String,
+    client_secret: String,
+    // redirect_uri: String, // TODO: use URL type?
+    access_token: AccessToken,
+    expires_by: DateTime<Utc>,
+    scope: Option<String>, // TODO: vector of strings?
+
+    #[serde(skip)]
+    client: AuthClient,
+}
+
+impl OAuth {
+    pub fn new(config: Config, client_id: String, client_secret: String) -> Self {
+        OAuth {
+            config,
+            client_id,
+            client_secret,
+            access_token: AccessToken::new(),
+            expires_by: Utc::now(),
+            scope: None,
+            client: AuthClient::default(),
+        }
+    }
+
+    pub fn is_expired(&self) -> bool {
+        Utc::now() > self.expires_by
+    }
+
+    pub fn authorization_url(&self, state: Option<String>, redirect_url: Option<String>) -> String {
+        let url = self.config.oauth2_authorize_url.clone();
+        let url = url + "?client_id=" + &self.client_id;
+        let url = url + "&response_type=code";
+
+        let local_scope = self.scope.clone();
+        let url = match local_scope {
+            Some(local_scope) => url + "&scope=" + local_scope.as_str(),
+            None => url,
+        };
+
+        let url = match state {
+            Some(state) => url + "&state=" + state.as_str(),
+            None => url + "&state=" + "box_csrf_token_" + &generate_state(16),
+        };
+
+        let url = match redirect_url {
+            Some(redirect_url) => url + "&redirect_uri=" + &urlencode(redirect_url.as_str()),
+            None => url,
+        };
+
+        url
+    }
+
+    async fn refresh_access_token(&mut self) -> Result<AccessToken, AuthError> {
+        let url = &(self.config.oauth2_api_url.clone() + "/token");
+
+        let refresh_token = self.access_token.refresh_token.clone().unwrap_or_default();
+
+        let headers = None; // TODO: Add headers to rquest
+
+        let mut payload = Form::new();
+        payload.insert("grant_type", "client_credentials");
+        payload.insert("client_id", &self.client_id);
+        payload.insert("client_secret", &self.client_secret);
+        payload.insert("grant_type", "refresh_token");
+        payload.insert("refresh_token", &refresh_token);
+
+        let now = Utc::now();
+
+        let response = self.client.post_form(url, headers, &payload).await;
+
+        let data = match response {
+            Ok(data) => data,
+            Err(e) => return Err(e),
+        };
+
+        let access_token = match serde_json::from_str::<AccessToken>(&data) {
+            Ok(access_token) => access_token,
+            Err(e) => {
+                return Err(AuthError::Serde(e));
+            }
+        };
+        let expires_in = access_token.expires_in.unwrap_or_default();
+        self.expires_by = now + Duration::seconds(expires_in);
+        self.access_token = access_token.clone();
+        Ok(access_token)
+    }
+}
+
+#[async_trait]
+impl<'a> Auth<'a> for OAuth {
+    async fn access_token(&mut self) -> Result<String, AuthError> {
+        if self.is_expired() {
+            match self.refresh_access_token().await {
+                Ok(access_token) => Ok(access_token.access_token.unwrap_or_default()),
+                Err(e) => Err(e),
+            }
+        } else {
+            let access_token = match self.access_token.access_token.clone() {
+                Some(token) => token,
+                None => return Err(AuthError::Token("CCG token is not set".to_owned())),
+            };
+            Ok(access_token)
+        }
+    }
+
+    async fn to_json(&mut self) -> Result<String, AuthError> {
+        self.access_token().await?;
+        match serde_json::to_string(&self) {
+            Ok(json) => Ok(json),
+            Err(e) => Err(AuthError::Serde(e)),
+        }
+    }
+
+    fn base_api_url(&self) -> String {
+        self.config.base_api_url()
+    }
+
+    fn user_agent(&self) -> String {
+        self.config.user_agent()
+    }
+}
+
+fn urlencode<T: AsRef<str>>(s: T) -> String {
+    ::url::form_urlencoded::byte_serialize(s.as_ref().as_bytes()).collect()
+}
+
+fn generate_state(length: u8) -> String {
+    rand::thread_rng()
+        .sample_iter(&Alphanumeric)
+        .take(length.into())
+        .map(char::from)
+        .collect()
+}
+
+#[cfg(test)]
+use std::env;
+
+#[test]
+fn test_generate_state() {
+    let state = generate_state(16);
+    assert_eq!(state.len(), 16);
+}
+
+#[test]
+fn test_urlencode() {
+    let url = "https://example.com";
+    let encoded_url = urlencode(url);
+    assert_eq!(encoded_url, "https%3A%2F%2Fexample.com");
+}
+
+#[test]
+fn test_authorization_url_default() {
+    let config = Config::new();
+    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+
+    let auth_url = auth.authorization_url(None, None);
+
+    // check if auth_url contains all required params
+    assert!(auth_url.contains("client_id=client_id"));
+    assert!(auth_url.contains("response_type=code"));
+    assert!(auth_url.contains("state=box_csrf_token_"));
+
+    // check if auth_url does not contain optional scope or redirect_url
+    assert!(!auth_url.contains("scope="));
+    assert!(!auth_url.contains("redirect_uri="));
+}
+
+#[tokio::test]
+async fn test_oauth_new() {
+    let config = Config::new();
+    let client_id = "client_id".to_owned();
+    let client_secret = "client_secret".to_owned();
+    let auth = OAuth::new(config, client_id, client_secret);
+
+    assert_eq!(auth.client_id, "client_id".to_owned());
+    assert_eq!(auth.client_secret, "client_secret".to_owned());
+}
+
+#[tokio::test]
+async fn test_oauth_refresh() {
+    dotenv::from_filename(".ccg.env").ok(); //TODO: refactor test
+    let config = Config::new();
+    let client_id = env::var("CLIENT_ID").expect("CLIENT_ID must be set");
+    let client_secret = env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set");
+
+    let mut auth = OAuth::new(config, client_id, client_secret);
+
+    let access_token = auth.access_token().await;
+    // println!("access_token: {:#?}", access_token);
+
+    assert!(access_token.is_ok());
+    assert!(!auth.is_expired());
+    assert!(auth.access_token.access_token.is_some());
+    assert_eq!(
+        access_token.unwrap(),
+        auth.access_token.access_token.unwrap()
+    );
+}

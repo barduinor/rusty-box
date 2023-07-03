@@ -4,6 +4,7 @@ pub mod auth_ccg;
 pub mod auth_client;
 pub mod auth_developer;
 pub mod auth_errors;
+pub mod auth_oauth;
 
 use async_trait::async_trait;
 
