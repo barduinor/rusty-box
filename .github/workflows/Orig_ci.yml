@@ -3,7 +3,7 @@ on:
   push:
     branches: main
 
-name: CI
+name: ORIG:CI
 
 jobs:
   formatting:
