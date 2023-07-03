@@ -2,6 +2,7 @@ on:
   create:
     tags:
       - v*
+    
 
 name: Publish Orig
 
