@@ -1,0 +1,99 @@
+on:
+  pull_request:
+  push:
+    branches: main
+
+name: CI Original
+
+jobs:
+  formatting:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt
+
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  docs:
+    name: Check Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Install cargo-deadlinks
+        run: cargo install cargo-deadlinks
+
+      - name: Build and Check
+        run: RUSTDOCFLAGS='-D warnings' cargo doc -p rusty-box --no-deps 
+
+      - name: Look for Dead Links
+        # We don't enforce deadlinks in the CI because it may print various
+        # false positives, or errors that aren't related to the current PR.
+        continue-on-error: true
+        run: |
+          cd target
+          for crate in doc/rusty-box*; do
+            echo ">> Checking in $crate"
+            cargo deadlinks --check-http --dir "$crate"
+          done
+
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    env:
+      RUST_BACKTRACE: 1
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: clippy
+
+      - name: Create .ccg.env from secrets
+        run: |
+          echo "${{secrets.CCG_ENV}}"
+          echo "${{secrets.CCG_ENV}}" | base64 -d > .ccg.env
+          
+      - name: Build sources
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: -p rusty-box --all-targets
+
+      - name: Run cargo clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -p rusty-box --all-targets -- -D warnings --no-deps
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: -p rusty-box
