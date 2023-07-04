@@ -21,10 +21,18 @@ pub struct OAuth {
 
     #[serde(skip)]
     client: AuthClient,
+
+    #[serde(skip)]
+    store: Option<fn(String)>,
 }
 
 impl OAuth {
-    pub fn new(config: Config, client_id: String, client_secret: String) -> Self {
+    pub fn new(
+        config: Config,
+        client_id: String,
+        client_secret: String,
+        store: Option<fn(String)>,
+    ) -> Self {
         OAuth {
             config,
             client_id,
@@ -32,6 +40,7 @@ impl OAuth {
             access_token: AccessToken::new(),
             expires_by: Utc::now(),
             client: AuthClient::default(),
+            store,
         }
     }
 
@@ -102,11 +111,26 @@ impl OAuth {
         let expires_in = access_token.expires_in.unwrap_or_default();
         self.expires_by = now + Duration::seconds(expires_in);
         self.access_token = access_token.clone();
+        match self.store {
+            Some(store) => {
+                let json_access_token = self.to_json().await?;
+                store(json_access_token);
+            }
+            None => return Ok(access_token),
+        };
         Ok(access_token)
     }
 
-    pub fn set_access_token(&mut self, access_token: AccessToken) {
+    pub fn set_access_token(&mut self, access_token: AccessToken) -> Result<(), AuthError> {
         self.access_token = access_token;
+        match self.store {
+            Some(store) => {
+                let json_access_token = serde_json::to_string(&self)?;
+                store(json_access_token);
+            }
+            None => return Ok(()),
+        };
+        Ok(())
     }
 
     async fn refresh_access_token(&mut self) -> Result<AccessToken, AuthError> {
@@ -141,6 +165,13 @@ impl OAuth {
         let expires_in = access_token.expires_in.unwrap_or_default();
         self.expires_by = now + Duration::seconds(expires_in);
         self.access_token = access_token.clone();
+        match self.store {
+            Some(store) => {
+                let json_access_token = self.to_json().await?;
+                store(json_access_token);
+            }
+            None => return Ok(access_token),
+        };
         Ok(access_token)
     }
 }
@@ -192,6 +223,12 @@ fn generate_state(length: u8) -> String {
 }
 
 #[cfg(test)]
+fn store(json_access_token: String) {
+    // println!("{}", json_access_token);
+    assert!(json_access_token.len() > 0);
+    assert!(json_access_token.contains("ACCESS_TOKEN"));
+    assert!(json_access_token.contains("REFRESH_TOKEN"));
+}
 #[test]
 fn test_generate_state() {
     let state = generate_state(16);
@@ -208,7 +245,12 @@ fn test_urlencode() {
 #[test]
 fn test_authorization_url_default() {
     let config = Config::new();
-    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+    let auth = OAuth::new(
+        config,
+        "client_id".to_owned(),
+        "client_secret".to_owned(),
+        None,
+    );
 
     let (auth_url, state) = auth.authorization_url(None, None, None).unwrap_or_default();
 
@@ -226,7 +268,12 @@ fn test_authorization_url_default() {
 #[test]
 fn test_authorization_url_state() {
     let config = Config::new();
-    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+    let auth = OAuth::new(
+        config,
+        "client_id".to_owned(),
+        "client_secret".to_owned(),
+        None,
+    );
 
     let (auth_url, state) = auth
         .authorization_url(None, Some("ABCDEF".to_string()), None)
@@ -246,7 +293,12 @@ fn test_authorization_url_state() {
 #[test]
 fn test_authorization_url_redirect() {
     let config = Config::new();
-    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+    let auth = OAuth::new(
+        config,
+        "client_id".to_owned(),
+        "client_secret".to_owned(),
+        None,
+    );
 
     let (auth_url, state) = auth
         .authorization_url(None, None, Some("https://example.com".to_string()))
@@ -267,7 +319,12 @@ fn test_authorization_url_redirect() {
 #[test]
 fn test_authorization_url_scope() {
     let config = Config::new();
-    let auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+    let auth = OAuth::new(
+        config,
+        "client_id".to_owned(),
+        "client_secret".to_owned(),
+        None,
+    );
 
     let (auth_url, state) = auth
         .authorization_url(Some("admin_readwrite".to_string()), None, None)
@@ -288,7 +345,7 @@ fn test_oauth_new() {
     let config = Config::new();
     let client_id = "client_id".to_owned();
     let client_secret = "client_secret".to_owned();
-    let auth = OAuth::new(config, client_id, client_secret);
+    let auth = OAuth::new(config, client_id, client_secret, None);
 
     assert_eq!(auth.client_id, "client_id".to_owned());
     assert_eq!(auth.client_secret, "client_secret".to_owned());
@@ -297,13 +354,42 @@ fn test_oauth_new() {
 #[test]
 fn test_oauth_set_access_token() {
     let config = Config::new();
-    let mut auth = OAuth::new(config, "client_id".to_owned(), "client_secret".to_owned());
+    let mut auth = OAuth::new(
+        config,
+        "client_id".to_owned(),
+        "client_secret".to_owned(),
+        None,
+    );
     let access_token = AccessToken {
         access_token: Some("access_token".to_owned()),
         refresh_token: Some("refresh_token".to_owned()),
         ..Default::default()
     };
-    auth.set_access_token(access_token.clone());
+    match auth.set_access_token(access_token.clone()) {
+        Ok(_) => assert_eq!(auth.access_token, access_token),
+        Err(_) => panic!("Error setting access token"),
+    };
+}
 
-    assert_eq!(auth.access_token, access_token);
+#[test]
+fn test_store() {
+    let config = Config::new();
+    let mut auth = OAuth::new(
+        config,
+        "client_id".to_owned(),
+        "client_secret".to_owned(),
+        Some(store),
+    );
+    let fake_access_token = AccessToken {
+        access_token: Some("ACCESS_TOKEN".to_string()),
+        expires_in: Some(3333),
+        token_type: Some(super::access_token::TokenType::Bearer),
+        restricted_to: None,
+        refresh_token: Some("REFRESH_TOKEN".to_string()),
+        issued_token_type: None,
+    };
+    match auth.set_access_token(fake_access_token) {
+        Ok(_) => {}
+        Err(_) => panic!("Error setting access token"),
+    };
 }
