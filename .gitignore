@@ -15,6 +15,7 @@ Cargo.lock
 
 .DS_Store
 .access_token.json
+*.cache.json
 .env
 *.env
 # Added by cargo
