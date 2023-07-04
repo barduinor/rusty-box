@@ -276,7 +276,7 @@ fn test_authorization_url_state() {
     );
 
     let (auth_url, state) = auth
-        .authorization_url(None, Some("ABCDEF".to_string()), None)
+        .authorization_url(None, None, Some("ABCDEF".to_string()))
         .unwrap_or_default();
 
     // check if auth_url contains all required params
@@ -301,7 +301,7 @@ fn test_authorization_url_redirect() {
     );
 
     let (auth_url, state) = auth
-        .authorization_url(None, None, Some("https://example.com".to_string()))
+        .authorization_url(Some("https://example.com".to_string()), None, None)
         .unwrap_or_default();
 
     let encoded_redirect = "redirect_uri=".to_string() + &urlencode("https://example.com");
@@ -327,7 +327,7 @@ fn test_authorization_url_scope() {
     );
 
     let (auth_url, state) = auth
-        .authorization_url(Some("admin_readwrite".to_string()), None, None)
+        .authorization_url(None, Some("admin_readwrite".to_string()), None)
         .unwrap_or_default();
 
     // check if auth_url contains all required params
