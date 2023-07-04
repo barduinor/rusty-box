@@ -36,11 +36,11 @@ impl DevAuth {
 impl<'a> Auth<'a> for DevAuth {
     async fn access_token(&mut self) -> Result<String, AuthError> {
         if self.is_expired() {
-            Err(AuthError::Token("Developer token has expired".to_owned()))
+            Err(AuthError::Generic("Developer token has expired".to_owned()))
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
-                None => return Err(AuthError::Token("Developer token is not set".to_owned())),
+                None => return Err(AuthError::Generic("Developer token is not set".to_owned())),
             };
             Ok(access_token)
         }

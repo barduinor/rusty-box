@@ -113,7 +113,7 @@ impl<'a> Auth<'a> for CCGAuth {
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
-                None => return Err(AuthError::Token("CCG token is not set".to_owned())),
+                None => return Err(AuthError::Generic("CCG token is not set".to_owned())),
             };
             Ok(access_token)
         }

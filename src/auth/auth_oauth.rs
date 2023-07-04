@@ -50,9 +50,9 @@ impl OAuth {
 
     pub fn authorization_url(
         &self,
+        redirect_url: Option<String>,
         scope: Option<String>, // TODO: vector of strings?
         state: Option<String>,
-        redirect_url: Option<String>,
     ) -> Result<(String, String), AuthError> {
         let url = self.config.oauth2_authorize_url.clone();
         let url = url + "?client_id=" + &self.client_id;
@@ -79,8 +79,8 @@ impl OAuth {
 
     pub async fn request_access_token(
         &mut self,
-        client_id: String,
-        client_secret: String,
+        // client_id: String,
+        // client_secret: String,
         code: String,
     ) -> Result<AccessToken, AuthError> {
         let url = self.config.oauth2_api_url.clone() + "/token";
@@ -88,8 +88,8 @@ impl OAuth {
         let headers = None; // TODO: Add headers to rquest
 
         let mut payload = Form::new();
-        payload.insert("client_id", &client_id);
-        payload.insert("client_secret", &client_secret);
+        payload.insert("client_id", &self.client_id);
+        payload.insert("client_secret", &self.client_secret);
         payload.insert("grant_type", "authorization_code");
         payload.insert("code", &code);
 
@@ -187,7 +187,7 @@ impl<'a> Auth<'a> for OAuth {
         } else {
             let access_token = match self.access_token.access_token.clone() {
                 Some(token) => token,
-                None => return Err(AuthError::Token("CCG token is not set".to_owned())),
+                None => return Err(AuthError::Generic("CCG token is not set".to_owned())),
             };
             Ok(access_token)
         }
