@@ -11,7 +11,7 @@ use rand::Rng;
 use serde::Serialize;
 
 /// Client Credentials Grant (CCG) authentication
-#[derive(Debug, Clone, Serialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct OAuth {
     pub config: Config,
     client_id: String,
