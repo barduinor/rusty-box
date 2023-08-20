@@ -36,7 +36,7 @@ pub enum AuthError {
     Network(reqwest::Error),
     Serde(serde_json::Error),
     Io(std::io::Error),
-    Token(String),
+    Generic(String),
     ResponseError(AuthErrorResponse),
 }
 
@@ -46,7 +46,7 @@ impl fmt::Display for AuthError {
             AuthError::Network(e) => ("reqwest", e.to_string()),
             AuthError::Serde(e) => ("serde", e.to_string()),
             AuthError::Io(e) => ("IO", e.to_string()),
-            AuthError::Token(e) => ("Token", e.to_string()),
+            AuthError::Generic(e) => ("Token", e.to_string()),
             AuthError::ResponseError(e) => ("API Error", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
@@ -59,7 +59,7 @@ impl fmt::Debug for AuthError {
             AuthError::Network(e) => ("reqwest", e.to_string()),
             AuthError::Serde(e) => ("serde", e.to_string()),
             AuthError::Io(e) => ("IO", e.to_string()),
-            AuthError::Token(e) => ("Token", e.to_string()),
+            AuthError::Generic(e) => ("Token", e.to_string()),
             AuthError::ResponseError(e) => ("API Error", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
@@ -86,7 +86,7 @@ impl From<std::io::Error> for AuthError {
 
 impl From<String> for AuthError {
     fn from(e: String) -> Self {
-        AuthError::Token(e)
+        AuthError::Generic(e)
     }
 }
 

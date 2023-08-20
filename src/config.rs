@@ -1,6 +1,6 @@
 //! Configuration for the Box API client.
 /// Configuration structure for the Box API.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
     base_api_url: String,
     upload_url: String,

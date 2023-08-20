@@ -45,8 +45,14 @@ async fn test_create_client_ccg() {
     let config = crate::config::Config::new();
     let client_id = std::env::var("CLIENT_ID").expect("CLIENT_ID must be set");
     let client_secret = std::env::var("CLIENT_SECRET").expect("CLIENT_SECRET must be set");
-    let box_subject_type = SubjectType::Enterprise;
-    let box_subject_id = std::env::var("BOX_ENTERPRISE_ID").expect("BOX_ENTERPRISE_ID must be set");
+    let env_subject_type = std::env::var("BOX_SUBJECT_TYPE").expect("BOX_SUBJECT_TYPE must be set");
+    let box_subject_type = match env_subject_type.as_str() {
+        "user" => SubjectType::User,
+        "enterprise" => SubjectType::Enterprise,
+        _ => panic!("BOX_SUBJECT_TYPE must be either 'user' or 'enterprise'"),
+    };
+
+    let box_subject_id = std::env::var("BOX_SUBJECT_ID").expect("BOX_SUBJECT_ID must be set");
 
     let auth = CCGAuth::new(
         config,
