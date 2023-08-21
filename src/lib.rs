@@ -14,6 +14,7 @@ pub use crate::auth::auth_errors::AuthError;
 
 pub use crate::auth::auth_ccg::CCGAuth;
 pub use crate::auth::auth_developer::DevAuth;
+pub use crate::auth::auth_oauth::OAuth;
 
 pub use crate::auth::auth_ccg::SubjectType;
 pub use crate::config::Config;
