@@ -17,6 +17,7 @@ Cargo.lock
 .access_token.json
 .env
 *.env
+*.cache.json
 # Added by cargo
 
 /target
