@@ -1,3 +1,9 @@
+### 0.4.0-alpha
+* Auth now supports:
+    * Client Credentials Grant (CCG)
+    * Developer Token
+    * Oauth 2.0
+
 ### 0.3.0-alpha
 ### Refactor:
 Completed refactoring of the error handle.
