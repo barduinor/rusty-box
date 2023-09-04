@@ -30,6 +30,9 @@ chrono = { version = "0.4.24", features = ["serde"] }
 async-trait = "0.1.68"
 url = "2.2.2"
 rand = "0.8.5"
+josekit = "0.8.3"
+openssl = "0.10.57"
+uuid = { version = "1.4.1", features = ["v4", "fast-rng","macro-diagnostics"]}
 
 [dev-dependencies]
 pretty_assertions = "1.3.0"

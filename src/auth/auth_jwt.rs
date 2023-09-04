@@ -6,19 +6,24 @@ use crate::config::Config;
 
 use async_trait::async_trait;
 use chrono::{DateTime, Duration, Utc};
+use josekit::{
+    jws::RS512,
+    jwt::{self, JwtPayload},
+};
+use openssl::pkey::PKey;
 use serde::Serialize;
+use serde_json::json;
 
 #[derive(Debug, Clone, Serialize, Default)]
 pub struct JWTAuth {
     pub config: Config,
-
     client_id: String,
     client_secret: String,
-    publick_key_id: String,
+    public_key_id: String,
+    box_subject_type: String,
+    box_subject_id: String,
     private_key: String,
     passphrase: String,
-    enterprise_id: String,
-
     access_token: AccessToken,
     expires_by: DateTime<Utc>,
     #[serde(skip)]
@@ -30,19 +35,22 @@ impl JWTAuth {
         config: Config,
         client_id: String,
         client_secret: String,
-        publick_key_id: String,
+        public_key_id: String,
+        box_subject_type: String,
+        box_subject_id: String,
         private_key: String,
         passphrase: String,
-        enterprise_id: String,
     ) -> Self {
         JWTAuth {
             config,
             client_id,
             client_secret,
-            publick_key_id,
+            public_key_id,
+            box_subject_type,
+            box_subject_id,
             private_key,
             passphrase,
-            enterprise_id,
+
             access_token: AccessToken::new(),
             expires_by: Utc::now(),
             client: AuthClient::default(),
@@ -87,4 +95,46 @@ impl JWTAuth {
     }
 }
 
-fn create_jet_assertion() {}
+fn jwt_assertion(jwt_aut: JWTAuth) -> Result<String, AuthError> {
+    // JWT Header
+    let mut header = josekit::jws::JwsHeader::new();
+    header.set_token_type("JWT");
+
+    header.set_key_id(jwt_aut.public_key_id);
+
+    // JWT Payload
+    let mut payload = JwtPayload::new();
+
+    payload.set_issuer(jwt_aut.client_id);
+
+    payload.set_subject(jwt_aut.box_subject_id);
+
+    let box_subject_type = Some(json!(jwt_aut.box_subject_type));
+    payload.set_claim("box_sub_type", box_subject_type)?;
+
+    let audience = vec![jwt_aut.config.oauth2_api_url + "/token"];
+    payload.set_audience(audience);
+
+    let jwt_id = uuid::Uuid::new_v4().to_string();
+    payload.set_jwt_id(jwt_id);
+
+    let expires_at = std::time::SystemTime::now() + std::time::Duration::from_secs(59);
+    payload.set_expires_at(&expires_at);
+
+    // decrupt private key
+    let private_key = PKey::private_key_from_pem_passphrase(
+        &jwt_aut.private_key.as_bytes(),
+        jwt_aut.passphrase.as_bytes(),
+    )?;
+
+    let private_key_pem = private_key.private_key_to_pem_pkcs8()?;
+
+    let signer = RS512.signer_from_pem(&private_key_pem)?;
+    let jwt = jwt::encode_with_signer(&payload, &header, &signer)?;
+
+    Ok(jwt)
+}
+
+#[cfg(test)]
+#[path = "./unit_tests/auth_jwt_test.rs"]
+mod auth_jwt_test;
