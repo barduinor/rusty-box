@@ -38,6 +38,8 @@ pub enum AuthError {
     Io(std::io::Error),
     Generic(String),
     ResponseError(AuthErrorResponse),
+    JoseError(josekit::JoseError),
+    OpenSSl(openssl::error::ErrorStack),
 }
 
 impl fmt::Display for AuthError {
@@ -48,6 +50,8 @@ impl fmt::Display for AuthError {
             AuthError::Io(e) => ("IO", e.to_string()),
             AuthError::Generic(e) => ("Token", e.to_string()),
             AuthError::ResponseError(e) => ("API Error", e.to_string()),
+            AuthError::JoseError(e) => ("Jose", e.to_string()),
+            AuthError::OpenSSl(e) => ("OpenSSL", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
     }
@@ -61,6 +65,8 @@ impl fmt::Debug for AuthError {
             AuthError::Io(e) => ("IO", e.to_string()),
             AuthError::Generic(e) => ("Token", e.to_string()),
             AuthError::ResponseError(e) => ("API Error", e.to_string()),
+            AuthError::JoseError(e) => ("Jose", e.to_string()),
+            AuthError::OpenSSl(e) => ("OpenSSL", e.to_string()),
         };
         write!(f, "error in {}: {}", module, e)
     }
@@ -93,5 +99,17 @@ impl From<String> for AuthError {
 impl From<AuthErrorResponse> for AuthError {
     fn from(e: AuthErrorResponse) -> Self {
         AuthError::ResponseError(e)
+    }
+}
+
+impl From<josekit::JoseError> for AuthError {
+    fn from(e: josekit::JoseError) -> Self {
+        AuthError::JoseError(e)
+    }
+}
+
+impl From<openssl::error::ErrorStack> for AuthError {
+    fn from(e: openssl::error::ErrorStack) -> Self {
+        AuthError::OpenSSl(e)
     }
 }
