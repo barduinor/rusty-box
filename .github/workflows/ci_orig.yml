@@ -79,6 +79,11 @@ jobs:
         run: |
           echo "${{secrets.CCG_ENV}}"
           echo "${{secrets.CCG_ENV}}" | base64 -d > .ccg.env
+
+      - name: Create .jwt.env from secrets
+        run: |
+          echo "${{secrets.JWT_ENV}}"
+          echo "${{secrets.JWT_ENV}}" | base64 -d > .jwt.env
           
       - name: Build sources
         uses: actions-rs/cargo@v1
