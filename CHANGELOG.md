@@ -1,3 +1,5 @@
+### 0.4.1-alpha
+* added JWT Authentication support
 ### 0.4.0-alpha
 * Auth now supports:
     * Client Credentials Grant (CCG)
