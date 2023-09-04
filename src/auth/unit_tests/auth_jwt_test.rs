@@ -18,9 +18,9 @@ fn test_jwt_assertion() {
         config,
         "client_id".to_string(),
         "client_secret".to_string(),
-        "public_key_id".to_string(),
-        "box_subject_type".to_string(),
+        SubjectType::Enterprise,
         "box_subject_id".to_string(),
+        "public_key_id".to_string(),
         encrypted_private_key,
         passphrase,
     );
@@ -47,10 +47,7 @@ fn test_jwt_assertion() {
     //assert claims
     assert_eq!(payload.issuer(), Some("client_id"));
     assert_eq!(payload.subject(), Some("box_subject_id"));
-    assert_eq!(
-        payload.claim("box_sub_type"),
-        Some(&json!("box_subject_type"))
-    );
+    assert_eq!(payload.claim("box_sub_type"), Some(&json!("enterprise")));
     assert_eq!(
         payload.audience(),
         Some(vec!["https://api.box.com/oauth2/token"])
